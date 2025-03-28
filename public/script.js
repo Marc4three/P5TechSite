@@ -1,22 +1,22 @@
 // Customer rates configuration
 const customerRates = {
-    'Clinovators': {
-        'Project Management': { clientRate: 60, devRate: 50 },
-        'Frontend Development': { clientRate: 60, devRate: 50 },
-        'Backend Development': { clientRate: 60, devRate: 50 },
-        'UI/UX Design': { clientRate: 60, devRate: 50 },
-        'Architecture/DevOps': { clientRate: 60, devRate: 50 },
-        'QA/Testing': { clientRate: 60, devRate: 50 },
-        'Customer Support/Training': { clientRate: 60, devRate: 50 }
+    'clinovators': {
+        'backend': { clientRate: 60, devRate: 50 },
+        'frontend': { clientRate: 60, devRate: 50 },
+        'ui': { clientRate: 60, devRate: 50 },
+        'pm': { rate: 60 },
+        'devops': { rate: 60 },
+        'qa': { clientRate: 60, devRate: 50 },
+        'support': { rate: 60 }
     },
-    'Default': {
-        'Project Management': { clientRate: 150, devRate: 125 },
-        'Frontend Development': { clientRate: 150, devRate: 125 },
-        'Backend Development': { clientRate: 150, devRate: 125 },
-        'UI/UX Design': { clientRate: 150, devRate: 125 },
-        'Architecture/DevOps': { clientRate: 150, devRate: 125 },
-        'QA/Testing': { clientRate: 150, devRate: 125 },
-        'Customer Support/Training': { clientRate: 150, devRate: 125 }
+    'custom': {
+        'backend': { clientRate: 150, devRate: 125 },
+        'frontend': { clientRate: 150, devRate: 125 },
+        'ui': { clientRate: 150, devRate: 125 },
+        'pm': { rate: 150 },
+        'devops': { rate: 150 },
+        'qa': { clientRate: 150, devRate: 125 },
+        'support': { rate: 150 }
     }
 };
 
@@ -408,7 +408,7 @@ function calculateTotals() {
             costMultiplier = 1 + (state.settings.overtimePremium / 100);
             break;
     }
-
+    
     // Calculate project duration and metrics
     const hoursPerMonth = 160; // 40 hours/week * 4 weeks
     const projectDuration = (totalHours / hoursPerMonth) * timelineMultiplier;
@@ -449,4 +449,17 @@ function toggleOvertimePremium() {
         overtimeGroup.style.display = 
             state.settings.timelinePreference === 'overtime' ? 'block' : 'none';
     }
+}
+
+function updateSummaryDisplay(summary) {
+    document.getElementById('total-project-cost').textContent = formatCurrency(summary.totalProjectCost);
+    document.getElementById('monthly-payment').textContent = formatCurrency(summary.monthlyCustomerPayment);
+    document.getElementById('monthly-team-payout').textContent = formatCurrency(summary.monthlyTeamPayout);
+    document.getElementById('my-monthly-profit').textContent = formatCurrency(summary.myMonthlyProfit);
+    document.getElementById('my-monthly-revenue').textContent = formatCurrency(summary.myMonthlyRevenue);
+}
+
+// Format currency
+function formatCurrency(value) {
+    return `$${Math.round(value).toLocaleString()}`;
 } 

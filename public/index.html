@@ -7,19 +7,29 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="logo-container">
-            <img src="P5TS Logo.png" alt="P5 Tech Solutions Logo" class="logo">
+    <nav class="nav-container">
+        <div class="nav-content">
+            <img src="P5TS Logo.png" alt="P5 Tech Solutions Logo" class="nav-logo">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">Project Pricer</a>
+                <a href="release-planner.html" class="nav-link">Release Planner</a>
+                <a href="customer-portal.html" class="nav-link">Customer Portal</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/projects" class="nav-link">Projects</a>
+                <a href="/settings" class="nav-link">Settings</a>
+            </div>
         </div>
-        
+    </nav>
+
+    <div class="container">
         <h1>Project Pricer Calculator</h1>
         
         <section class="customer-selection">
             <div class="input-group">
                 <label for="customer-select">Select Customer</label>
                 <select id="customer-select">
-                    <option value="Clinovators">Clinovators</option>
-                    <option value="Default">Default Rates</option>
+                    <option value="clinovators">Clinovators</option>
+                    <option value="custom">Custom Rates</option>
                 </select>
             </div>
         </section>
@@ -262,6 +272,7 @@
             </section>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html> 

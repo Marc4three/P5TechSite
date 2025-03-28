@@ -1,0 +1,318 @@
+/* Sprint Tool Specific Styles */
+.setup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.task-grid {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.task-header {
+    display: grid;
+    grid-template-columns: 2fr 0.5fr 1fr 0.5fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-weight: 600;
+    align-items: center;
+}
+
+.task-item {
+    display: grid;
+    grid-template-columns: 2fr 0.5fr 1fr 0.5fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.priority-tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.priority-high {
+    background: #ffe5e5;
+    color: #d63031;
+}
+
+.priority-medium {
+    background: #fff3e0;
+    color: #f39c12;
+}
+
+.priority-low {
+    background: #e8f5e9;
+    color: #27ae60;
+}
+
+.status-tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.status-planned {
+    background: #e3f2fd;
+    color: #2196f3;
+}
+
+.status-progress {
+    background: #fff3e0;
+    color: #f39c12;
+}
+
+.status-complete {
+    background: #e8f5e9;
+    color: #27ae60;
+}
+
+.tracking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.tracking-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.tracking-item label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #666;
+}
+
+.tracking-item span {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3436;
+}
+
+.margin-visualization {
+    grid-column: 1 / -1;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.margin-bar {
+    height: 24px;
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+    border-radius: 12px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.approval-grid {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.approval-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.invoice-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.invoice-preview {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    min-height: 400px;
+}
+
+.add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    border: none;
+    padding: 0.875rem 1.75rem;
+    border-radius: 0.75rem;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(46, 204, 113, 0.2),
+                0 2px 4px -2px rgba(46, 204, 113, 0.1);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.add-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px -1px rgba(46, 204, 113, 0.2),
+                0 4px 6px -2px rgba(46, 204, 113, 0.1);
+    background: linear-gradient(135deg, #27ae60, #219a52);
+}
+
+.add-button:active {
+    transform: translateY(0);
+}
+
+.add-button i {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.add-button:hover i {
+    transform: rotate(90deg);
+}
+
+.add-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.add-button:hover::before {
+    left: 100%;
+}
+
+.add-button.clicked {
+    animation: clickEffect 0.3s ease-out;
+}
+
+@keyframes clickEffect {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+.primary-button {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.primary-button:hover {
+    background: #27ae60;
+}
+
+.secondary-button {
+    background: white;
+    color: #2ecc71;
+    border: 1px solid #2ecc71;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+    background: #f8fff9;
+    color: #27ae60;
+    border-color: #27ae60;
+}
+
+/* Role Card Styles */
+.role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.role-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.role-card h3 {
+    margin: 0 0 1rem 0;
+    color: #2d3436;
+}
+
+.role-inputs {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .setup-grid,
+    .tracking-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .task-header,
+    .task-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .invoice-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+} 

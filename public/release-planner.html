@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P5 Tech Solutions - Monthly Release Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="release-planner.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="nav-container">
+        <div class="nav-content">
+            <img src="P5TS Logo.png" alt="P5 Tech Solutions Logo" class="nav-logo">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Project Pricer</a>
+                <a href="release-planner.html" class="nav-link active">Release Planner</a>
+                <a href="customer-portal.html" class="nav-link">Customer Portal</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/projects" class="nav-link">Projects</a>
+                <a href="/settings" class="nav-link">Settings</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Monthly Release & Enhancement Planner</h1>
+
+        <section class="customer-selection">
+            <div class="input-group">
+                <label for="customer-select">Select Customer</label>
+                <select id="customer-select">
+                    <option value="clinovators">Clinovators</option>
+                    <option value="custom">Custom Rates</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="release-setup">
+            <h2>Release Setup</h2>
+            <div class="setup-grid">
+                <div class="input-group">
+                    <label for="release-name">Release Name</label>
+                    <input type="text" id="release-name" placeholder="e.g., January 2024 Enhancements">
+                </div>
+                <div class="input-group">
+                    <label for="project-name">Project Name</label>
+                    <input type="text" id="project-name" placeholder="e.g., Client Portal">
+                </div>
+                <div class="input-group">
+                    <label for="release-month">Release Month</label>
+                    <input type="month" id="release-month">
+                </div>
+                <div class="input-group full-width">
+                    <label for="release-scope">Release Scope</label>
+                    <textarea id="release-scope" rows="3" placeholder="List the enhancements and changes to be included in this release"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="start-date">Start Date</label>
+                    <input type="date" id="start-date">
+                </div>
+                <div class="input-group">
+                    <label for="end-date">End Date</label>
+                    <input type="date" id="end-date">
+                </div>
+                <div class="input-group">
+                    <label for="hour-cap">Monthly Hour Cap</label>
+                    <input type="number" id="hour-cap" min="0" value="40">
+                </div>
+                <div class="input-group">
+                    <label for="total-hours">Total Estimated Hours</label>
+                    <input type="number" id="total-hours" value="0" readonly class="readonly-input">
+                </div>
+            </div>
+        </section>
+
+        <section class="enhancement-list">
+            <h2>Enhancement Items</h2>
+            <div class="task-grid">
+                <div class="task-header">
+                    <span>Enhancement</span>
+                    <span>Priority #</span>
+                    <span>Priority</span>
+                    <span>Hours</span>
+                    <span>Status</span>
+                </div>
+                <div id="task-list">
+                    <!-- Enhancement items will be dynamically inserted here -->
+                </div>
+                <button id="add-task" class="action-button">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Enhancement Item
+                </button>
+            </div>
+        </section>
+
+        <section class="hours-tracking">
+            <h2>Monthly Hours & Cost Tracking</h2>
+            <div class="tracking-grid">
+                <div class="rates-section">
+                    <div class="rate-group">
+                        <label>Client Rate ($/hr)</label>
+                        <input type="number" id="client-rate" min="0" value="0">
+                    </div>
+                    <div class="rate-group">
+                        <label>Team Rate ($/hr)</label>
+                        <input type="number" id="team-rate" min="0" value="0">
+                    </div>
+                </div>
+                <div class="tracking-item">
+                    <label>Hours Allocated</label>
+                    <span id="hours-allocated">0</span>
+                </div>
+                <div class="tracking-item">
+                    <label>Monthly Cost</label>
+                    <span id="monthly-cost">$0</span>
+                </div>
+                <div class="tracking-item highlight">
+                    <label>Available Hours</label>
+                    <span id="available-hours">40</span>
+                </div>
+                <div class="hours-visualization">
+                    <div id="hours-bar" class="hours-bar"></div>
+                </div>
+                <div class="cost-tracking">
+                    <div class="cost-tracking-item">
+                        <label>Client Charges</label>
+                        <span id="total-client-charge">$0</span>
+                    </div>
+                    <div class="cost-tracking-item">
+                        <label>Team Costs</label>
+                        <span id="total-team-cost">$0</span>
+                    </div>
+                    <div class="cost-tracking-item highlight">
+                        <label>Monthly Profit</label>
+                        <span id="total-profit">$0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="client-approval">
+            <h2>Client Release Approval</h2>
+            <div class="approval-grid">
+                <div class="input-group full-width">
+                    <label for="client-notes">Release Notes & Comments</label>
+                    <textarea id="client-notes" rows="4" placeholder="Add release notes, dependencies, or special instructions for the client"></textarea>
+                </div>
+                <div class="approval-status">
+                    <label class="toggle">
+                        <input type="checkbox" id="client-approval">
+                        <span class="toggle-slider"></span>
+                        Release Plan Approved
+                    </label>
+                    <span id="approval-date"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="release-summary">
+            <h2>Release Plan Generation</h2>
+            <div class="summary-controls">
+                <div class="options-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="include-details">
+                        <span class="toggle-slider"></span>
+                        Include Technical Details
+                    </label>
+                </div>
+                <button id="generate-plan" class="action-button">
+                    <i class="fas fa-file-alt"></i>
+                    Generate Release Plan
+                </button>
+                <button id="export-pdf" class="action-button">
+                    <i class="fas fa-file-pdf"></i>
+                    Export as PDF
+                </button>
+            </div>
+            <div id="plan-preview" class="plan-preview">
+                <!-- Release plan preview will be rendered here -->
+            </div>
+        </section>
+    </div>
+
+    <script src="release-planner.js"></script>
+</body>
+</html> 

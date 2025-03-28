@@ -1,0 +1,1068 @@
+/* Modern Variables */
+:root {
+    --primary-color: #0066cc;  /* Apple Blue */
+    --primary-hover: #0055b3;
+    --secondary-color: #231f20;
+    --success-color: #34c759;  /* Apple Green */
+    --warning-color: #ff9f0a;  /* Apple Orange */
+    --review-color: #5856d6;   /* Apple Purple */
+    --background-color: #f5f5f7; /* Apple Light Gray */
+    --card-background: #ffffff;
+    --border-color: #e5e5e7;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Base Styles */
+body {
+    font-family: var(--font-sans);
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Auth Styles */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.auth-card {
+    background: var(--card-background);
+    padding: 3rem;
+    border-radius: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.auth-logo {
+    width: 120px;
+    margin-bottom: 2rem;
+}
+
+.auth-card h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.auth-form .input-group {
+    margin-bottom: 1rem;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+}
+
+.auth-button {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.auth-button:hover {
+    background: var(--primary-hover);
+}
+
+/* Navigation */
+.nav-bar {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-logo {
+    height: 60px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    margin: 0 2rem;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.nav-link.active {
+    color: var(--primary-color);
+    background: rgba(0, 102, 204, 0.1);
+}
+
+.nav-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    transition: background-color 0.2s ease;
+}
+
+.nav-profile:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.company-logo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+    margin-right: 0.75rem;
+}
+
+.profile-name {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+/* Project Cards */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.project-card {
+    background: var(--card-background);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.project-card .card-header {
+    margin-bottom: 0.5rem;
+}
+
+.project-card .card-header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.status-wrapper {
+    margin-bottom: 1rem;
+}
+
+.project-card .status-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.project-card .card-content {
+    margin-top: 1rem;
+}
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge.in-progress {
+    background: rgba(0, 102, 204, 0.1);
+    color: var(--primary-color);
+}
+
+.status-badge.complete {
+    background: rgba(52, 199, 89, 0.1);
+    color: var(--success-color);
+}
+
+.status-badge.review {
+    background: rgba(88, 86, 214, 0.1);
+    color: var(--review-color);
+}
+
+.project-card h3 {
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.project-phase {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.project-progress {
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progress.complete {
+    background: var(--success-color);
+}
+
+.progress.review {
+    background: var(--review-color);
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+.project-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.view-button {
+    width: 100%;
+    padding: 0.875rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    color: var(--primary-color);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-button:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Project Details */
+.details-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.details-header {
+    margin-bottom: 2rem;
+    background: var(--card-background);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.project-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.project-title h1 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.project-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.details-card {
+    background: var(--card-background);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.details-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.details-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    margin: 0 0 1.5rem 0;
+    color: var(--text-primary);
+}
+
+.details-card h3 i {
+    color: var(--primary-color);
+    font-size: 1.1em;
+}
+
+.details-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: var(--background-color);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.task-item:hover {
+    transform: translateX(4px);
+    background: rgba(0, 102, 204, 0.05);
+}
+
+.task-item.complete {
+    border-left: 4px solid var(--success-color);
+}
+
+.task-item.current {
+    border-left: 4px solid var(--primary-color);
+}
+
+.task-item.upcoming {
+    border-left: 4px solid var(--warning-color);
+}
+
+.task-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.task-progress {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 150px;
+}
+
+.update-list {
+    margin-bottom: 2rem;
+}
+
+.update-item {
+    padding: 1.25rem;
+    background: var(--background-color);
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.update-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.update-author {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.update-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.update-content {
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.message-box {
+    margin-top: 1.5rem;
+    background: var(--background-color);
+    border-radius: 1rem;
+    padding: 1.25rem;
+}
+
+.message-box textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    resize: vertical;
+    min-height: 100px;
+    margin-bottom: 1rem;
+    background: var(--card-background);
+    transition: all 0.2s ease;
+}
+
+.message-box textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+}
+
+.send-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.send-button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.send-button i {
+    font-size: 1rem;
+}
+
+#customer-portal-section {
+    display: block !important;
+}
+
+#login-section {
+    display: none !important;
+}
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    background: var(--card-background);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-button i {
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.action-button:hover {
+    border-color: var(--primary-color);
+    background: var(--card-background);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
+
+.action-button:hover i {
+    transform: scale(1.1);
+}
+
+.action-button.primary {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.action-button.primary:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: white;
+}
+
+.filter-button:hover i {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Overlay Styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.show {
+    opacity: 1;
+}
+
+.overlay-content {
+    background: var(--card-background);
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.overlay.show .overlay-content {
+    transform: translateY(0);
+}
+
+.overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.overlay-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+    background-color: var(--primary-color);
+}
+
+/* Form Styles */
+.project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-background);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
+    outline: none;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group.half {
+    flex: 1;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* Custom Scrollbar for Overlay */
+.overlay-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.overlay-content::-webkit-scrollbar-track {
+    background: var(--card-background);
+    border-radius: 4px;
+}
+
+.overlay-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.overlay-content::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Success Message Styles */
+.success-message {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.success-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.success-content i {
+    font-size: 48px;
+    color: var(--success-color);
+}
+
+.success-content h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 24px;
+}
+
+.success-content p {
+    color: var(--text-secondary);
+    margin: 0;
+    max-width: 400px;
+}
+
+.section-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Ensure the New Project button is properly styled */
+.action-button.primary {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.action-button.primary:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.action-button.primary i {
+    font-size: 0.875rem;
+}
+
+/* Task Overlay Specific Styles */
+.task-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-group label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-group span {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.task-description {
+    margin-bottom: 2rem;
+}
+
+.task-description h3,
+.task-requirements h3 {
+    font-size: 1.125rem;
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.task-description p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.task-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-requirements li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--background-color);
+    border-radius: 0.75rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.task-requirements li:hover {
+    background: rgba(0, 102, 204, 0.05);
+}
+
+.task-requirements li i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.overlay-body {
+    padding: 0 1rem;
+}
+
+/* Status badge styles for task overlay */
+#task-overlay .status-badge {
+    display: inline-flex;
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+#task-overlay .status-badge.complete {
+    background-color: rgba(52, 199, 89, 0.1);
+    color: var(--success-color);
+}
+
+#task-overlay .status-badge.in-progress {
+    background-color: rgba(0, 102, 204, 0.1);
+    color: var(--primary-color);
+}
+
+#task-overlay .status-badge.upcoming {
+    background-color: rgba(255, 159, 10, 0.1);
+    color: var(--warning-color);
+}
+
+/* Ensure both overlays work */
+#task-overlay.show,
+#new-project-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+/* New Project Overlay Styles */
+#new-project-overlay.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#new-project-overlay.overlay.show {
+    opacity: 1;
+}
+
+#new-project-overlay .overlay-content {
+    background: var(--card-background);
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+#new-project-overlay.overlay.show .overlay-content {
+    transform: translateY(0);
+}
+
+.project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.project-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.project-form label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.project-form input,
+.project-form select,
+.project-form textarea {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-background);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-form input:focus,
+.project-form select:focus,
+.project-form textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
+    outline: none;
+}
+
+.project-form .form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.project-form .form-group.half {
+    flex: 1;
+}
+
+.project-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.project-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.project-form select {
+    cursor: pointer;
+}
+
+/* Success Message Styles */
+.success-message {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.success-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.success-content i {
+    font-size: 48px;
+    color: var(--success-color);
+}
+
+.success-content h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 24px;
+}
+
+.success-content p {
+    color: var(--text-secondary);
+    margin: 0;
+    max-width: 400px;
+}
+
+/* Custom Scrollbar for Overlay */
+#new-project-overlay .overlay-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+#new-project-overlay .overlay-content::-webkit-scrollbar-track {
+    background: var(--card-background);
+    border-radius: 4px;
+}
+
+#new-project-overlay .overlay-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+#new-project-overlay .overlay-content::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+} 
