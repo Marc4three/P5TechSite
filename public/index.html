@@ -17,13 +17,49 @@
                 <h3>Backend Development</h3>
                 <div class="rate-group">
                     <div class="input-group">
-                        <label for="backend-rate">Hourly Rate ($)</label>
-                        <input type="number" id="backend-rate" value="100" min="0">
+                        <label for="backend-client-rate">Client Rate ($)</label>
+                        <input type="number" id="backend-client-rate" value="100" min="0">
                     </div>
                     <div class="input-group">
-                        <label for="backend-hours">Hours</label>
+                        <label for="backend-dev-rate">Developer Rate ($)</label>
+                        <input type="number" id="backend-dev-rate" value="85" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="backend-hours">Projected Hours</label>
                         <input type="number" id="backend-hours" value="0" min="0">
                     </div>
+                </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="backend-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>Frontend Development</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="frontend-client-rate">Client Rate ($)</label>
+                        <input type="number" id="frontend-client-rate" value="90" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="frontend-dev-rate">Developer Rate ($)</label>
+                        <input type="number" id="frontend-dev-rate" value="75" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="frontend-hours">Projected Hours</label>
+                        <input type="number" id="frontend-hours" value="0" min="0">
+                    </div>
+                </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="frontend-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
                 </div>
             </div>
 
@@ -39,6 +75,13 @@
                         <input type="number" id="ui-hours" value="0" min="0">
                     </div>
                 </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="ui-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
+                </div>
             </div>
 
             <div class="role-card">
@@ -53,52 +96,205 @@
                         <input type="number" id="pm-hours" value="0" min="0">
                     </div>
                 </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="pm-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>Business Analysis</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="ba-rate">Hourly Rate ($)</label>
+                        <input type="number" id="ba-rate" value="90" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="ba-hours">Hours</label>
+                        <input type="number" id="ba-hours" value="0" min="0">
+                    </div>
+                </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="ba-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>Architecture/DevOps</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="devops-rate">Hourly Rate ($)</label>
+                        <input type="number" id="devops-rate" value="110" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="devops-hours">Hours</label>
+                        <input type="number" id="devops-hours" value="0" min="0">
+                    </div>
+                </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="devops-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>QA / Testing</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="qa-rate">Hourly Rate ($)</label>
+                        <input type="number" id="qa-rate" value="75" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="qa-hours">Hours</label>
+                        <input type="number" id="qa-hours" value="0" min="0">
+                    </div>
+                </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="qa-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>Change Requests</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="cr-rate">Hourly Rate ($)</label>
+                        <input type="number" id="cr-rate" value="95" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="cr-hours">Hours</label>
+                        <input type="number" id="cr-hours" value="0" min="0">
+                    </div>
+                </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="cr-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>Customer Support / Training</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="support-rate">Hourly Rate ($)</label>
+                        <input type="number" id="support-rate" value="70" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="support-hours">Hours</label>
+                        <input type="number" id="support-hours" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>Content/Copywriting</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="content-rate">Hourly Rate ($)</label>
+                        <input type="number" id="content-rate" value="65" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="content-hours">Hours</label>
+                        <input type="number" id="content-hours" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>Creative Consulting</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="consulting-rate">Hourly Rate ($)</label>
+                        <input type="number" id="consulting-rate" value="120" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="consulting-hours">Hours</label>
+                        <input type="number" id="consulting-hours" value="0" min="0">
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section class="profit-timeline">
-            <h2>Profit & Timeline</h2>
-            <div class="settings-group">
-                <div class="input-group">
-                    <label for="profit-margin">Profit Margin (%)</label>
-                    <input type="number" id="profit-margin" value="20" min="0" max="100">
+        <div class="calculator-footer">
+            <section class="profit-timeline">
+                <h2>Profit & Timeline</h2>
+                <div class="settings-group">
+                    <div class="input-group">
+                        <label>Profit Margin</label>
+                        <div class="profit-inputs">
+                            <input type="number" id="profit-margin" value="20" min="0" max="100" disabled class="readonly-input">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="monthly-profit">Desired Monthly Profit ($)</label>
+                        <input type="number" id="monthly-profit" value="5000" min="0" step="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="duration">Project Duration (months)</label>
+                        <input type="number" id="duration" value="1" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="timeline-preference">Timeline Preference</label>
+                        <select id="timeline-preference">
+                            <option value="normal">Normal</option>
+                            <option value="rush">Rush (1.5×)</option>
+                            <option value="relaxed">Relaxed (0.9×)</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="duration">Project Duration (months)</label>
-                    <input type="number" id="duration" value="1" min="1">
-                </div>
-                <div class="input-group">
-                    <label for="timeline-preference">Timeline Preference</label>
-                    <select id="timeline-preference">
-                        <option value="normal">Normal</option>
-                        <option value="rush">Rush (1.5×)</option>
-                        <option value="relaxed">Relaxed (0.9×)</option>
-                    </select>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="project-summary">
-            <h2>Project Summary</h2>
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <label>Total Cost</label>
-                    <span id="total-cost">$0</span>
+            <section class="project-summary">
+                <h2>Project Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-item highlight main-highlight">
+                        <label>Total Project Cost</label>
+                        <span id="total-project-cost">$0</span>
+                        <small class="monthly-breakdown">Complete project cost including all roles and profit</small>
+                    </div>
+                    <div class="summary-subgrid">
+                        <div class="summary-item">
+                            <label>Monthly Customer Payment</label>
+                            <span id="monthly-payment">$0</span>
+                            <small class="monthly-breakdown">Client pays this amount monthly</small>
+                        </div>
+                        <div class="summary-item">
+                            <label>Monthly Team Payout</label>
+                            <span id="monthly-team-payout">$0</span>
+                            <small class="monthly-breakdown">Team member costs per month</small>
+                        </div>
+                        <div class="summary-item">
+                            <label>My Monthly Profit</label>
+                            <span id="my-monthly-profit">$0</span>
+                            <small class="monthly-breakdown">Revenue + Profit Margin</small>
+                        </div>
+                        <div class="summary-item">
+                            <label>My Monthly Revenue</label>
+                            <span id="my-monthly-revenue">$0</span>
+                            <small class="monthly-breakdown">From my assigned roles</small>
+                        </div>
+                    </div>
                 </div>
-                <div class="summary-item">
-                    <label>Profit Amount</label>
-                    <span id="profit-amount">$0</span>
-                </div>
-                <div class="summary-item">
-                    <label>Rush Multiplier</label>
-                    <span id="rush-multiplier">1×</span>
-                </div>
-                <div class="summary-item highlight">
-                    <label>Final Price</label>
-                    <span id="final-price">$0</span>
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
