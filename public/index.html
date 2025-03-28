@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Pricer Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Project Pricer Calculator</h1>
+        
+        <section class="role-pricing">
+            <h2>Role-Based Pricing</h2>
+            
+            <div class="role-card">
+                <h3>Backend Development</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="backend-rate">Hourly Rate ($)</label>
+                        <input type="number" id="backend-rate" value="100" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="backend-hours">Hours</label>
+                        <input type="number" id="backend-hours" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>UI/UX Design</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="ui-rate">Hourly Rate ($)</label>
+                        <input type="number" id="ui-rate" value="85" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="ui-hours">Hours</label>
+                        <input type="number" id="ui-hours" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <h3>Project Management</h3>
+                <div class="rate-group">
+                    <div class="input-group">
+                        <label for="pm-rate">Hourly Rate ($)</label>
+                        <input type="number" id="pm-rate" value="80" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="pm-hours">Hours</label>
+                        <input type="number" id="pm-hours" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="profit-timeline">
+            <h2>Profit & Timeline</h2>
+            <div class="settings-group">
+                <div class="input-group">
+                    <label for="profit-margin">Profit Margin (%)</label>
+                    <input type="number" id="profit-margin" value="20" min="0" max="100">
+                </div>
+                <div class="input-group">
+                    <label for="duration">Project Duration (months)</label>
+                    <input type="number" id="duration" value="1" min="1">
+                </div>
+                <div class="input-group">
+                    <label for="timeline-preference">Timeline Preference</label>
+                    <select id="timeline-preference">
+                        <option value="normal">Normal</option>
+                        <option value="rush">Rush (1.5×)</option>
+                        <option value="relaxed">Relaxed (0.9×)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="project-summary">
+            <h2>Project Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <label>Total Cost</label>
+                    <span id="total-cost">$0</span>
+                </div>
+                <div class="summary-item">
+                    <label>Profit Amount</label>
+                    <span id="profit-amount">$0</span>
+                </div>
+                <div class="summary-item">
+                    <label>Rush Multiplier</label>
+                    <span id="rush-multiplier">1×</span>
+                </div>
+                <div class="summary-item highlight">
+                    <label>Final Price</label>
+                    <span id="final-price">$0</span>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
