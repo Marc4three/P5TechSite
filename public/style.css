@@ -1,10 +1,12 @@
 :root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --background-color: #f8fafc;
+    --primary-color: #b39f91;  /* Taupe/Sand color */
+    --secondary-color: #231f20;  /* Dark gray/Almost black */
+    --accent-color: #000000;  /* Pure black */
+    --background-color: #fefff2;  /* Off-white */
+    --text-color: #231f20;
+    --border-color: #b39f91;
+    --hover-color: #a08d7f;  /* Slightly darker version of primary */
     --card-background: #ffffff;
-    --text-color: #1e293b;
-    --border-color: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
@@ -15,42 +17,241 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.5;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
-    padding: 2rem;
+    margin: 0;
+    padding: 1rem;
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 2rem;
+    background-color: var(--primary-color);
+    padding: 2rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    margin: -2rem -2rem 2rem -2rem;
+}
+
+.logo {
+    max-width: 400px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+h1, h2, h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 2rem;
+    font-size: 2.5rem;
     color: var(--primary-color);
 }
 
-h2 {
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
+.role-card {
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    height: fit-content;
 }
 
-section {
-    background: var(--card-background);
-    border-radius: 8px;
+.role-card:hover {
+    box-shadow: 0 4px 12px rgba(179, 159, 145, 0.2);
+}
+
+.role-card h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+}
+
+input[type="number"],
+input[type="text"],
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(179, 159, 145, 0.2);
+}
+
+.role-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8fafc;
+    border-radius: 0.5rem;
+}
+
+.toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-slider {
+    position: relative;
+    width: 48px;
+    height: 24px;
+    background-color: #e2e8f0;
+    border-radius: 12px;
+    margin-right: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-slider:before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+}
+
+.toggle input:checked + .toggle-slider {
+    background-color: var(--primary-color);
+}
+
+.toggle input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+.toggle input {
+    display: none;
+}
+
+.role-total {
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+}
+
+.calculator-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.project-summary {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-top: 2rem;
+}
+
+.project-summary h2 {
+    color: white;
+    margin-top: 0;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.summary-item {
+    background-color: rgba(255, 255, 255, 0.1);
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow);
+    border-radius: 0.5rem;
+}
+
+.summary-item label {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.summary-item span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.main-highlight {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.monthly-breakdown {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 1200px) {
+    .calculator-footer {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 0.5rem;
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+    
+    .role-pricing {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-group,
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Role cards grid layout */
 .role-pricing {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .role-pricing h2 {
@@ -121,21 +322,9 @@ input:focus, select:focus {
 }
 
 /* Settings and Summary sections side by side */
-.calculator-footer {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
 .settings-group {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-}
-
-.summary-grid {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
 }
 
@@ -219,78 +408,43 @@ input:focus, select:focus {
     font-size: 0.9rem;
 }
 
-/* Role toggle styling */
-.role-toggle {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--border-color);
+/* Customer selection styling */
+.customer-selection {
+    margin-bottom: 2rem;
 }
 
-.toggle {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
+.customer-selection .input-group {
+    max-width: 300px;
+    margin: 0 auto;
 }
 
-.toggle input {
-    display: none;
+/* Timeline preference styling */
+.input-help {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 0.25rem;
 }
 
-.toggle-slider {
-    position: relative;
-    width: 36px;
-    height: 20px;
-    background-color: #e2e8f0;
-    margin-right: 8px;
-    border-radius: 20px;
-    transition: background-color 0.2s;
+/* Overtime premium input styling */
+#overtime-premium-group {
+    transition: all 0.3s ease;
 }
 
-.toggle-slider:before {
-    content: '';
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    border-radius: 50%;
-    transition: transform 0.2s;
+/* Team capacity input styling */
+#team-capacity {
+    background-color: #f0f7ff;
+    border-color: var(--primary-color);
 }
 
-.toggle input:checked + .toggle-slider {
-    background-color: var(--primary-color);
+/* Timeline preference select styling */
+#timeline-preference {
+    background-color: #f8fafc;
 }
 
-.toggle input:checked + .toggle-slider:before {
-    transform: translateX(16px);
+#timeline-preference option[value="compressed"] {
+    color: #dc2626;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    body {
-        padding: 1rem;
-    }
-    
-    section {
-        padding: 1rem;
-    }
-    
-    .role-pricing {
-        grid-template-columns: 1fr;
-    }
-    
-    .calculator-footer {
-        grid-template-columns: 1fr;
-    }
-    
-    .summary-subgrid {
-        grid-template-columns: 1fr;
-    }
-    
-    .rate-group {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
+#timeline-preference option[value="overtime"] {
+    color: #ea580c;
 } 

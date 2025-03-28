@@ -3,13 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Pricer Calculator</title>
+    <title>P5 Tech Solutions - Project Pricer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
+        <div class="logo-container">
+            <img src="P5TS Logo.png" alt="P5 Tech Solutions Logo" class="logo">
+        </div>
+        
         <h1>Project Pricer Calculator</h1>
         
+        <section class="customer-selection">
+            <div class="input-group">
+                <label for="customer-select">Select Customer</label>
+                <select id="customer-select">
+                    <option value="Clinovators">Clinovators</option>
+                    <option value="Default">Default Rates</option>
+                </select>
+            </div>
+        </section>
+
         <section class="role-pricing">
             <h2>Role-Based Pricing</h2>
             
@@ -35,6 +49,7 @@
                         <span class="toggle-slider"></span>
                         My Role
                     </label>
+                    <span class="role-total" id="backend-total">$0</span>
                 </div>
             </div>
 
@@ -60,6 +75,7 @@
                         <span class="toggle-slider"></span>
                         My Role
                     </label>
+                    <span class="role-total" id="frontend-total">$0</span>
                 </div>
             </div>
 
@@ -67,8 +83,12 @@
                 <h3>UI/UX Design</h3>
                 <div class="rate-group">
                     <div class="input-group">
-                        <label for="ui-rate">Hourly Rate ($)</label>
-                        <input type="number" id="ui-rate" value="85" min="0">
+                        <label for="ui-client-rate">Client Rate ($)</label>
+                        <input type="number" id="ui-client-rate" value="85" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="ui-dev-rate">Developer Rate ($)</label>
+                        <input type="number" id="ui-dev-rate" value="70" min="0">
                     </div>
                     <div class="input-group">
                         <label for="ui-hours">Hours</label>
@@ -81,11 +101,12 @@
                         <span class="toggle-slider"></span>
                         My Role
                     </label>
+                    <span class="role-total" id="ui-total">$0</span>
                 </div>
             </div>
 
             <div class="role-card">
-                <h3>Project Management</h3>
+                <h3>Project Management & Business Analysis</h3>
                 <div class="rate-group">
                     <div class="input-group">
                         <label for="pm-rate">Hourly Rate ($)</label>
@@ -102,27 +123,7 @@
                         <span class="toggle-slider"></span>
                         My Role
                     </label>
-                </div>
-            </div>
-
-            <div class="role-card">
-                <h3>Business Analysis</h3>
-                <div class="rate-group">
-                    <div class="input-group">
-                        <label for="ba-rate">Hourly Rate ($)</label>
-                        <input type="number" id="ba-rate" value="90" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="ba-hours">Hours</label>
-                        <input type="number" id="ba-hours" value="0" min="0">
-                    </div>
-                </div>
-                <div class="role-toggle">
-                    <label class="toggle">
-                        <input type="checkbox" id="ba-my-role">
-                        <span class="toggle-slider"></span>
-                        My Role
-                    </label>
+                    <span class="role-total" id="pm-total">$0</span>
                 </div>
             </div>
 
@@ -144,6 +145,7 @@
                         <span class="toggle-slider"></span>
                         My Role
                     </label>
+                    <span class="role-total" id="devops-total">$0</span>
                 </div>
             </div>
 
@@ -151,8 +153,12 @@
                 <h3>QA / Testing</h3>
                 <div class="rate-group">
                     <div class="input-group">
-                        <label for="qa-rate">Hourly Rate ($)</label>
-                        <input type="number" id="qa-rate" value="75" min="0">
+                        <label for="qa-client-rate">Client Rate ($)</label>
+                        <input type="number" id="qa-client-rate" value="75" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="qa-dev-rate">Developer Rate ($)</label>
+                        <input type="number" id="qa-dev-rate" value="60" min="0">
                     </div>
                     <div class="input-group">
                         <label for="qa-hours">Hours</label>
@@ -165,27 +171,7 @@
                         <span class="toggle-slider"></span>
                         My Role
                     </label>
-                </div>
-            </div>
-
-            <div class="role-card">
-                <h3>Change Requests</h3>
-                <div class="rate-group">
-                    <div class="input-group">
-                        <label for="cr-rate">Hourly Rate ($)</label>
-                        <input type="number" id="cr-rate" value="95" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="cr-hours">Hours</label>
-                        <input type="number" id="cr-hours" value="0" min="0">
-                    </div>
-                </div>
-                <div class="role-toggle">
-                    <label class="toggle">
-                        <input type="checkbox" id="cr-my-role">
-                        <span class="toggle-slider"></span>
-                        My Role
-                    </label>
+                    <span class="role-total" id="qa-total">$0</span>
                 </div>
             </div>
 
@@ -201,33 +187,13 @@
                         <input type="number" id="support-hours" value="0" min="0">
                     </div>
                 </div>
-            </div>
-
-            <div class="role-card">
-                <h3>Content/Copywriting</h3>
-                <div class="rate-group">
-                    <div class="input-group">
-                        <label for="content-rate">Hourly Rate ($)</label>
-                        <input type="number" id="content-rate" value="65" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="content-hours">Hours</label>
-                        <input type="number" id="content-hours" value="0" min="0">
-                    </div>
-                </div>
-            </div>
-
-            <div class="role-card">
-                <h3>Creative Consulting</h3>
-                <div class="rate-group">
-                    <div class="input-group">
-                        <label for="consulting-rate">Hourly Rate ($)</label>
-                        <input type="number" id="consulting-rate" value="120" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="consulting-hours">Hours</label>
-                        <input type="number" id="consulting-hours" value="0" min="0">
-                    </div>
+                <div class="role-toggle">
+                    <label class="toggle">
+                        <input type="checkbox" id="support-my-role">
+                        <span class="toggle-slider"></span>
+                        My Role
+                    </label>
+                    <span class="role-total" id="support-total">$0</span>
                 </div>
             </div>
         </section>
