@@ -67,10 +67,59 @@ h1 {
     border-radius: 0.5rem;
     padding: 1.5rem;
     height: fit-content;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+    position: relative;
+    z-index: 1;
 }
 
 .role-card:hover {
-    box-shadow: 0 4px 12px rgba(179, 159, 145, 0.2);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.2),
+                0 4px 8px -4px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    border-color: var(--primary-color);
+}
+
+.role-card.selected {
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+}
+
+.role-card.selected:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.2),
+                0 4px 8px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* Add a subtle glow effect on hover */
+.role-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 0 0 rgba(179, 159, 145, 0.2);
+    transition: box-shadow 0.3s ease;
+    pointer-events: none;
+}
+
+.role-card:hover::after {
+    box-shadow: 0 0 0 4px rgba(179, 159, 145, 0.2);
+}
+
+/* Ensure smooth transitions for all interactive elements */
+.role-card * {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Add a subtle background color change on hover */
+.role-card:hover {
+    background-color: #fff;
+    background-image: linear-gradient(to bottom right, #fff, #fafafa);
 }
 
 .role-card h3 {
