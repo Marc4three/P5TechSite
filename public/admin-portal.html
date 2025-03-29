@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - P5 Tech Solutions</title>
+    <link rel="stylesheet" href="customer-portal.css">
+    <link rel="stylesheet" href="admin-portal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="nav-bar">
+            <div class="nav-content">
+                <img src="P5TS Logo.png" alt="P5 Tech Solutions Logo" class="nav-logo">
+                <div class="nav-links">
+                    <a href="project-pricer.html" class="nav-link">Project Pricer</a>
+                    <a href="release-planner.html" class="nav-link">Release Planner</a>
+                    <a href="customer-portal.html" class="nav-link">Customer Portal</a>
+                    <a href="admin-portal.html" class="nav-link active">Admin Portal</a>
+                </div>
+                <div class="nav-profile">
+                    <span class="profile-name">Marcus Norman</span>
+                    <img src="marc.png" alt="Profile Picture" class="profile-pic">
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>Portfolio Overview</h1>
+                    <p class="subtitle">Manage all customer projects</p>
+                </div>
+                <div class="header-actions">
+                    <div class="filter-group">
+                        <select class="status-filter" id="statusFilter">
+                            <option value="all">All Projects</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="pending">Pending Start</option>
+                            <option value="complete">Completed</option>
+                            <option value="review">Review</option>
+                        </select>
+                    </div>
+                    <div class="section-actions">
+                        <button class="action-button secondary" id="addCustomerBtn">
+                            <i class="fas fa-user-plus"></i>
+                            Add Customer
+                        </button>
+                        <button class="action-button primary" id="newProjectBtn">
+                            <i class="fas fa-plus"></i>
+                            New Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Groups -->
+            <div class="customer-groups">
+                <!-- Clinovators Group -->
+                <div class="customer-group">
+                    <div class="customer-header">
+                        <div class="customer-info">
+                            <img src="Clinovators Logos-04.png" alt="Clinovators" class="customer-logo">
+                            <div>
+                                <h2>Clinovators</h2>
+                                <p>4 Active Projects • 2 Pending • 3 Completed</p>
+                            </div>
+                        </div>
+                        <div class="customer-actions">
+                            <button class="action-button">
+                                <i class="fas fa-envelope"></i>
+                                Contact
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </button>
+                        </div>
+                    </div>
+                    <div class="projects-grid">
+                        <!-- Clinovators Projects -->
+                        <!-- Active Projects -->
+                        <div class="project-card" data-project-id="patient-portal">
+                            <div class="card-header">
+                                <h3>Patient Portal CRM</h3>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Build Phase</span>
+                                    <span>65%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 65%"></div>
+                                </div>
+                                <p class="due-date">Due May 12, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="analytics-dashboard">
+                            <div class="card-header">
+                                <h3>Analytics Dashboard</h3>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Development Phase</span>
+                                    <span>45%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 45%"></div>
+                                </div>
+                                <p class="due-date">Due Jun 30, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="mobile-app">
+                            <div class="card-header">
+                                <h3>Mobile App</h3>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Design Phase</span>
+                                    <span>25%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 25%"></div>
+                                </div>
+                                <p class="due-date">Due Jul 15, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="api-integration">
+                            <div class="card-header">
+                                <h3>API Integration</h3>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Integration Phase</span>
+                                    <span>35%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 35%"></div>
+                                </div>
+                                <p class="due-date">Due Aug 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pending Projects -->
+                        <div class="project-card" data-project-id="data-migration">
+                            <div class="card-header">
+                                <h3>Data Migration</h3>
+                                <span class="status-badge pending">Pending Start</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Not Started</span>
+                                    <span>0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 0%"></div>
+                                </div>
+                                <p class="due-date">Start Date: Sep 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="security-update">
+                            <div class="card-header">
+                                <h3>Security Update</h3>
+                                <span class="status-badge pending">Pending Start</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Not Started</span>
+                                    <span>0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 0%"></div>
+                                </div>
+                                <p class="due-date">Start Date: Oct 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Completed Projects -->
+                        <div class="project-card" data-project-id="scheduling-tool">
+                            <div class="card-header">
+                                <h3>Scheduling Tool</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed Mar 15</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="reporting-system">
+                            <div class="card-header">
+                                <h3>Reporting System</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed Apr 1</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="user-authentication">
+                            <div class="card-header">
+                                <h3>User Authentication</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed Apr 15</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MLT Group -->
+                <div class="customer-group">
+                    <div class="customer-header">
+                        <div class="customer-info">
+                            <img src="Mlt.png" alt="MLT" class="customer-logo">
+                            <div>
+                                <h2>MLT</h2>
+                                <p>2 Active Projects • 1 Pending • 1 Completed</p>
+                            </div>
+                        </div>
+                        <div class="customer-actions">
+                            <button class="action-button">
+                                <i class="fas fa-envelope"></i>
+                                Contact
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </button>
+                        </div>
+                    </div>
+                    <div class="projects-grid">
+                        <!-- MLT Projects -->
+                        <!-- Active Projects -->
+                        <div class="project-card" data-project-id="mlt-project-1">
+                            <div class="card-header">
+                                <h3>MLT Project 1</h3>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Development Phase</span>
+                                    <span>30%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 30%"></div>
+                                </div>
+                                <p class="due-date">Due Jul 15, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="mlt-project-2">
+                            <div class="card-header">
+                                <h3>MLT Project 2</h3>
+                                <span class="status-badge review">Review</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Testing Phase</span>
+                                    <span>80%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%"></div>
+                                </div>
+                                <p class="due-date">Due Jun 30, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pending Project -->
+                        <div class="project-card" data-project-id="mlt-project-3">
+                            <div class="card-header">
+                                <h3>MLT Project 3</h3>
+                                <span class="status-badge pending">Pending Start</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Not Started</span>
+                                    <span>0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 0%"></div>
+                                </div>
+                                <p class="due-date">Start Date: Aug 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Completed Project -->
+                        <div class="project-card" data-project-id="mlt-project-4">
+                            <div class="card-header">
+                                <h3>MLT Project 4</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed May 1</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Points of Light Group -->
+                <div class="customer-group">
+                    <div class="customer-header">
+                        <div class="customer-info">
+                            <img src="Points of light.png" alt="Points of Light" class="customer-logo">
+                            <div>
+                                <h2>Points of Light</h2>
+                                <p>3 Active Projects • 1 Pending • 2 Completed</p>
+                            </div>
+                        </div>
+                        <div class="customer-actions">
+                            <button class="action-button">
+                                <i class="fas fa-envelope"></i>
+                                Contact
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </button>
+                        </div>
+                    </div>
+                    <div class="projects-grid">
+                        <!-- Points of Light Projects -->
+                        <!-- Active Projects -->
+                        <div class="project-card" data-project-id="pol-project-1">
+                            <div class="card-header">
+                                <h3>Points of Light Project 1</h3>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Planning Phase</span>
+                                    <span>20%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 20%"></div>
+                                </div>
+                                <p class="due-date">Due Aug 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="pol-project-2">
+                            <div class="card-header">
+                                <h3>Points of Light Project 2</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed May 1</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="pol-project-3">
+                            <div class="card-header">
+                                <h3>Points of Light Project 3</h3>
+                                <span class="status-badge review">Review</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Testing Phase</span>
+                                    <span>90%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 90%"></div>
+                                </div>
+                                <p class="due-date">Due Jul 20, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pending Project -->
+                        <div class="project-card" data-project-id="pol-project-4">
+                            <div class="card-header">
+                                <h3>Points of Light Project 4</h3>
+                                <span class="status-badge pending">Pending Start</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Not Started</span>
+                                    <span>0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 0%"></div>
+                                </div>
+                                <p class="due-date">Start Date: Sep 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Completed Project -->
+                        <div class="project-card" data-project-id="pol-project-5">
+                            <div class="card-header">
+                                <h3>Points of Light Project 5</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed Apr 15</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Internal Projects Group -->
+                <div class="customer-group">
+                    <div class="customer-header">
+                        <div class="customer-info">
+                            <img src="P5TS Logo.png" alt="P5 Tech Solutions" class="customer-logo">
+                            <div>
+                                <h2>Internal Projects</h2>
+                                <p>4 Active Projects • 2 Pending • 3 Completed</p>
+                            </div>
+                        </div>
+                        <div class="customer-actions">
+                            <button class="action-button">
+                                <i class="fas fa-envelope"></i>
+                                Contact
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </button>
+                        </div>
+                    </div>
+                    <div class="projects-grid">
+                        <!-- Internal Projects -->
+                        <!-- Active Projects -->
+                        <div class="project-card" data-project-id="internal-project-1">
+                            <div class="card-header">
+                                <h3>Internal Project 1</h3>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Development Phase</span>
+                                    <span>45%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 45%"></div>
+                                </div>
+                                <p class="due-date">Due Sep 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="internal-project-2">
+                            <div class="card-header">
+                                <h3>Internal Project 2</h3>
+                                <span class="status-badge review">Review</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Testing Phase</span>
+                                    <span>70%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 70%"></div>
+                                </div>
+                                <p class="due-date">Due Aug 15, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="internal-project-3">
+                            <div class="card-header">
+                                <h3>Internal Project 3</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed Jun 1</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="internal-project-4">
+                            <div class="card-header">
+                                <h3>Internal Project 4</h3>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Planning Phase</span>
+                                    <span>15%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 15%"></div>
+                                </div>
+                                <p class="due-date">Due Oct 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pending Projects -->
+                        <div class="project-card" data-project-id="internal-project-5">
+                            <div class="card-header">
+                                <h3>Internal Project 5</h3>
+                                <span class="status-badge pending">Pending Start</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Not Started</span>
+                                    <span>0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 0%"></div>
+                                </div>
+                                <p class="due-date">Start Date: Nov 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="internal-project-6">
+                            <div class="card-header">
+                                <h3>Internal Project 6</h3>
+                                <span class="status-badge pending">Pending Start</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Not Started</span>
+                                    <span>0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 0%"></div>
+                                </div>
+                                <p class="due-date">Start Date: Dec 1, 2025</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Completed Projects -->
+                        <div class="project-card" data-project-id="internal-project-7">
+                            <div class="card-header">
+                                <h3>Internal Project 7</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed May 15</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="internal-project-8">
+                            <div class="card-header">
+                                <h3>Internal Project 8</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed Jun 15</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-project-id="internal-project-9">
+                            <div class="card-header">
+                                <h3>Internal Project 9</h3>
+                                <span class="status-badge complete">Complete</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="progress-info">
+                                    <span>Completed</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <p class="due-date">Completed Jul 1</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="view-button">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- New Project Overlay -->
+        <div id="new-project-overlay" class="overlay">
+            <div class="overlay-content">
+                <div class="overlay-header">
+                    <h2>New Project Request</h2>
+                    <button class="close-button" type="button">&times;</button>
+                </div>
+                <form id="new-project-form" class="project-form">
+                    <div class="form-group">
+                        <label for="project-name">Project Name</label>
+                        <input type="text" id="project-name" name="project-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-customer">Customer</label>
+                        <select id="project-customer" name="project-customer" required>
+                            <option value="">Select Customer</option>
+                            <option value="clinovators">Clinovators</option>
+                            <option value="mlt">MLT</option>
+                            <option value="points-of-light">Points of Light</option>
+                            <option value="internal">Internal Projects</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-description">Project Description</label>
+                        <textarea id="project-description" name="project-description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-requirements">Project Requirements</label>
+                        <textarea id="project-requirements" name="project-requirements" rows="4" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="start-date">Start Date</label>
+                            <input type="date" id="start-date" name="start-date" required>
+                        </div>
+                        <div class="form-group half">
+                            <label for="end-date">Expected End Date</label>
+                            <input type="date" id="end-date" name="end-date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-status">Initial Status</label>
+                        <select id="project-status" name="project-status" required>
+                            <option value="pending">Pending Start</option>
+                            <option value="in-progress">In Progress</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="action-button secondary">Cancel</button>
+                        <button type="submit" class="action-button primary">Create Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- New Customer Overlay -->
+        <div id="new-customer-overlay" class="overlay">
+            <div class="overlay-content">
+                <div class="overlay-header">
+                    <h2>Add New Customer</h2>
+                    <button class="close-button" type="button">&times;</button>
+                </div>
+                <form id="new-customer-form" class="customer-form">
+                    <div class="form-group">
+                        <label for="customer-name">Customer Name</label>
+                        <input type="text" id="customer-name" name="customer-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-logo">Customer Logo</label>
+                        <div class="logo-upload">
+                            <input type="file" id="customer-logo" name="customer-logo" accept="image/*" required>
+                            <div class="logo-preview">
+                                <img id="logo-preview-img" src="#" alt="Logo preview" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-description">Customer Description</label>
+                        <textarea id="customer-description" name="customer-description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="primary-contact">Primary Contact Name</label>
+                            <input type="text" id="primary-contact" name="primary-contact" required>
+                        </div>
+                        <div class="form-group half">
+                            <label for="contact-phone">Contact Phone</label>
+                            <input type="tel" id="contact-phone" name="contact-phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Contact Email</label>
+                        <input type="email" id="contact-email" name="contact-email" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="action-button secondary">Cancel</button>
+                        <button type="submit" class="action-button primary">Add Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-portal.js"></script>
+</body>
+</html> 

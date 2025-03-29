@@ -128,13 +128,28 @@ export const useProject = () => {
   };
 
   const calculateSummary = () => {
-    const selectedRoles = roles.filter(role => role.isMyRole);
-    const totalProjectCost = roles.reduce((sum, role) => sum + role.total, 0);
-    const monthlyCustomerPayment = totalProjectCost / settings.duration;
-    const monthlyTeamPayout = roles.reduce((sum, role) => 
-      sum + (role.isMyRole ? role.total / settings.duration : 0), 0);
+    // Calculate total project cost based on hours and rates
+    const totalProjectCost = roles.reduce((sum, role) => {
+      if (!role.hours || !role.clientRate) return sum;
+      return sum + (role.hours * role.clientRate);
+    }, 0);
+
+    // Calculate monthly customer payment
+    const monthlyCustomerPayment = settings.duration > 0 ? 
+      totalProjectCost / settings.duration : 0;
+
+    // Calculate monthly team payout for roles marked as "my role"
+    const monthlyTeamPayout = roles.reduce((sum, role) => {
+      if (!role.isMyRole || !role.hours || !role.devRate) return sum;
+      const roleTotal = role.hours * role.devRate;
+      return sum + (roleTotal / settings.duration);
+    }, 0);
+
+    // Calculate profit based on margin
     const myMonthlyProfit = monthlyCustomerPayment * (settings.profitMargin / 100);
-    const myMonthlyRevenue = monthlyCustomerPayment + myMonthlyProfit;
+    
+    // Calculate total monthly revenue
+    const myMonthlyRevenue = monthlyTeamPayout + myMonthlyProfit;
 
     setSummary({
       totalProjectCost,

@@ -150,27 +150,27 @@ body {
 .nav-profile {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    border-radius: 0.75rem;
-    transition: background-color 0.2s ease;
-}
-
-.nav-profile:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    gap: 12px;
+    padding: 4px 0;
 }
 
 .company-logo {
-    height: 60px;
+    height: 32px;
     width: auto;
     object-fit: contain;
-    margin-right: 0.75rem;
 }
 
 .profile-name {
+    font-size: 14px;
     color: var(--text-primary);
     font-weight: 500;
-    font-size: 0.95rem;
+}
+
+.profile-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 /* Main Content */
