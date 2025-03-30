@@ -22,324 +22,23 @@ const customerRates = {
 
 // State Management
 const state = {
-    release: {
-        projectName: '',
-        releaseMonth: '',
-        hourCap: 40,
-        totalHours: 0
-    },
     customer: {
         selected: 'clinovators',
-        rates: {
-            clinovators: {
-                clientRate: 60,
-                teamRate: 50
-            },
-            custom: {
-                clientRate: 0,
-                teamRate: 0
-            }
-        }
+        rates: customerRates.clinovators
     },
-    enhancements: [],
-    hoursTracking: {
-        allocated: 0,
-        available: 40,
-        cost: 0
-    },
-    clientApproval: {
-        notes: '',
-        approved: false,
-        approvalDate: null
+    release: {
+        hourCap: 40,
+        totalHours: 0,
+        name: '',
+        project: '',
+        month: '',
+        scope: '',
+        startDate: '',
+        endDate: ''
     }
 };
 
-// Update rates based on customer selection
-function updateCustomerRates() {
-    const customerSelect = document.getElementById('customer-select');
-    state.customer.selected = customerSelect.value;
-    
-    if (state.customer.selected === 'custom') {
-        document.getElementById('custom-rates').style.display = 'block';
-    } else {
-        document.getElementById('custom-rates').style.display = 'none';
-    }
-    
-    updateCalculations();
-}
-
-// Role Management
-function createRoleCard(role = null) {
-    const roleCard = document.createElement('div');
-    roleCard.className = 'role-card';
-    
-    const roleData = role || {
-        selectedRoles: [],
-        teamMember: '',
-        hours: 0,
-        isMyRole: false
-    };
-
-    roleCard.innerHTML = `
-        <div class="role-inputs">
-            <div class="input-group">
-                <label>Team Member</label>
-                <select class="team-member-select">
-                    <option value="">Select Team Member</option>
-                    <option value="AJ" ${roleData.teamMember === 'AJ' ? 'selected' : ''}>AJ</option>
-                    <option value="Jonas" ${roleData.teamMember === 'Jonas' ? 'selected' : ''}>Jonas</option>
-                    <option value="Luis" ${roleData.teamMember === 'Luis' ? 'selected' : ''}>Luis</option>
-                    <option value="Marcus" ${roleData.teamMember === 'Marcus' ? 'selected' : ''}>Marcus</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Team Member Role</label>
-                <select class="role-select" multiple>
-                    <option value="backend">Backend Development</option>
-                    <option value="frontend">Frontend Development</option>
-                    <option value="ui">UI/UX Design</option>
-                    <option value="pm">Project Management</option>
-                    <option value="devops">Architecture/DevOps</option>
-                    <option value="qa">QA/Testing</option>
-                    <option value="support">Customer Support/Training</option>
-                </select>
-                <small class="helper-text">Hold Ctrl/Cmd to select multiple roles</small>
-            </div>
-            <div class="rate-details"></div>
-            <div class="input-group">
-                <label>Hours</label>
-                <input type="number" class="role-hours" value="${roleData.hours}" min="0">
-            </div>
-        </div>
-        <div class="role-toggle">
-            <label class="toggle">
-                <input type="checkbox" class="my-role" ${roleData.isMyRole ? 'checked' : ''}>
-                <span class="toggle-slider"></span>
-                My Role
-            </label>
-            <span class="role-total">$0</span>
-        </div>
-    `;
-
-    // Event Listeners
-    roleCard.querySelector('.team-member-select').addEventListener('change', (e) => {
-        const teamMember = e.target.value;
-        roleData.teamMember = teamMember;
-        updateCalculations();
-    });
-
-    roleCard.querySelector('.role-select').addEventListener('change', (e) => {
-        updateRateDetails(roleCard);
-        updateCalculations();
-    });
-
-    roleCard.querySelector('.role-hours').addEventListener('input', updateCalculations);
-    roleCard.querySelector('.my-role').addEventListener('change', updateCalculations);
-
-    roleCard.querySelector('.remove-role')?.addEventListener('click', () => {
-        roleCard.remove();
-        updateCalculations();
-    });
-
-    return roleCard;
-}
-
-function updateRateDetails(roleCard) {
-    const selectedRoles = Array.from(roleCard.querySelector('.role-select').selectedOptions)
-        .map(option => option.value);
-    const customer = document.getElementById('customer-select').value;
-    const rates = customerRates[customer];
-    const rateDetailsDiv = roleCard.querySelector('.rate-details');
-
-    rateDetailsDiv.innerHTML = selectedRoles.map(role => {
-        const roleRates = rates[role];
-        if (roleRates.clientRate !== undefined) {
-            return `
-                <div class="rate-group">
-                    <h4>${role.charAt(0).toUpperCase() + role.slice(1)} Rates</h4>
-                    <div class="input-group">
-                        <label>Client Rate ($)</label>
-                        <input type="number" class="client-rate" value="${roleRates.clientRate}" min="0" data-role="${role}">
-                    </div>
-                    <div class="input-group">
-                        <label>Developer Rate ($)</label>
-                        <input type="number" class="dev-rate" value="${roleRates.devRate}" min="0" data-role="${role}">
-                    </div>
-                </div>
-            `;
-        } else {
-            return `
-                <div class="rate-group">
-                    <h4>${role.charAt(0).toUpperCase() + role.slice(1)} Rate</h4>
-                    <div class="input-group">
-                        <label>Hourly Rate ($)</label>
-                        <input type="number" class="rate" value="${roleRates.rate}" min="0" data-role="${role}">
-                    </div>
-                </div>
-            `;
-        }
-    }).join('');
-
-    // Add event listeners to new rate inputs
-    rateDetailsDiv.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', updateCalculations);
-    });
-}
-
-// Enhanced Enhancement Creation
-function createEnhancementItem() {
-    const enhancementList = document.getElementById('enhancement-list');
-    const enhancementItem = document.createElement('div');
-    enhancementItem.className = 'task-item';
-    enhancementItem.style.opacity = '0';
-    enhancementItem.style.transform = 'translateY(20px)';
-    
-    // Add a ripple effect to the add button
-    const addButton = document.getElementById('add-enhancement');
-    addButton.classList.add('clicked');
-    setTimeout(() => addButton.classList.remove('clicked'), 300);
-    
-    enhancementItem.innerHTML = `
-        <div class="task-header">
-            <input type="text" class="task-title" placeholder="Enhancement Title">
-            <input type="number" class="task-priority-number" value="${state.enhancements.length + 1}" readonly>
-            <select class="team-member-select">
-                <option value="">Select Team Member</option>
-                <option value="Marcus">Marcus</option>
-                <option value="Team Member 1">Team Member 1</option>
-                <option value="Team Member 2">Team Member 2</option>
-            </select>
-            <input type="number" class="task-hours" placeholder="Hours" min="0">
-            <select class="task-status">
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-            </select>
-        </div>
-        <div class="task-details">
-            <textarea class="task-description" placeholder="Enhancement description..."></textarea>
-        </div>
-        <button class="button danger-button remove-enhancement" onclick="removeEnhancement(this)">
-            <i class="fas fa-trash"></i> Remove Enhancement
-        </button>
-    `;
-    
-    enhancementList.appendChild(enhancementItem);
-    
-    // Enhanced fade in animation with bounce
-    requestAnimationFrame(() => {
-        enhancementItem.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-        enhancementItem.style.opacity = '1';
-        enhancementItem.style.transform = 'translateY(0)';
-    });
-    
-    // Add event listeners
-    const inputs = enhancementItem.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        input.addEventListener('change', updateCalculations);
-        input.addEventListener('input', updateCalculations);
-    });
-    
-    updateCalculations();
-}
-
-function removeEnhancement(button) {
-    const enhancementItem = button.closest('.task-item');
-    enhancementItem.style.opacity = '0';
-    enhancementItem.style.transform = 'translateY(10px)';
-    enhancementItem.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-    
-    setTimeout(() => {
-        enhancementItem.remove();
-        updateCalculations();
-    }, 300);
-}
-
-// Calculations
-function updateCalculations() {
-    let totalHours = 0;
-    let totalClientCharge = 0;
-    let totalTeamCost = 0;
-    let marcusProfit = 0;
-    const clientRate = state.customer.rates[state.customer.selected].clientRate;
-    const teamRate = state.customer.rates[state.customer.selected].teamRate;
-    const profitPerTeamHour = clientRate - teamRate;
-
-    document.querySelectorAll('.task-item').forEach(item => {
-        const hours = Number(item.querySelector('.task-hours').value) || 0;
-        const assignedTo = item.querySelector('.team-member-select').value;
-        
-        totalHours += hours;
-        totalClientCharge += hours * clientRate;
-        
-        if (assignedTo === 'Marcus') {
-            totalTeamCost += hours * teamRate;
-            marcusProfit += hours * clientRate;
-        } else {
-            totalTeamCost += hours * teamRate;
-            marcusProfit += hours * profitPerTeamHour;
-        }
-    });
-
-    // Update state
-    state.release.totalHours = totalHours;
-    state.hoursTracking.allocated = totalHours;
-    state.hoursTracking.cost = totalClientCharge;
-    state.hoursTracking.available = state.release.hourCap - totalHours;
-
-    // Update display with animations
-    animateValue('total-hours', totalHours);
-    animateValue('hours-allocated', totalHours);
-    animateValue('monthly-cost', totalClientCharge, true);
-    animateValue('available-hours', state.hoursTracking.available);
-    
-    // Update cost tracking display
-    animateValue('total-client-charge', totalClientCharge, true);
-    animateValue('total-team-cost', totalTeamCost, true);
-    animateValue('total-profit', marcusProfit, true);
-
-    // Update hours bar with smooth animation
-    const hoursPercentage = (totalHours / state.release.hourCap) * 100;
-    const hoursBar = document.getElementById('hours-bar');
-    hoursBar.style.width = `${Math.min(100, hoursPercentage)}%`;
-    
-    if (totalHours > state.release.hourCap) {
-        hoursBar.classList.add('warning');
-        document.getElementById('available-hours').classList.add('warning');
-    } else {
-        hoursBar.classList.remove('warning');
-        document.getElementById('available-hours').classList.remove('warning');
-    }
-}
-
-// Smooth number animations
-function animateValue(elementId, value, isCurrency = false) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
-
-    const start = Number(element.textContent.replace(/[^0-9.-]+/g, '')) || 0;
-    const duration = 500;
-    const startTime = performance.now();
-
-    function update(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Easing function for smooth animation
-        const easeOutQuad = 1 - (1 - progress) * (1 - progress);
-        const current = start + (value - start) * easeOutQuad;
-        
-        element.textContent = isCurrency ? formatCurrency(current) : Math.round(current);
-        
-        if (progress < 1) {
-            requestAnimationFrame(update);
-        }
-    }
-    
-    requestAnimationFrame(update);
-}
-
-// Utility Functions
+// Format currency
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -347,51 +46,290 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
-const formatDate = (date) => {
-    return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'long'
-    }).format(new Date(date));
-};
+// DOM Elements
+let elements;
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    
+    // Cache DOM elements
+    elements = {
+        overlay: document.getElementById('new-enhancement-overlay'),
+        addEnhancementBtn: document.getElementById('add-enhancement-btn'),
+        closeBtn: document.querySelector('.close-button'),
+        cancelBtn: document.getElementById('cancel-enhancement'),
+        enhancementForm: document.getElementById('new-enhancement-form'),
+        taskList: document.getElementById('task-list'),
+        teamMemberSelect: document.getElementById('team-member-select'),
+        isMyJobCheckbox: document.getElementById('is-my-job'),
+        customerSelect: document.getElementById('customer-select'),
+        hourCap: document.getElementById('hour-cap'),
+        releaseMonth: document.getElementById('release-month'),
+        releaseName: document.getElementById('release-name'),
+        projectName: document.getElementById('project-name'),
+        releaseScope: document.getElementById('release-scope'),
+        startDate: document.getElementById('start-date'),
+        endDate: document.getElementById('end-date')
+    };
+
+    // Debug log elements
+    console.log('Elements found:', {
+        overlay: !!elements.overlay,
+        addEnhancementBtn: !!elements.addEnhancementBtn,
+        closeBtn: !!elements.closeBtn,
+        cancelBtn: !!elements.cancelBtn,
+        enhancementForm: !!elements.enhancementForm,
+        taskList: !!elements.taskList,
+        teamMemberSelect: !!elements.teamMemberSelect,
+        isMyJobCheckbox: !!elements.isMyJobCheckbox,
+        customerSelect: !!elements.customerSelect,
+        hourCap: !!elements.hourCap,
+        releaseMonth: !!elements.releaseMonth
+    });
+
+    initializeEventListeners();
+    initializeDefaultValues();
+});
+
+function initializeDefaultValues() {
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('due-date').value = today;
+    
+    // Set default values for other fields
+    document.getElementById('priority-number').value = '1';
+    document.getElementById('priority-level').value = 'Medium';
+    document.getElementById('enhancement-status').value = 'Not Started';
+    
+    // Set default month to current month
+    const currentDate = new Date();
+    const currentMonth = currentDate.toISOString().slice(0, 7);
+    elements.releaseMonth.value = currentMonth;
+    
+    // Initialize calculations
+    updateCalculations();
+}
 
 // Event Listeners
 function initializeEventListeners() {
-    // Customer selection
-    document.getElementById('customer-select').addEventListener('change', updateCustomerRates);
-
-    // Release setup listeners
-    document.getElementById('release-name').addEventListener('input', () => state.release.name = this.value);
-    document.getElementById('project-name').addEventListener('input', () => state.release.project = this.value);
-    document.getElementById('release-month').addEventListener('input', () => state.release.month = this.value);
-    document.getElementById('release-scope').addEventListener('input', () => state.release.scope = this.value);
-    document.getElementById('start-date').addEventListener('input', () => state.release.startDate = this.value);
-    document.getElementById('end-date').addEventListener('input', () => state.release.endDate = this.value);
-    document.getElementById('hour-cap').addEventListener('input', (e) => {
-        state.release.hourCap = Number(e.target.value);
-        updateCalculations();
+    // Add Enhancement button
+    elements.addEnhancementBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Add Enhancement button clicked');
+        showEnhancementOverlay();
     });
 
-    // Add enhancement button
-    document.getElementById('add-enhancement').addEventListener('click', createEnhancementItem);
+    // Close button
+    elements.closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Close button clicked');
+        hideEnhancementOverlay();
+    });
 
-    // Client approval
-    document.getElementById('client-approval').addEventListener('change', (e) => {
-        state.clientApproval.approved = e.target.checked;
-        if (e.target.checked) {
-            state.clientApproval.approvalDate = new Date();
-            document.getElementById('approval-date').textContent = formatDate(state.clientApproval.approvalDate);
-        } else {
-            state.clientApproval.approvalDate = null;
-            document.getElementById('approval-date').textContent = '';
+    // Cancel button
+    elements.cancelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Cancel button clicked');
+        hideEnhancementOverlay();
+    });
+
+    // Click outside overlay
+    elements.overlay.addEventListener('click', (e) => {
+        if (e.target === elements.overlay) {
+            console.log('Clicked outside overlay content');
+            hideEnhancementOverlay();
         }
     });
 
-    // Generate plan
-    document.getElementById('generate-plan').addEventListener('click', generateReleasePlan);
+    // Team member selection
+    elements.teamMemberSelect.addEventListener('change', (e) => {
+        console.log('Team member changed:', e.target.value);
+        elements.isMyJobCheckbox.checked = e.target.value === 'Marcus';
+    });
 
-    // Rate inputs
-    document.getElementById('client-rate').addEventListener('input', updateCalculations);
-    document.getElementById('team-rate').addEventListener('input', updateCalculations);
+    // Enhancement form submission
+    elements.enhancementForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log('Form submitted');
+        createEnhancementItem();
+        hideEnhancementOverlay();
+    });
+
+    // Customer selection
+    elements.customerSelect.addEventListener('change', (e) => {
+        console.log('Customer changed:', e.target.value);
+        state.customer.selected = e.target.value;
+        state.customer.rates = customerRates[e.target.value];
+        updateCalculations();
+    });
+
+    // Hour cap change
+    elements.hourCap.addEventListener('change', (e) => {
+        console.log('Hour cap changed:', e.target.value);
+        state.release.hourCap = parseInt(e.target.value) || 40;
+        updateCalculations();
+    });
+
+    // Release setup listeners
+    elements.releaseName.addEventListener('input', (e) => {
+        state.release.name = e.target.value;
+    });
+    
+    elements.projectName.addEventListener('input', (e) => {
+        state.release.project = e.target.value;
+    });
+    
+    elements.releaseMonth.addEventListener('input', (e) => {
+        state.release.month = e.target.value;
+    });
+    
+    elements.releaseScope.addEventListener('input', (e) => {
+        state.release.scope = e.target.value;
+    });
+    
+    elements.startDate.addEventListener('input', (e) => {
+        state.release.startDate = e.target.value;
+    });
+    
+    elements.endDate.addEventListener('input', (e) => {
+        state.release.endDate = e.target.value;
+    });
+
+    // Export PDF button
+    document.getElementById('export-pdf').addEventListener('click', generateReleasePlan);
+}
+
+// Show overlay
+function showEnhancementOverlay() {
+    console.log('Showing overlay');
+    elements.overlay.style.display = 'flex';
+    requestAnimationFrame(() => {
+        elements.overlay.classList.add('show');
+    });
+    elements.enhancementForm.reset();
+    initializeDefaultValues();
+}
+
+// Hide overlay
+function hideEnhancementOverlay() {
+    console.log('Hiding overlay');
+    elements.overlay.classList.remove('show');
+    setTimeout(() => {
+        elements.overlay.style.display = 'none';
+    }, 300); // Match the CSS transition duration
+}
+
+// Create enhancement item
+function createEnhancementItem() {
+    const formData = {
+        name: document.getElementById('enhancement-name').value,
+        description: document.getElementById('enhancement-description').value,
+        role: document.getElementById('role-select').value,
+        priorityLevel: document.getElementById('priority-level').value,
+        hours: document.getElementById('estimated-hours').value,
+        status: document.getElementById('enhancement-status').value,
+        assignedTo: document.getElementById('team-member-select').value,
+        dueDate: document.getElementById('due-date').value,
+        isMyJob: document.getElementById('is-my-job').checked
+    };
+
+    const enhancementHtml = `
+        <div class="enhancement-item" data-hours="${formData.hours}" data-role="${formData.role}" data-is-my-job="${formData.isMyJob}">
+            <div class="enhancement-header">
+                <div class="enhancement-title">
+                    <h3>${formData.name}</h3>
+                    <span class="priority-badge ${formData.priorityLevel.toLowerCase()}">${formData.priorityLevel}</span>
+                </div>
+                <div class="enhancement-actions">
+                    <button class="icon-button remove-enhancement">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="enhancement-content">
+                <p class="enhancement-description">${formData.description}</p>
+                <div class="enhancement-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-briefcase"></i>
+                        ${formData.role.charAt(0).toUpperCase() + formData.role.slice(1)}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        ${formData.hours} hours
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-user"></i>
+                        ${formData.assignedTo}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        ${new Date(formData.dueDate).toLocaleDateString()}
+                    </span>
+                    <span class="meta-item status-badge ${formData.status.toLowerCase().replace(' ', '-')}">
+                        ${formData.status}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    elements.taskList.insertAdjacentHTML('beforeend', enhancementHtml);
+    
+    // Add event listener to the new remove button
+    const newEnhancement = elements.taskList.lastElementChild;
+    const removeButton = newEnhancement.querySelector('.remove-enhancement');
+    removeButton.addEventListener('click', () => {
+        newEnhancement.remove();
+        updateCalculations();
+    });
+
+    updateCalculations();
+}
+
+// Update calculations
+function updateCalculations() {
+    const enhancementItems = document.querySelectorAll('.enhancement-item');
+    let totalHours = 0;
+    let totalCost = 0;
+    let totalClientCharge = 0;
+    let myRevenue = 0;
+
+    enhancementItems.forEach(item => {
+        const hours = parseFloat(item.dataset.hours) || 0;
+        const isMyJob = item.dataset.isMyJob === 'true';
+        const role = item.dataset.role;
+        const rates = state.customer.rates;
+        
+        totalHours += hours;
+        
+        if (isMyJob) {
+            totalCost += hours * rates[role].clientRate;
+            totalClientCharge += hours * rates[role].clientRate;
+            myRevenue += hours * rates[role].clientRate;
+        } else {
+            totalCost += hours * rates[role].devRate;
+            totalClientCharge += hours * rates[role].clientRate;
+        }
+    });
+
+    const profit = totalClientCharge - totalCost;
+    const hourCap = parseInt(elements.hourCap.value) || 40;
+    const availableHours = Math.max(0, hourCap - totalHours);
+
+    // Update summary values
+    document.getElementById('total-enhancements').textContent = enhancementItems.length;
+    document.getElementById('total-hours').textContent = totalHours.toFixed(1);
+    document.getElementById('total-cost').textContent = formatCurrency(totalCost);
+    document.getElementById('hours-allocated').textContent = totalHours.toFixed(1);
+    document.getElementById('available-hours').textContent = availableHours.toFixed(1);
+    document.getElementById('total-client-charge').textContent = formatCurrency(totalClientCharge);
+    document.getElementById('total-profit').textContent = formatCurrency(profit);
+    document.getElementById('monthly-cost').textContent = formatCurrency(totalCost);
+    document.getElementById('my-revenue').textContent = formatCurrency(myRevenue);
+
+    // Update state
+    state.release.totalHours = totalHours;
 }
 
 // Generate Release Plan
@@ -403,33 +341,33 @@ function generateReleasePlan() {
     // Collect all the data
     const planData = {
         project: {
-            name: document.getElementById('project-name').value,
-            releaseMonth: document.getElementById('release-month').value,
+            name: state.release.project,
+            releaseMonth: state.release.month,
             hourCap: state.release.hourCap
         },
         customer: state.customer.selected,
         rates: {
-            client: state.customer.rates[state.customer.selected].clientRate,
-            team: state.customer.rates[state.customer.selected].teamRate
+            client: state.customer.rates.backend.clientRate,
+            team: state.customer.rates.backend.devRate
         },
         enhancements: [],
         totals: {
             hours: state.release.totalHours,
-            clientCharge: state.hoursTracking.cost,
-            teamCost: document.getElementById('total-team-cost').textContent,
+            clientCharge: document.getElementById('total-client-charge').textContent,
+            teamCost: document.getElementById('total-cost').textContent,
             profit: document.getElementById('total-profit').textContent
         }
     };
 
     // Collect enhancement data
-    document.querySelectorAll('.task-item').forEach(item => {
+    document.querySelectorAll('.enhancement-item').forEach(item => {
         planData.enhancements.push({
-            title: item.querySelector('.task-title').value,
-            priority: item.querySelector('.task-priority-number').value,
-            assignedTo: item.querySelector('.team-member-select').value,
-            hours: item.querySelector('.task-hours').value,
-            status: item.querySelector('.task-status').value,
-            description: item.querySelector('.task-description').value
+            title: item.querySelector('h3').textContent,
+            priority: item.querySelector('.meta-item:first-child').textContent.replace('Priority ', ''),
+            assignedTo: item.querySelector('.meta-item:nth-child(3)').textContent,
+            hours: item.dataset.hours,
+            status: item.querySelector('.status-badge').textContent,
+            description: item.querySelector('.enhancement-description').textContent
         });
     });
 
@@ -566,83 +504,76 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Initialize the application
-document.addEventListener('DOMContentLoaded', () => {
-    initializeEventListeners();
-    updateCustomerRates(); // Set initial rates
-    updateCalculations(); // Initial calculations
-    
-    // Add smooth scroll behavior
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
+// Add smooth scroll behavior
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
         });
     });
+});
 
-    // Create enhancement section header
-    const enhancementSection = document.querySelector('.section');
-    const header = document.createElement('div');
-    header.className = 'enhancement-header';
-    
-    const title = document.createElement('h2');
-    title.className = 'enhancement-title';
-    title.textContent = 'Enhancement Items';
-    
-    const actions = document.createElement('div');
-    actions.className = 'enhancement-actions';
-    
-    // Create enhanced add button
-    const addButton = document.createElement('button');
-    addButton.id = 'add-enhancement';
-    addButton.className = 'add-enhancement-button';
-    addButton.innerHTML = '<i class="fas fa-plus-circle icon"></i>Add Enhancement';
-    
-    // Add click animation
-    addButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        addButton.classList.add('clicked');
-        setTimeout(() => addButton.classList.remove('clicked'), 300);
-        createEnhancementItem();
-    });
-    
-    // Add hover effect for icon
-    addButton.addEventListener('mouseover', () => {
-        const icon = addButton.querySelector('.icon');
-        icon.style.transform = 'rotate(90deg)';
-    });
-    
-    addButton.addEventListener('mouseout', () => {
-        const icon = addButton.querySelector('.icon');
-        icon.style.transform = 'rotate(0deg)';
-    });
-    
-    // Create export button
-    const exportButton = document.createElement('button');
-    exportButton.id = 'export-pdf';
-    exportButton.className = 'action-button export-button';
-    exportButton.innerHTML = '<i class="fas fa-file-pdf icon"></i>Export as PDF';
-    exportButton.onclick = generateReleasePlan;
-    
-    // Assemble the header
-    actions.appendChild(addButton);
-    actions.appendChild(exportButton);
-    header.appendChild(title);
-    header.appendChild(actions);
-    
-    // Insert the new header at the top of the enhancement section
-    enhancementSection.insertBefore(header, enhancementSection.firstChild);
-    
-    // Load Font Awesome
-    const fontAwesome = document.createElement('link');
-    fontAwesome.rel = 'stylesheet';
-    fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
-    document.head.appendChild(fontAwesome);
-    
-    // Load html2pdf
-    const html2pdfScript = document.createElement('script');
-    html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-    document.body.appendChild(html2pdfScript);
-}); 
+// Create enhancement section header
+const enhancementSection = document.querySelector('.section');
+const header = document.createElement('div');
+header.className = 'enhancement-header';
+
+const title = document.createElement('h2');
+title.className = 'enhancement-title';
+title.textContent = 'Enhancement Items';
+
+const actions = document.createElement('div');
+actions.className = 'enhancement-actions';
+
+// Create enhanced add button
+const addButton = document.createElement('button');
+addButton.id = 'add-enhancement';
+addButton.className = 'add-enhancement-button';
+addButton.innerHTML = '<i class="fas fa-plus-circle icon"></i>Add Enhancement';
+
+// Add click animation
+addButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    addButton.classList.add('clicked');
+    setTimeout(() => addButton.classList.remove('clicked'), 300);
+    createEnhancementItem();
+});
+
+// Add hover effect for icon
+addButton.addEventListener('mouseover', () => {
+    const icon = addButton.querySelector('.icon');
+    icon.style.transform = 'rotate(90deg)';
+});
+
+addButton.addEventListener('mouseout', () => {
+    const icon = addButton.querySelector('.icon');
+    icon.style.transform = 'rotate(0deg)';
+});
+
+// Create export button
+const exportButton = document.createElement('button');
+exportButton.id = 'export-pdf';
+exportButton.className = 'action-button export-button';
+exportButton.innerHTML = '<i class="fas fa-file-pdf icon"></i>Export as PDF';
+exportButton.onclick = generateReleasePlan;
+
+// Assemble the header
+actions.appendChild(addButton);
+actions.appendChild(exportButton);
+header.appendChild(title);
+header.appendChild(actions);
+
+// Insert the new header at the top of the enhancement section
+enhancementSection.insertBefore(header, enhancementSection.firstChild);
+
+// Load Font Awesome
+const fontAwesome = document.createElement('link');
+fontAwesome.rel = 'stylesheet';
+fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+document.head.appendChild(fontAwesome);
+
+// Load html2pdf
+const html2pdfScript = document.createElement('script');
+html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+document.body.appendChild(html2pdfScript); 

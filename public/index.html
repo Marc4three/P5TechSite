@@ -12,7 +12,8 @@
             <img src="P5TS Logo.png" alt="P5TS" class="nav-logo">
             <div class="nav-links">
                 <a href="#" class="nav-link active">Project Pricer</a>
-                <a href="#" class="nav-link">Release Planner</a>
+                <a href="release-planner.html" class="nav-link">Release Planner</a>
+                <a href="repository.html" class="nav-link">Quote Repository</a>
                 <a href="customer-portal.html" class="nav-link">Customer Portal</a>
                 <a href="admin-portal.html" class="nav-link">Admin Portal</a>
             </div>
@@ -30,16 +31,23 @@
                     <h1>Project Price Calculator</h1>
                     <p class="subtitle">Calculate project costs and revenue based on roles and hours</p>
                     <div class="header-actions">
-                        <button class="action-button secondary">Save Estimate</button>
+                        <button class="action-button secondary save-estimate-button">Save Estimate</button>
                         <button class="action-button primary">Share</button>
                     </div>
                 </div>
                 <div class="settings-grid">
                     <div class="setting-item">
+                        <label for="projectName">Project Name</label>
+                        <input type="text" id="projectName" placeholder="Enter project name">
+                    </div>
+                    <div class="setting-item">
                         <label for="customer">Customer</label>
                         <select id="customer">
                             <option value="clinovators">Clinovators</option>
                             <option value="custom">Custom</option>
+                            <option value="mlt">MLT</option>
+                            <option value="points-of-light">Points of Light</option>
+                            <option value="add-new">+ Add New Customer</option>
                         </select>
                     </div>
                     <div class="setting-item">
@@ -331,6 +339,39 @@
             </div>
         </div>
     </main>
+
+    <!-- New Customer Overlay -->
+    <div id="new-customer-overlay" class="overlay" style="display: none;">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2>Add New Customer</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <form id="new-customer-form">
+                <div class="form-group">
+                    <label for="customerName">Customer Name</label>
+                    <input type="text" id="customerName" name="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Default Rates</label>
+                    <div class="rates-grid">
+                        <div class="rate-item">
+                            <label for="defaultClientRate">Client Rate ($)</label>
+                            <input type="number" id="defaultClientRate" name="defaultClientRate" min="0" value="150">
+                        </div>
+                        <div class="rate-item">
+                            <label for="defaultDevRate">Developer Rate ($)</label>
+                            <input type="number" id="defaultDevRate" name="defaultDevRate" min="0" value="125">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="action-button secondary" id="cancelCustomer">Cancel</button>
+                    <button type="submit" class="action-button primary">Add Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
