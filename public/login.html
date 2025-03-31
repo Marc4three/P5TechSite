@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - P5 Tech Solutions</title>
+    <link rel="stylesheet" href="Project-Price-Calculator.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--background-color);
+        }
+
+        .header {
+            background: white;
+            width: 100%;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .header-logo {
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--primary-hover));
+        }
+
+        .login-content {
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .login-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .login-button.internal {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+        }
+
+        .login-button.internal:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 102, 204, 0.3);
+        }
+
+        .login-button.customer {
+            background-color: white;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .login-button.customer:hover {
+            background-color: var(--background-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-secondary);
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .login-divider span {
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .error-message {
+            background-color: #fee2e2;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-size: 0.875rem;
+            border-left: 4px solid #dc2626;
+        }
+
+        @media (max-width: 640px) {
+            .login-container {
+                padding: 1rem;
+            }
+
+            .login-card {
+                padding: 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="P5TS Logo.png" alt="P5 Tech Solutions" class="header-logo">
+    </header>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-content">
+                <h1 class="login-title">Welcome Back</h1>
+                <p class="login-subtitle">Sign in to access your portal</p>
+                
+                <div id="error-message" class="error-message"></div>
+
+                <div class="login-options">
+                    <button id="internal-login" class="login-button internal">
+                        <i class="fas fa-user-tie"></i>
+                        P5TS Portal
+                    </button>
+
+                    <div class="login-divider">
+                        <span>or</span>
+                    </div>
+
+                    <button id="customer-login" class="login-button customer">
+                        <i class="fas fa-building"></i>
+                        Customer Portal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { authService } from './auth-service.js';
+
+        // Initialize authentication
+        await authService.initialize();
+
+        // Check if already authenticated
+        const authState = await authService.checkAuth();
+        if (authState.isAuthenticated) {
+            window.location.href = 'home.html';
+        }
+
+        // Handle internal login
+        document.getElementById('internal-login').addEventListener('click', async () => {
+            try {
+                const result = await authService.loginInternal();
+                if (result.success) {
+                    window.location.href = 'home.html';
+                } else {
+                    showError('Internal login failed. Please try again.');
+                }
+            } catch (error) {
+                showError('An error occurred during login. Please try again.');
+                console.error('Login error:', error);
+            }
+        });
+
+        // Handle customer login
+        document.getElementById('customer-login').addEventListener('click', async () => {
+            try {
+                const result = await authService.loginExternal();
+                if (result.success) {
+                    window.location.href = 'home.html';
+                } else {
+                    showError('Customer login failed. Please try again.');
+                }
+            } catch (error) {
+                showError('An error occurred during login. Please try again.');
+                console.error('Login error:', error);
+            }
+        });
+
+        // Show error message
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Add save estimate functionality
-function saveEstimate() {
+async function saveEstimate() {
     const projectName = document.getElementById('projectName').value;
     const customerSelect = document.getElementById('customer');
     const customerName = customerSelect ? customerSelect.value : '';
@@ -436,7 +436,6 @@ function saveEstimate() {
     
     // Create the project data object
     const projectData = {
-        id: Date.now(),
         name: projectName || 'Untitled Project',
         customer: customerName,
         type: 'project-price',
@@ -450,38 +449,58 @@ function saveEstimate() {
         monthlyTeamPayout: monthlyTeamPayout,
         monthlyCustomerPayment: monthlyCustomerPayment,
         monthlyProfit: monthlyProfit,
-        totalCost: totalProjectCost,
-        monthlyCost: monthlyCustomerPayment
+        totalCost: totalProjectCost
     };
 
-    // Save to localStorage
-    let projects = JSON.parse(localStorage.getItem('projects') || '[]');
-    projects.push(projectData);
-    localStorage.setItem('projects', JSON.stringify(projects));
-    
-    // Show success notification with repository link
-    const notification = document.createElement('div');
-    notification.className = 'notification success';
-    notification.innerHTML = `
-        Project estimate saved successfully! 
-        <a href="repository.html" style="color: inherit; text-decoration: underline; margin-left: 5px;">
-            View in Repository
-        </a>
-    `;
-    document.body.appendChild(notification);
-    
-    // Fade in
-    requestAnimationFrame(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateY(0)';
-    });
-    
-    // Remove after 5 seconds
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateY(-20px)';
-        setTimeout(() => notification.remove(), 300);
-    }, 5000);
+    try {
+        // Save to SharePoint
+        await sharePointService.saveProjectQuote(projectData);
+        
+        // Show success notification with repository link
+        const notification = document.createElement('div');
+        notification.className = 'notification success';
+        notification.innerHTML = `
+            Project estimate saved successfully to SharePoint! 
+            <a href="${SharePointConfig.siteUrl}/Lists/${SharePointConfig.listName}" style="color: inherit; text-decoration: underline; margin-left: 5px;">
+                View in SharePoint
+            </a>
+        `;
+        document.body.appendChild(notification);
+        
+        // Fade in
+        requestAnimationFrame(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateY(0)';
+        });
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(-20px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    } catch (error) {
+        console.error('Failed to save to SharePoint:', error);
+        
+        // Show error notification
+        const notification = document.createElement('div');
+        notification.className = 'notification error';
+        notification.textContent = 'Failed to save project estimate to SharePoint. Please try again.';
+        document.body.appendChild(notification);
+        
+        // Fade in
+        requestAnimationFrame(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateY(0)';
+        });
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(-20px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }
 }
 
 // Add event listener for save estimate button

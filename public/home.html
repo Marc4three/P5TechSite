@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P5 Tech Solutions Portal</title>
+    <link rel="stylesheet" href="Project-Price-Calculator.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .welcome-section {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .portal-grid.customer {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+        }
+
+        .portal-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .portal-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .portal-card h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .portal-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            min-height: 3em;
+        }
+
+        .portal-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+
+        .portal-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .nav-bar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            height: 40px;
+        }
+
+        .sign-in {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .sign-in img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <img src="P5TS Logo.png" alt="P5 Tech Solutions" class="nav-logo">
+            <a href="#" class="sign-in">
+                <span>Marcus Norman</span>
+                <img src="marc.png" alt="Profile">
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="welcome-section">
+            <h1>Welcome to P5 Tech Solutions Portal</h1>
+            <p>Your central hub for project management and collaboration</p>
+        </div>
+
+        <!-- Internal Staff View -->
+        <div id="internal-view" class="portal-grid">
+            <div class="portal-card">
+                <i class="fas fa-calculator portal-icon"></i>
+                <h2>Project Pricer</h2>
+                <p>Calculate project costs and generate accurate quotes</p>
+                <a href="Project-Price-Calculator.html" class="portal-button">Open Project Pricer</a>
+            </div>
+
+            <div class="portal-card">
+                <i class="fas fa-tasks portal-icon"></i>
+                <h2>Release Planner</h2>
+                <p>Plan and track monthly release enhancements</p>
+                <a href="release-planner.html" class="portal-button">Open Release Planner</a>
+            </div>
+
+            <div class="portal-card">
+                <i class="fas fa-folder portal-icon"></i>
+                <h2>Quote Repository</h2>
+                <p>Access and manage all project quotes</p>
+                <a href="repository.html" class="portal-button">View Repository</a>
+            </div>
+
+            <div class="portal-card">
+                <i class="fas fa-cogs portal-icon"></i>
+                <h2>Admin Portal</h2>
+                <p>Manage system settings and user access</p>
+                <a href="admin-portal.html" class="portal-button">Admin Access</a>
+            </div>
+        </div>
+
+        <!-- Customer View (Hidden by default) -->
+        <div id="customer-view" class="portal-grid customer" style="display: none;">
+            <div class="portal-card">
+                <i class="fas fa-users portal-icon"></i>
+                <h2>Customer Portal</h2>
+                <p>View your projects and track progress</p>
+                <a href="customer-portal.html" class="portal-button">Customer Access</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { authService } from './auth-service.js';
+
+        async function initializePage() {
+            // Initialize authentication
+            await authService.initialize();
+            
+            // Check authentication status
+            const authState = await authService.checkAuth();
+            
+            if (!authState.isAuthenticated) {
+                // If not authenticated, redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update profile section
+            const userProfile = await authService.getUserProfile();
+            document.querySelector('.sign-in span').textContent = userProfile.displayName;
+            
+            // Show appropriate view based on user type
+            if (authState.userType === 'internal') {
+                document.getElementById('internal-view').style.display = 'grid';
+                document.getElementById('customer-view').style.display = 'none';
+            } else {
+                document.getElementById('internal-view').style.display = 'none';
+                document.getElementById('customer-view').style.display = 'grid';
+            }
+
+            // Add logout handler
+            document.querySelector('.sign-in').addEventListener('click', async (e) => {
+                e.preventDefault();
+                await authService.logout();
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Initialize the page
+        initializePage().catch(error => {
+            console.error('Error initializing page:', error);
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html> 
