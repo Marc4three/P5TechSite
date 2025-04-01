@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="Project-Price-Calculator.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+    <script src="auth-config.js"></script>
+    <script src="auth-handler.js"></script>
     <style>
         body {
             margin: 0;
@@ -207,14 +209,12 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-content">
-                <h1 class="login-title">Welcome to P5 Tech Solutions</h1>
-                <p class="login-subtitle">Access your customer portal</p>
-                
+                <h1 class="login-title">Welcome Back</h1>
+                <p class="login-subtitle">Sign in to access your P5TS portal</p>
                 <div id="error-message" class="error-message"></div>
-
-                <button id="customer-login-button" class="customer-login-button">
-                    <i class="fas fa-users"></i>
-                    Sign in to Customer Portal
+                <button id="signin-button" class="customer-login-button" onclick="handleLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign in with Microsoft
                 </button>
             </div>
         </div>
@@ -233,70 +233,47 @@
         </div>
     </div>
 
-    <script src="auth-config.js"></script>
     <script>
-        // Initialize MSAL instance
-        let msalInstance;
-        try {
-            msalInstance = new msal.PublicClientApplication(msalConfig);
-            console.log("MSAL initialized with config:", msalConfig);
-        } catch (error) {
-            console.error("MSAL initialization error:", error);
-            document.getElementById('error-message').textContent = 'Authentication system initialization failed. Please try again.';
-            document.getElementById('error-message').style.display = 'block';
+        // Handle the login process
+        async function handleLogin() {
+            const button = document.getElementById('signin-button');
+            const errorMessage = document.getElementById('error-message');
+            
+            try {
+                // Disable button and show loading state
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+                errorMessage.style.display = 'none';
+
+                // Try to login
+                await window.msalInstance.loginPopup(window.loginRequest);
+                
+                // Redirect to home page on success
+                window.location.replace('home.html');
+            } catch (error) {
+                console.error('Login failed:', error);
+                errorMessage.textContent = 'Sign in failed. Please try again.';
+                errorMessage.style.display = 'block';
+                
+                // Reset button state
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign in with Microsoft';
+            }
         }
 
-        // Handle redirect promise
-        msalInstance.handleRedirectPromise()
-            .then((response) => {
-                if (response) {
-                    console.log("Login successful, response:", response);
-                    window.location.href = "/project-pricer.html";
-                } else {
-                    console.log("No response from redirect, user may not have completed login");
-                }
-            })
-            .catch((error) => {
-                console.error("Detailed login error:", error);
-                if (error.errorMessage) {
-                    console.error("Error message:", error.errorMessage);
-                }
-                if (error.errorCode) {
-                    console.error("Error code:", error.errorCode);
-                }
-                document.getElementById('error-message').textContent = 'Login failed: ' + (error.errorMessage || 'Please try again');
-                document.getElementById('error-message').style.display = 'block';
-            });
-
-        // Handle login button click
-        document.getElementById('customer-login-button').addEventListener('click', async () => {
+        // Check if we're already logged in
+        window.addEventListener('load', async () => {
             try {
-                console.log("Starting login process...");
-                const loginOptions = {
-                    scopes: loginRequest.scopes,
-                    prompt: "select_account"
-                };
-                await msalInstance.loginRedirect(loginOptions);
+                const accounts = window.msalInstance.getAllAccounts();
+                if (accounts.length > 0) {
+                    // We have an account, redirect to home
+                    window.location.replace('home.html');
+                }
             } catch (error) {
-                console.error("Login initiation error:", error);
-                document.getElementById('error-message').textContent = 'Could not start login process. Please try again.';
-                document.getElementById('error-message').style.display = 'block';
-            }
-        });
-
-        // Handle team login button click
-        document.getElementById('team-login-button').addEventListener('click', async () => {
-            try {
-                console.log("Starting team login process...");
-                const loginOptions = {
-                    scopes: loginRequest.scopes,
-                    prompt: "select_account"
-                };
-                await msalInstance.loginRedirect(loginOptions);
-            } catch (error) {
-                console.error("Team login initiation error:", error);
-                document.getElementById('error-message').textContent = 'Could not start login process. Please try again.';
-                document.getElementById('error-message').style.display = 'block';
+                console.error('Error checking authentication state:', error);
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = 'Error checking authentication state. Please refresh the page.';
+                errorMessage.style.display = 'block';
             }
         });
 
@@ -309,6 +286,13 @@
         // Handle close modal
         document.getElementById('close-modal').addEventListener('click', () => {
             document.getElementById('team-modal').classList.remove('show');
+        });
+
+        // Close modal if clicking outside
+        document.getElementById('team-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('team-modal')) {
+                document.getElementById('team-modal').classList.remove('show');
+            }
         });
     </script>
 </body>

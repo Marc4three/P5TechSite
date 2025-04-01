@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Repository - P5 Tech Solutions</title>
+    <link rel="stylesheet" href="Project-Price-Calculator.css">
+    <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+    <script src="auth-config.js"></script>
+    <script src="services/sharepoint-service.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quote Repository</h1>
+            <div id="user-info">
+                <span id="username"></span>
+                <button id="logout-button">Logout</button>
+            </div>
+        </header>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <input type="text" id="customer-filter" placeholder="Filter by customer">
+                <select id="month-filter">
+                    <option value="">All Months</option>
+                    <!-- Months will be populated dynamically -->
+                </select>
+                <select id="year-filter">
+                    <option value="">All Years</option>
+                    <!-- Years will be populated dynamically -->
+                </select>
+                <button id="apply-filters">Apply Filters</button>
+                <button id="clear-filters">Clear Filters</button>
+            </div>
+        </div>
+
+        <!-- Quotes List -->
+        <div class="quotes-section">
+            <table id="quotes-table">
+                <thead>
+                    <tr>
+                        <th>Quote ID</th>
+                        <th>Customer</th>
+                        <th>Project Name</th>
+                        <th>Date Created</th>
+                        <th>Total Hours</th>
+                        <th>Total Cost</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="quotes-list">
+                    <!-- Quotes will be listed here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Quote Preview Modal -->
+        <div id="preview-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Quote Details</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="quote-details">
+                        <h3>Project Information</h3>
+                        <div id="project-info"></div>
+
+                        <h3>Resource Breakdown</h3>
+                        <div id="resource-breakdown"></div>
+
+                        <h3>Enhancement Items</h3>
+                        <div id="enhancement-items"></div>
+
+                        <div class="quote-totals">
+                            <h3>Totals</h3>
+                            <div id="quote-totals"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="edit-quote">Edit Quote</button>
+                    <button id="download-pdf">Download PDF</button>
+                    <button id="close-preview">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .filters-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .quotes-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #quotes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #quotes-table th,
+        #quotes-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #quotes-table th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            font-size: 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .quote-details {
+            margin-bottom: 20px;
+        }
+
+        .quote-details h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #106ebe;
+        }
+
+        input[type="text"],
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+
+    <script>
+        // Initialize MSAL
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+        const sharePointService = new SharePointService(msalInstance);
+
+        // SharePoint configuration
+        const siteName = 'P5TS Quote Repository';
+        const libraryName = 'Project Price Calculator';
+        let currentSiteId = null;
+
+        // Initialize the page
+        async function initializePage() {
+            try {
+                const accounts = msalInstance.getAllAccounts();
+                if (accounts.length === 0) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                document.getElementById('username').textContent = accounts[0].username;
+
+                currentSiteId = await sharePointService.getSiteId(siteName);
+                await loadQuotes();
+                setupEventListeners();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('Error initializing the page. Please try again.');
+            }
+        }
+
+        // Load quotes from SharePoint
+        async function loadQuotes() {
+            try {
+                const quotes = await sharePointService.listFiles(currentSiteId, libraryName);
+                displayQuotes(quotes.value);
+            } catch (error) {
+                console.error('Error loading quotes:', error);
+                alert('Error loading quotes. Please try again.');
+            }
+        }
+
+        // Display quotes in the table
+        function displayQuotes(quotes) {
+            const tbody = document.getElementById('quotes-list');
+            tbody.innerHTML = '';
+
+            quotes.forEach(quote => {
+                if (quote.name.endsWith('.json')) {
+                    const row = document.createElement('tr');
+                    const metadata = JSON.parse(quote.content);
+                    row.innerHTML = `
+                        <td>${metadata.quoteId}</td>
+                        <td>${metadata.customer}</td>
+                        <td>${metadata.projectName}</td>
+                        <td>${new Date(metadata.dateCreated).toLocaleDateString()}</td>
+                        <td>${metadata.totalHours}</td>
+                        <td>$${metadata.totalCost.toLocaleString()}</td>
+                        <td>
+                            <button onclick="previewQuote('${metadata.quoteId}')">View</button>
+                            <button onclick="editQuote('${metadata.quoteId}')">Edit</button>
+                            <button onclick="downloadPdf('${metadata.quoteId}')">PDF</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('apply-filters').addEventListener('click', applyFilters);
+            document.getElementById('clear-filters').addEventListener('click', clearFilters);
+            document.querySelector('.close-modal').addEventListener('click', closeModal);
+            document.getElementById('close-preview').addEventListener('click', closeModal);
+            document.getElementById('logout-button').addEventListener('click', () => {
+                msalInstance.logoutRedirect();
+            });
+        }
+
+        // Preview quote
+        async function previewQuote(quoteId) {
+            try {
+                const quote = await sharePointService.getQuoteMetadata(currentSiteId, libraryName, quoteId);
+                displayQuotePreview(quote);
+                document.getElementById('preview-modal').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading quote preview:', error);
+                alert('Error loading quote preview. Please try again.');
+            }
+        }
+
+        // Edit quote
+        function editQuote(quoteId) {
+            window.location.href = `/project-pricer.html?quoteId=${quoteId}`;
+        }
+
+        // Download PDF
+        async function downloadPdf(quoteId) {
+            try {
+                const pdfUrl = await sharePointService.getQuotePdfUrl(currentSiteId, libraryName, quoteId);
+                window.open(pdfUrl, '_blank');
+            } catch (error) {
+                console.error('Error downloading PDF:', error);
+                alert('Error downloading PDF. Please try again.');
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('preview-modal').style.display = 'none';
+        }
+
+        // Initialize the page when loaded
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html> 

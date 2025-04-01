@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Release Planner - P5 Tech Solutions</title>
-    <link rel="stylesheet" href="Project-Price-Calculator.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="release-planner.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Release Planner</title>
+    <link rel="stylesheet" type="text/css" href="styles/release-planner.css">
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -14,11 +14,11 @@
         <div class="nav-content">
             <img src="P5TS Logo.png" alt="P5TS" class="nav-logo">
             <div class="nav-links">
-                <a href="home.html" class="nav-link">Home</a>
-                <a href="Project-Price-Calculator.html" class="nav-link">Project Pricer</a>
-                <a href="#" class="nav-link active">Release Planner</a>
-                <a href="repository.html" class="nav-link">Quote Repository</a>
-                <a href="admin-portal.html" class="nav-link">Admin Portal</a>
+                <a href="Home.html">Home</a>
+                <a href="Project-Price-Calculator.html">Project Pricer</a>
+                <a href="#" class="active">Release Planner</a>
+                <a href="repository.html">Quote Repository</a>
+                <a href="admin-portal.html">Admin Portal</a>
             </div>
             <div class="nav-profile">
                 <span class="profile-name">Marcus Norman</span>
@@ -37,38 +37,45 @@
                 <div class="settings-grid">
                     <div class="setting-item">
                         <label for="release-name">Release Name</label>
-                        <input type="text" id="release-name" placeholder="Enter release name">
+                        <input type="text" id="release-name" name="release-name" placeholder="Enter release name" required>
                     </div>
                     <div class="setting-item">
                         <label for="project-name">Project Name</label>
-                        <input type="text" id="project-name" placeholder="Enter project name">
+                        <input type="text" id="project-name" name="project-name" placeholder="Enter project name" required>
                     </div>
                     <div class="setting-item">
                         <label for="release-month">Release Month</label>
-                        <input type="month" id="release-month">
+                        <input type="month" id="release-month" name="release-month" required>
                     </div>
                     <div class="setting-item">
                         <label for="customer-select">Customer</label>
-                        <select id="customer-select">
+                        <select id="customer-select" name="customer" required>
                             <option value="clinovators">Clinovators</option>
                             <option value="custom">Custom</option>
+                            <option value="mlt">MLT</option>
+                            <option value="points-of-light">Points of Light</option>
+                            <option value="add-new">+ Add New Customer</option>
                         </select>
                     </div>
                     <div class="setting-item">
                         <label for="hour-cap">Hour Cap</label>
-                        <input type="number" id="hour-cap" min="0" value="40">
+                        <input type="number" id="hour-cap" name="hour-cap" min="0" value="40" required>
                     </div>
                     <div class="setting-item">
                         <label for="start-date">Start Date</label>
-                        <input type="date" id="start-date">
+                        <input type="date" id="start-date" name="start-date" required>
                     </div>
                     <div class="setting-item">
                         <label for="end-date">End Date</label>
-                        <input type="date" id="end-date">
+                        <input type="date" id="end-date" name="end-date" required>
                     </div>
                     <div class="setting-item action-item">
-                        <button class="action-button secondary" id="export-pdf">
-                            <i class="fas fa-file-pdf"></i>
+                        <button type="button" id="save-release" class="action-button primary" title="Save Release Plan">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            Save Release
+                        </button>
+                        <button type="button" id="export-pdf" class="action-button secondary" title="Export as PDF">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
                             Export as PDF
                         </button>
                     </div>
@@ -78,13 +85,13 @@
             <section class="roles-section">
                 <div class="roles-header">
                     <h2>Enhancement Items</h2>
-                    <button id="add-enhancement-btn" class="add-role-button">
-                        <i class="fas fa-plus-circle"></i>
+                    <button type="button" id="add-enhancement-btn" class="action-button primary" title="Add new enhancement">
+                        <i class="fas fa-plus-circle" aria-hidden="true"></i>
                         Add Enhancement
                     </button>
                 </div>
                 <div class="roles-grid">
-                    <div id="task-list" class="task-list">
+                    <div id="task-list" class="task-list" role="list">
                         <!-- Enhancement items will be added here -->
                     </div>
                 </div>
@@ -96,40 +103,28 @@
                 <h2>Release Summary</h2>
                 <div class="summary-grid">
                     <div class="summary-item">
-                        <label>Total Enhancements</label>
-                        <span id="total-enhancements">0</span>
+                        <label id="total-enhancements-label">Total Enhancements</label>
+                        <span id="total-enhancements" aria-labelledby="total-enhancements-label">0</span>
                     </div>
                     <div class="summary-item">
-                        <label>Total Hours</label>
-                        <span id="total-hours">0.0</span>
+                        <label id="total-hours-label">Total Hours</label>
+                        <span id="total-hours" aria-labelledby="total-hours-label">0.0</span>
                     </div>
                     <div class="summary-item">
-                        <label>Total Cost</label>
-                        <span id="total-cost">$0.00</span>
+                        <label id="monthly-cost-label">Monthly Team Payout</label>
+                        <span id="monthly-cost" aria-labelledby="monthly-cost-label">$0.00</span>
                     </div>
                     <div class="summary-item">
-                        <label>Hours Allocated</label>
-                        <span id="hours-allocated">0.0</span>
+                        <label id="my-revenue-label">Monthly Revenue</label>
+                        <span id="my-revenue" aria-labelledby="my-revenue-label">$0.00</span>
                     </div>
                     <div class="summary-item">
-                        <label>Available Hours</label>
-                        <span id="available-hours">40.0</span>
-                    </div>
-                    <div class="summary-item">
-                        <label>Total Client Charge</label>
-                        <span id="total-client-charge">$0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <label>Total Profit</label>
-                        <span id="total-profit">$0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <label>Monthly Cost</label>
-                        <span id="monthly-cost">$0.00</span>
+                        <label id="total-profit-label">Total Project Profit</label>
+                        <span id="total-profit" aria-labelledby="total-profit-label">$0.00</span>
                     </div>
                     <div class="summary-item highlight">
-                        <label>My Revenue</label>
-                        <span id="my-revenue">$0.00</span>
+                        <label id="total-cost-label">Total Project Cost</label>
+                        <span id="total-cost" aria-labelledby="total-cost-label">$0.00</span>
                     </div>
                 </div>
             </div>
@@ -137,27 +132,28 @@
     </main>
 
     <!-- Enhancement Overlay -->
-    <div id="new-enhancement-overlay" class="overlay">
+    <div id="new-enhancement-overlay" class="overlay" role="dialog" aria-labelledby="enhancement-dialog-title">
         <div class="overlay-content">
             <div class="overlay-header">
-                <h2>Add Enhancement</h2>
-                <button class="close-button">
-                    <i class="fas fa-times"></i>
+                <h2 id="enhancement-dialog-title">Add Enhancement</h2>
+                <button type="button" class="close-button" id="close-enhancement" title="Close dialog">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                    <span class="sr-only">Close</span>
                 </button>
             </div>
             <form id="new-enhancement-form">
                 <div class="form-group">
                     <label for="enhancement-name">Enhancement Name</label>
-                    <input type="text" id="enhancement-name" required>
+                    <input type="text" id="enhancement-name" name="enhancement-name" required>
                 </div>
                 <div class="form-group">
                     <label for="enhancement-description">Description</label>
-                    <textarea id="enhancement-description" rows="3" required></textarea>
+                    <textarea id="enhancement-description" name="description" rows="3" required></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="role-select">Role/Type</label>
-                        <select id="role-select" required>
+                        <select id="role-select" name="role" required>
                             <option value="">Select Role</option>
                             <option value="backend">Backend Development</option>
                             <option value="frontend">Frontend Development</option>
@@ -170,7 +166,7 @@
                     </div>
                     <div class="form-group">
                         <label for="priority-level">Priority Level</label>
-                        <select id="priority-level" required>
+                        <select id="priority-level" name="priority" required>
                             <option value="High">High</option>
                             <option value="Medium">Medium</option>
                             <option value="Low">Low</option>
@@ -180,11 +176,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="estimated-hours">Estimated Hours</label>
-                        <input type="number" id="estimated-hours" min="0" step="0.5" required>
+                        <input type="number" id="estimated-hours" name="hours" min="0" step="0.5" required>
                     </div>
                     <div class="form-group">
                         <label for="enhancement-status">Status</label>
-                        <select id="enhancement-status" required>
+                        <select id="enhancement-status" name="status" required>
                             <option value="Not Started">Not Started</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Completed">Completed</option>
@@ -195,24 +191,23 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="team-member-select">Assigned To</label>
-                        <select id="team-member-select" required>
+                        <select id="team-member-select" name="assigned-to" required>
                             <option value="">Select Team Member</option>
-                            <option value="Marcus">Marcus</option>
-                            <option value="John">John</option>
-                            <option value="Sarah">Sarah</option>
-                            <option value="Mike">Mike</option>
-                            <option value="Emily">Emily</option>
+                            <option value="Marcus">Marcus (Me)</option>
+                            <option value="Jonas">Jonas</option>
+                            <option value="AJ">AJ</option>
+                            <option value="Luis">Luis</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="due-date">Due Date</label>
-                        <input type="date" id="due-date" required>
+                        <input type="date" id="due-date" name="due-date" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="is-my-job">
-                        <span>This is my job</span>
+                    <label class="checkbox-label" for="is-my-job">
+                        <input type="checkbox" id="is-my-job" name="is-my-job">
+                        This is my job
                     </label>
                 </div>
                 <div class="form-actions">
@@ -223,8 +218,55 @@
         </div>
     </div>
 
+    <!-- New Customer Overlay -->
+    <div id="new-customer-overlay" class="overlay" role="dialog" aria-labelledby="customer-dialog-title">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 id="customer-dialog-title">Add New Customer</h2>
+                <button type="button" class="close-button" id="close-customer" title="Close dialog">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                    <span class="sr-only">Close</span>
+                </button>
+            </div>
+            <form id="new-customer-form">
+                <div class="form-group">
+                    <label for="customerName">Customer Name</label>
+                    <input type="text" id="customerName" name="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="clientRate">Default Client Rate ($/hr)</label>
+                    <input type="number" id="clientRate" name="clientRate" value="150" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="devRate">Default Developer Rate ($/hr)</label>
+                    <input type="number" id="devRate" name="devRate" value="125" min="0" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelCustomer" class="button secondary">Cancel</button>
+                    <button type="submit" class="button primary">Add Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="sr-only" aria-live="polite" id="notifications"></div>
+
+    <!-- Load MSAL first -->
+    <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
+    
+    <!-- Auth Configuration and Handler -->
+    <script src="auth-config.js"></script>
+    <script src="auth-handler.js"></script>
+    
+    <!-- SharePoint Integration -->
+    <script src="sharepoint-config.js"></script>
+    <script src="services/sharepoint-service.js"></script>
+    
+    <!-- Other Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- Main Application Script -->
     <script src="release-planner.js"></script>
 </body>
 </html> 

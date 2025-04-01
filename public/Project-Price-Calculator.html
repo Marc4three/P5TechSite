@@ -5,7 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Price Calculator - P5 Tech Solutions</title>
     <link rel="stylesheet" href="Project-Price-Calculator.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" integrity="sha384-3B6NwesSXE7YJlcLI9RpRqGf2p/EgVH8BgoKTaUrmKNDkHPStTQ3EyoYjCGXaOTS" crossorigin="anonymous">
+    <!-- Load scripts in the head to ensure they're available -->
+    <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+    <script src="auth-config.js"></script>
+    <script src="services/auth-handler.js"></script>
+    <script src="services/sharepoint-service.js"></script>
+    <script>
+        // Wait for all scripts to load before initializing
+        window.addEventListener('load', async () => {
+            try {
+                // Initialize auth and get account
+                const account = await AuthHandler.initialize();
+                if (!account) {
+                    window.location.replace('login.html');
+                    return;
+                }
+
+                // Update UI with user info
+                const profileName = document.querySelector('.profile-name');
+                if (profileName) {
+                    profileName.textContent = account.name || account.username || 'User';
+                }
+
+                // Load calculator script after auth is ready
+                const calculatorScript = document.createElement('script');
+                calculatorScript.src = 'Project-Price-Calculator.js';
+                calculatorScript.onload = async () => {
+                    try {
+                        // Initialize calculator
+                        await initializeServices();
+                    } catch (error) {
+                        console.error('Error initializing calculator:', error);
+                        alert('Failed to initialize calculator. Please try refreshing the page.');
+                    }
+                };
+                document.head.appendChild(calculatorScript);
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                if (error.errorCode?.includes('auth')) {
+                    window.location.replace('login.html');
+                } else {
+                    alert('Failed to initialize. Please try refreshing the page.');
+                }
+            }
+        });
+    </script>
 </head>
 <body>
     <nav class="nav-bar">
@@ -373,7 +418,5 @@
             </form>
         </div>
     </div>
-
-    <script src="Project-Price-Calculator.js"></script>
 </body>
 </html> 

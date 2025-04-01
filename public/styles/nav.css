@@ -1,0 +1,129 @@
+/* Navigation Bar */
+.nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #1d1d1f;
+    padding: 1rem;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-content {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    height: 40px;
+    width: auto;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.nav-links a.active {
+    background-color: #0066cc;
+    color: white;
+}
+
+/* Profile Section */
+.nav-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-name {
+    font-size: 14px;
+    color: white;
+    font-weight: 500;
+}
+
+.profile-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Ensure consistent styling for all navigation items */
+.nav-links a[href*="Project-Price-Calculator"],
+.nav-links a[href*="release-planner"],
+.nav-links a[href*="repository"],
+.nav-links a[href*="admin-portal"],
+.nav-links a[href*="Home"] {
+    font-size: 1rem !important;
+    padding: 0.75rem 1rem !important;
+    font-weight: 500;
+    text-transform: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+/* Remove any special styling for specific pages */
+.nav-links a[href*="project-pricer"] {
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    text-transform: none;
+    background: transparent;
+}
+
+/* Ensure all navigation items have the same base style */
+.nav-links > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    line-height: normal;
+}
+
+/* Ensure consistent sizing for all navigation items */
+.nav-links a[href*="release-planner"],
+.nav-links a[href*="quote-repository"],
+.nav-links a[href*="admin-portal"] {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .nav-content {
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .nav-profile {
+        margin-left: auto;
+    }
+} 
