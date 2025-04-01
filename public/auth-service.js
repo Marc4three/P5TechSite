@@ -75,12 +75,9 @@ class AuthService {
     // Login for internal users
     async loginInternal() {
         try {
-            const response = await this.msalInstance.loginPopup(loginRequest);
-            this.account = response.account;
-            this.userType = 'internal';
+            await this.msalInstance.loginRedirect(loginRequest);
             return {
-                success: true,
-                account: response.account
+                success: true
             };
         } catch (error) {
             console.error('Error during internal login:', error);
@@ -94,14 +91,11 @@ class AuthService {
     // Login for external users (B2C)
     async loginExternal() {
         try {
-            const response = await this.b2cInstance.loginPopup({
+            await this.b2cInstance.loginRedirect({
                 authority: b2cPolicies.signUpSignIn
             });
-            this.account = response.account;
-            this.userType = 'external';
             return {
-                success: true,
-                account: response.account
+                success: true
             };
         } catch (error) {
             console.error('Error during external login:', error);

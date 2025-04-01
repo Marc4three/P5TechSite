@@ -6,6 +6,7 @@
     <title>Login - P5 Tech Solutions</title>
     <link rel="stylesheet" href="Project-Price-Calculator.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -19,14 +20,36 @@
         .header {
             background: white;
             width: 100%;
-            padding: 1rem;
+            padding: 1.5rem;
             box-shadow: var(--shadow);
             text-align: center;
+            position: relative;
         }
 
         .header-logo {
-            height: 60px;
+            height: 100px;
             object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .team-login-link {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-login-link:hover {
+            background-color: var(--background-color);
+            color: var(--primary-color);
         }
 
         .login-container {
@@ -75,73 +98,28 @@
             margin-bottom: 2rem;
         }
 
-        .login-options {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .login-button {
+        .customer-login-button {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            padding: 1rem;
+            padding: 1.25rem;
             border: none;
             border-radius: 0.5rem;
-            font-size: 1rem;
+            font-size: 1.125rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
-        }
-
-        .login-button.internal {
             background-color: var(--primary-color);
             color: white;
             box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
         }
 
-        .login-button.internal:hover {
+        .customer-login-button:hover {
             background-color: var(--primary-hover);
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 102, 204, 0.3);
-        }
-
-        .login-button.customer {
-            background-color: white;
-            color: var(--text-primary);
-            border: 2px solid var(--border-color);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .login-button.customer:hover {
-            background-color: var(--background-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .login-divider {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 1.5rem 0;
-            color: var(--text-secondary);
-        }
-
-        .login-divider::before,
-        .login-divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .login-divider span {
-            padding: 0 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .error-message {
@@ -167,92 +145,171 @@
             .login-title {
                 font-size: 1.5rem;
             }
+
+            .team-login-link {
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+
+        /* Modal styles for team login */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .close-modal:hover {
+            color: var(--text-primary);
         }
     </style>
 </head>
 <body>
     <header class="header">
         <img src="P5TS Logo.png" alt="P5 Tech Solutions" class="header-logo">
+        <a href="#" class="team-login-link" id="team-login-trigger">
+            <i class="fas fa-user-tie"></i>
+            Team Login
+        </a>
     </header>
 
     <div class="login-container">
         <div class="login-card">
             <div class="login-content">
-                <h1 class="login-title">Welcome Back</h1>
-                <p class="login-subtitle">Sign in to access your portal</p>
+                <h1 class="login-title">Welcome to P5 Tech Solutions</h1>
+                <p class="login-subtitle">Access your customer portal</p>
                 
                 <div id="error-message" class="error-message"></div>
 
-                <div class="login-options">
-                    <button id="internal-login" class="login-button internal">
-                        <i class="fas fa-user-tie"></i>
-                        P5TS Portal
-                    </button>
-
-                    <div class="login-divider">
-                        <span>or</span>
-                    </div>
-
-                    <button id="customer-login" class="login-button customer">
-                        <i class="fas fa-building"></i>
-                        Customer Portal
-                    </button>
-                </div>
+                <button id="customer-login-button" class="customer-login-button">
+                    <i class="fas fa-users"></i>
+                    Sign in to Customer Portal
+                </button>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        import { authService } from './auth-service.js';
+    <!-- Team Login Modal -->
+    <div id="team-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-modal">×</button>
+            <h2 class="login-title">Team Login</h2>
+            <p class="login-subtitle">Access the P5TS internal portal</p>
+            <button id="team-login-button" class="customer-login-button">
+                <i class="fas fa-user-tie"></i>
+                Sign in with Microsoft
+            </button>
+        </div>
+    </div>
 
-        // Initialize authentication
-        await authService.initialize();
-
-        // Check if already authenticated
-        const authState = await authService.checkAuth();
-        if (authState.isAuthenticated) {
-            window.location.href = 'home.html';
+    <script src="auth-config.js"></script>
+    <script>
+        // Initialize MSAL instance
+        let msalInstance;
+        try {
+            msalInstance = new msal.PublicClientApplication(msalConfig);
+            console.log("MSAL initialized with config:", msalConfig);
+        } catch (error) {
+            console.error("MSAL initialization error:", error);
+            document.getElementById('error-message').textContent = 'Authentication system initialization failed. Please try again.';
+            document.getElementById('error-message').style.display = 'block';
         }
 
-        // Handle internal login
-        document.getElementById('internal-login').addEventListener('click', async () => {
-            try {
-                const result = await authService.loginInternal();
-                if (result.success) {
-                    window.location.href = 'home.html';
+        // Handle redirect promise
+        msalInstance.handleRedirectPromise()
+            .then((response) => {
+                if (response) {
+                    console.log("Login successful, response:", response);
+                    window.location.href = "/project-pricer.html";
                 } else {
-                    showError('Internal login failed. Please try again.');
+                    console.log("No response from redirect, user may not have completed login");
                 }
+            })
+            .catch((error) => {
+                console.error("Detailed login error:", error);
+                if (error.errorMessage) {
+                    console.error("Error message:", error.errorMessage);
+                }
+                if (error.errorCode) {
+                    console.error("Error code:", error.errorCode);
+                }
+                document.getElementById('error-message').textContent = 'Login failed: ' + (error.errorMessage || 'Please try again');
+                document.getElementById('error-message').style.display = 'block';
+            });
+
+        // Handle login button click
+        document.getElementById('customer-login-button').addEventListener('click', async () => {
+            try {
+                console.log("Starting login process...");
+                const loginOptions = {
+                    scopes: loginRequest.scopes,
+                    prompt: "select_account"
+                };
+                await msalInstance.loginRedirect(loginOptions);
             } catch (error) {
-                showError('An error occurred during login. Please try again.');
-                console.error('Login error:', error);
+                console.error("Login initiation error:", error);
+                document.getElementById('error-message').textContent = 'Could not start login process. Please try again.';
+                document.getElementById('error-message').style.display = 'block';
             }
         });
 
-        // Handle customer login
-        document.getElementById('customer-login').addEventListener('click', async () => {
+        // Handle team login button click
+        document.getElementById('team-login-button').addEventListener('click', async () => {
             try {
-                const result = await authService.loginExternal();
-                if (result.success) {
-                    window.location.href = 'home.html';
-                } else {
-                    showError('Customer login failed. Please try again.');
-                }
+                console.log("Starting team login process...");
+                const loginOptions = {
+                    scopes: loginRequest.scopes,
+                    prompt: "select_account"
+                };
+                await msalInstance.loginRedirect(loginOptions);
             } catch (error) {
-                showError('An error occurred during login. Please try again.');
-                console.error('Login error:', error);
+                console.error("Team login initiation error:", error);
+                document.getElementById('error-message').textContent = 'Could not start login process. Please try again.';
+                document.getElementById('error-message').style.display = 'block';
             }
         });
 
-        // Show error message
-        function showError(message) {
-            const errorElement = document.getElementById('error-message');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 5000);
-        }
+        // Handle team login trigger
+        document.getElementById('team-login-trigger').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('team-modal').classList.add('show');
+        });
+
+        // Handle close modal
+        document.getElementById('close-modal').addEventListener('click', () => {
+            document.getElementById('team-modal').classList.remove('show');
+        });
     </script>
 </body>
 </html> 
