@@ -1,0 +1,166 @@
+.filter-container {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border: none;
+    border-radius: 4px;
+    background: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background: #0066cc;
+    color: white;
+}
+
+.projects-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.project-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.project-dates {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 0.9rem;
+    margin: 1rem 0;
+}
+
+.project-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+}
+
+.project-status.in-progress {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.project-status.pending {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.project-status.completed {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.project-progress {
+    height: 4px;
+    background: #f0f0f0;
+    border-radius: 2px;
+    margin: 1rem 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #0066cc;
+    transition: width 0.3s ease;
+}
+
+.view-tasks-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.view-tasks-btn:hover {
+    background: #0055b3;
+}
+
+.task-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.task-details {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.task-list {
+    margin: 1.5rem 0;
+}
+
+.task-item {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.task-item.in-progress {
+    background: #e3f2fd;
+}
+
+.task-item.pending {
+    background: #fff3e0;
+}
+
+.task-item.completed {
+    background: #e8f5e9;
+}
+
+.task-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.close-overlay {
+    padding: 0.75rem 1.5rem;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.close-overlay:hover {
+    background: #0055b3;
+} 

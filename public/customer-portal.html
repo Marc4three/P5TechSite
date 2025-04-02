@@ -3,460 +3,373 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Portal - P5 Tech Solutions</title>
+    <title>P5TS Customer Portal</title>
     <link rel="stylesheet" href="customer-portal.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+    <script src="auth-config.js"></script>
+    <script src="customer-data.js"></script>
 </head>
 <body>
-    <div id="app">
-        <!-- Login Section -->
-        <section id="login-section" class="auth-section">
-            <div class="auth-container">
-                <div class="auth-card">
-                    <img src="P5TS Logo.png" alt="P5 Tech Solutions Logo" class="auth-logo">
-                    <h1>Welcome to Customer Portal</h1>
-                    <p class="subtitle">Sign in to access your projects</p>
-                    <form class="auth-form">
-                        <div class="input-group">
-                            <input type="email" id="email" placeholder="Email" required>
-                        </div>
-                        <div class="input-group">
-                            <input type="password" id="password" placeholder="Password" required>
-                        </div>
-                        <button type="submit" class="auth-button">Sign In</button>
-                    </form>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="overlay">
+        <div class="loading-spinner"></div>
+        <p>Loading your projects...</p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <div class="nav-left">
+                <img src="P5TS Logo.png" alt="P5TS Logo" class="nav-logo">
+                <div class="nav-links">
+                    <a href="#" class="nav-link active">Projects</a>
                 </div>
             </div>
-        </section>
+            <div class="nav-profile">
+                <img id="company-logo" alt="Organization Logo" class="company-logo">
+                <span class="profile-name">Welcome, <span id="user-name">User</span></span>
+                <button id="logout-button" class="action-button" onclick="signOut()">Sign Out</button>
+            </div>
+        </div>
+    </nav>
 
-        <!-- Customer Portal Section -->
-        <section id="customer-portal-section" class="dashboard-container" style="display: none;">
-            <nav class="nav-bar">
-                <div class="nav-content">
-                    <img src="P5TS Logo.png" alt="P5TS" class="nav-logo">
-                    <div class="nav-links">
-                        <a href="home.html" class="nav-link">Home</a>
-                        <a href="customer-portal.html" class="nav-link active">Customer Portal</a>
-                    </div>
-                    <div class="nav-profile">
-                        <img src="Clinovators Logos-04.png" alt="Clinovators" class="company-logo">
-                        <span class="profile-name">Jovan Chapman</span>
-                        <img src="jovan1.png" alt="Profile Picture" class="profile-pic">
-                    </div>
-                </div>
-            </nav>
+    <!-- Main Content -->
+    <div id="customer-portal-section" class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Your Projects</h1>
+                <p id="organization-name" class="subtitle">Loading organization...</p>
+            </div>
+            <div class="section-actions">
+                <button class="action-button primary" onclick="showNewProjectOverlay()">
+                    <i class="fas fa-plus"></i>
+                    New Project
+                </button>
+            </div>
+        </div>
 
-            <main class="main-content">
-                <div class="page-header">
-                    <div>
-                        <h1>Your Projects</h1>
-                        <p class="subtitle">View and manage your ongoing projects</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="action-button filter-button">
-                            <i class="fas fa-filter"></i>
-                            Filter
-                        </button>
-                        <div class="section-actions">
-                            <button class="action-button primary">
-                                <i class="fas fa-plus"></i>
-                                New Project
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <div class="projects-grid" id="projects-container">
+            <!-- Projects will be dynamically inserted here -->
+        </div>
 
-                <div class="projects-grid">
-                    <!-- Patient Portal CRM -->
-                    <div class="project-card" data-project-id="patient-portal">
-                        <div class="card-header">
-                            <h3>Patient Portal CRM</h3>
-                            <span class="status-badge in-progress">In Progress</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="progress-info">
-                                <span>Build Phase</span>
-                                <span>65%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 65%"></div>
-                            </div>
-                            <p class="due-date">Due May 12, 2025</p>
-                        </div>
-                        <div class="card-footer">
-                            <button class="view-button">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                        </div>
-                    </div>
+        <!-- No projects message -->
+        <div id="no-projects" class="no-projects" style="display: none;">
+            <i class="fas fa-folder-open"></i>
+            <h2>No Projects Found</h2>
+            <p>You don't have any active projects at the moment.</p>
+        </div>
+    </div>
 
-                    <!-- Scheduling Tool -->
-                    <div class="project-card" data-project-id="scheduling-tool">
-                        <div class="card-header">
-                            <h3>Scheduling Tool</h3>
-                            <span class="status-badge complete">Complete</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="progress-info">
-                                <span>Done</span>
-                                <span>100%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 100%"></div>
-                            </div>
-                            <p class="due-date">Completed Mar 15</p>
-                        </div>
-                        <div class="card-footer">
-                            <button class="view-button">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Internal Dashboard -->
-                    <div class="project-card" data-project-id="internal-dashboard">
-                        <div class="card-header">
-                            <h3>Internal Dashboard</h3>
-                            <span class="status-badge review">Review</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="progress-info">
-                                <span>UAT Phase</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 85%"></div>
-                            </div>
-                            <p class="due-date">Due Apr 4, 2025</p>
-                        </div>
-                        <div class="card-footer">
-                            <button class="view-button">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Clinovators CRM Dashboards -->
-                    <div class="project-card" data-project-id="crm-dashboards">
-                        <div class="card-header">
-                            <h3>Clinovators CRM Dashboards</h3>
-                        </div>
-                        <div class="status-wrapper">
-                            <span class="status-badge in-progress">In Progress</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="progress-info">
-                                <span>Development Phase</span>
-                                <span>45%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 45%"></div>
-                            </div>
-                            <p class="due-date">Due Jun 30, 2025</p>
-                        </div>
-                        <div class="card-footer">
-                            <button class="view-button">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- RFP Pricing Tool -->
-                    <div class="project-card" data-project-id="rfp-pricing-tool">
-                        <div class="card-header">
-                            <h3>RFP Pricing Tool</h3>
-                            <span class="status-badge review">Review</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="progress-info">
-                                <span>Testing Phase</span>
-                                <span>75%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 75%"></div>
-                            </div>
-                            <p class="due-date">Due May 15, 2025</p>
-                        </div>
-                        <div class="card-footer">
-                            <button class="view-button">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </section>
-
-        <!-- Project Details Section -->
-        <section id="project-details" class="details-container" style="display: none;">
-            <div class="details-header">
-                <button class="action-button" onclick="showCustomerPortal()">
+    <!-- Project Details Section -->
+    <div id="project-details" class="project-details" style="display: none;">
+        <div class="details-header">
+            <div class="header-content">
+                <button class="back-button" onclick="showCustomerPortal()">
                     <i class="fas fa-arrow-left"></i>
                     Back to Projects
                 </button>
                 <div class="project-title">
-                    <h1>Patient Portal CRM</h1>
-                    <span class="status-badge in-progress">In Progress</span>
+                    <h1>Project Title</h1>
+                    <span class="status-badge">Status</span>
                 </div>
-                <div class="project-meta">
-                    <span class="meta-item">
-                        <i class="far fa-calendar"></i>
-                        Due May 12, 2025
-                    </span>
-                    <span class="meta-item">
-                        <i class="fas fa-users"></i>
-                        Team: Development
-                    </span>
-                    <span class="meta-item">
-                        <i class="fas fa-clock"></i>
-                        65% Complete
-                    </span>
-                </div>
-                <div class="project-actions">
-                    <button class="action-button">
-                        <i class="fas fa-comment"></i>
-                        Message Team
-                    </button>
-                    <button class="action-button">
-                        <i class="fas fa-file-alt"></i>
-                        View Documents
-                    </button>
-                    <button class="action-button primary">
-                        <i class="fas fa-download"></i>
-                        Download Files
-                    </button>
-                </div>
-            </div>
-
-            <div class="details-grid">
-                <div class="details-card">
-                    <h3>
-                        <i class="fas fa-check-circle"></i>
-                        Completed Tasks
-                    </h3>
-                    <ul class="task-list">
-                        <li class="task-item complete">
-                            <span>Initial Design Mockups</span>
-                            <span class="task-date">Mar 1, 2025</span>
-                        </li>
-                        <li class="task-item complete">
-                            <span>Database Schema</span>
-                            <span class="task-date">Mar 5, 2025</span>
-                        </li>
-                        <li class="task-item complete">
-                            <span>API Documentation</span>
-                            <span class="task-date">Mar 10, 2025</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="details-card">
-                    <h3>
-                        <i class="fas fa-spinner fa-spin"></i>
-                        In Progress
-                    </h3>
-                    <ul class="task-list">
-                        <li class="task-item current">
-                            <div>
-                                <span>Frontend Development</span>
-                                <div class="task-progress">
-                                    <div class="progress-bar">
-                                        <div class="progress" style="width: 75%"></div>
-                                    </div>
-                                    <span>75%</span>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="task-item current">
-                            <div>
-                                <span>API Integration</span>
-                                <div class="task-progress">
-                                    <div class="progress-bar">
-                                        <div class="progress" style="width: 40%"></div>
-                                    </div>
-                                    <span>40%</span>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="details-card">
-                    <h3>
-                        <i class="fas fa-clock"></i>
-                        Upcoming Tasks
-                    </h3>
-                    <ul class="task-list">
-                        <li class="task-item upcoming">
-                            <span>User Testing</span>
-                            <span class="task-date">Apr 1, 2025</span>
-                        </li>
-                        <li class="task-item upcoming">
-                            <span>Security Audit</span>
-                            <span class="task-date">Apr 10, 2025</span>
-                        </li>
-                        <li class="task-item upcoming">
-                            <span>Deployment</span>
-                            <span class="task-date">Apr 15, 2025</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="details-card full-width">
-                    <h3>
-                        <i class="fas fa-comment-alt"></i>
-                        Latest Updates
-                    </h3>
-                    <div class="update-list">
-                        <div class="update-item">
-                            <div class="update-header">
-                                <span class="update-author">Sarah Johnson</span>
-                                <span class="update-date">2 hours ago</span>
-                            </div>
-                            <p class="update-content">Frontend development is progressing well. We've completed the main dashboard components and are now working on the patient management interface. The team has implemented all requested UI changes and is now focusing on responsive design improvements.</p>
-                        </div>
-                        <div class="update-item">
-                            <div class="update-header">
-                                <span class="update-author">Mike Chen</span>
-                                <span class="update-date">1 day ago</span>
-                            </div>
-                            <p class="update-content">API integration has started. Currently implementing the authentication endpoints and data validation. We've completed the core API structure and are now working on optimizing database queries for better performance.</p>
-                        </div>
-                        <div class="update-item">
-                            <div class="update-header">
-                                <span class="update-author">Lisa Park</span>
-                                <span class="update-date">2 days ago</span>
-                            </div>
-                            <p class="update-content">Database schema has been finalized and documented. All tables are properly indexed and we've implemented the requested audit logging functionality.</p>
-                        </div>
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span class="meta-label">Due Date:</span>
+                        <span class="meta-value">2024-05-31</span>
                     </div>
-                    <div class="message-box">
-                        <textarea placeholder="Leave a message or ask a question..."></textarea>
-                        <button class="send-button">
-                            <i class="fas fa-paper-plane"></i>
-                            Send Message
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Task Details Overlay -->
-        <div id="task-overlay" class="overlay">
-            <div class="overlay-content">
-                <div class="overlay-header">
-                    <h2 id="task-title"></h2>
-                    <button class="close-button" onclick="closeTaskOverlay()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="overlay-body">
-                    <div class="task-info">
-                        <div class="info-group">
-                            <label><i class="fas fa-calendar"></i> Due Date</label>
-                            <span id="task-date"></span>
-                        </div>
-                        <div class="info-group">
-                            <label><i class="fas fa-user"></i> Assignee</label>
-                            <span id="task-assignee"></span>
-                        </div>
-                        <div class="info-group">
-                            <label><i class="fas fa-info-circle"></i> Status</label>
-                            <span id="task-status" class="status-badge"></span>
-                        </div>
-                    </div>
-                    <div class="task-description">
-                        <h3>Description</h3>
-                        <p id="task-description"></p>
-                    </div>
-                    <div class="task-requirements">
-                        <h3>Requirements</h3>
-                        <ul id="task-requirements"></ul>
+                    <div class="meta-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="meta-label">Percentage Complete:</span>
+                        <span class="meta-value">25%</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- New Project Overlay -->
-        <div id="new-project-overlay" class="overlay">
-            <div class="overlay-content">
-                <div class="overlay-header">
-                    <h2>New Project Request</h2>
-                    <button class="close-button" onclick="closeNewProjectOverlay()">
-                        <i class="fas fa-times"></i>
+        <div class="details-content">
+            <!-- Task Columns -->
+            <div class="details-grid">
+                <!-- Planning Tasks -->
+                <div class="details-card planning-tasks">
+                    <h2>
+                        <i class="fas fa-clipboard-list"></i>
+                        Planning
+                    </h2>
+                    <div class="column-description">Pre-requirements and initial planning</div>
+                    <ul class="task-list" id="planning-tasks"></ul>
+                </div>
+
+                <!-- In Progress Tasks -->
+                <div class="details-card in-progress-tasks">
+                    <h2>
+                        <i class="fas fa-spinner"></i>
+                        In Progress
+                    </h2>
+                    <div class="column-description">Active development</div>
+                    <ul class="task-list" id="in-progress-tasks"></ul>
+                </div>
+
+                <!-- Testing Tasks -->
+                <div class="details-card testing-tasks">
+                    <h2>
+                        <i class="fas fa-vial"></i>
+                        Testing
+                    </h2>
+                    <div class="column-description">QA and user acceptance</div>
+                    <ul class="task-list" id="testing-tasks"></ul>
+                </div>
+
+                <!-- Completed Tasks -->
+                <div class="details-card completed-tasks">
+                    <h2>
+                        <i class="fas fa-check-circle"></i>
+                        Complete
+                    </h2>
+                    <div class="column-description">Finished and deployed</div>
+                    <ul class="task-list" id="completed-tasks"></ul>
+                </div>
+            </div>
+
+            <!-- Updates Section -->
+            <div class="details-card updates-section">
+                <h2>
+                    <i class="fas fa-history"></i>
+                    Updates & Comments
+                </h2>
+                <div class="update-list" id="updates-list"></div>
+                <div class="message-box">
+                    <textarea placeholder="Add a comment or update..."></textarea>
+                    <button class="action-button primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Post Comment
                     </button>
                 </div>
-                <form id="new-project-form" class="project-form">
-                    <div class="form-group">
-                        <label for="project-title">Project Title*</label>
-                        <input type="text" id="project-title" name="project-title" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="project-description">Project Description*</label>
-                        <textarea id="project-description" name="project-description" rows="4" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="project-type">Project Type*</label>
-                        <select id="project-type" name="project-type" required>
-                            <option value="">Select a project type</option>
-                            <option value="web-application">Web Application</option>
-                            <option value="mobile-app">Mobile Application</option>
-                            <option value="dashboard">Dashboard/Analytics</option>
-                            <option value="integration">System Integration</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="priority-level">Priority Level*</label>
-                        <select id="priority-level" name="priority-level" required>
-                            <option value="">Select priority level</option>
-                            <option value="high">High</option>
-                            <option value="medium">Medium</option>
-                            <option value="low">Low</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group half">
-                            <label for="desired-start-date">Desired Start Date*</label>
-                            <input type="date" id="desired-start-date" name="desired-start-date" required>
-                        </div>
-                        <div class="form-group half">
-                            <label for="target-completion">Target Completion Date*</label>
-                            <input type="date" id="target-completion" name="target-completion" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="budget-range">Budget Range</label>
-                        <select id="budget-range" name="budget-range">
-                            <option value="">Select budget range</option>
-                            <option value="10k-25k">$10,000 - $25,000</option>
-                            <option value="25k-50k">$25,000 - $50,000</option>
-                            <option value="50k-100k">$50,000 - $100,000</option>
-                            <option value="100k+">$100,000+</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="requirements">Specific Requirements</label>
-                        <textarea id="requirements" name="requirements" rows="4" placeholder="Please list any specific requirements or features you need..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="additional-info">Additional Information</label>
-                        <textarea id="additional-info" name="additional-info" rows="3" placeholder="Any other details you'd like to share..."></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="action-button secondary" onclick="closeNewProjectOverlay()">Cancel</button>
-                        <button type="submit" class="action-button primary">Submit Request</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
 
+    <!-- Task item template -->
+    <template id="task-item-template">
+        <li class="task-item" data-task-id="">
+            <div class="task-header">
+                <div class="task-name">
+                    <i class="fas fa-circle-check"></i>
+                    <span>Task Name</span>
+                </div>
+                <div class="task-date">
+                    <i class="fas fa-calendar"></i>
+                    <span>Due Date</span>
+                </div>
+            </div>
+            <div class="task-description">Task description goes here...</div>
+            <div class="task-meta">
+                <div class="task-assignee">
+                    <i class="fas fa-user"></i>
+                    <span>Assignee Name</span>
+                </div>
+            </div>
+        </li>
+    </template>
+
+    <!-- Task Details Overlay -->
+    <div id="task-overlay" class="task-overlay">
+        <div class="task-details">
+            <button class="close-overlay" onclick="closeTaskOverlay()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 id="task-title">Task Title</h3>
+            <div class="task-info">
+                <div class="info-row">
+                    <i class="fas fa-calendar"></i>
+                    <span class="label">Due Date:</span>
+                    <span id="task-date">Date</span>
+                </div>
+                <div class="info-row">
+                    <i class="fas fa-user"></i>
+                    <span class="label">Assignee:</span>
+                    <span id="task-assignee">Assignee Name</span>
+                </div>
+                <div class="info-row">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="label">Status:</span>
+                    <span id="task-status" class="status-badge">Status</span>
+                </div>
+            </div>
+            <div class="task-description" id="task-description">
+                Task description will appear here.
+            </div>
+            <div class="requirements-section">
+                <h4>Requirements</h4>
+                <ul class="requirements-list" id="task-requirements">
+                    <!-- Requirements will be dynamically inserted here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Project Overlay -->
+    <div id="new-project-overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2>Create New Project</h2>
+                <button class="close-button" onclick="closeNewProjectOverlay()">×</button>
+            </div>
+            <form id="new-project-form" class="project-form">
+                <div class="form-group">
+                    <label for="project-title">Project Title</label>
+                    <input type="text" id="project-title" name="project-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="project-description">Project Description</label>
+                    <textarea id="project-description" name="project-description" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="desired-start-date">Desired Start Date</label>
+                        <input type="date" id="desired-start-date" name="desired-start-date" required>
+                    </div>
+                    <div class="form-group half">
+                        <label for="target-completion">Target Completion Date</label>
+                        <input type="date" id="target-completion" name="target-completion" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="action-button" onclick="closeNewProjectOverlay()">Cancel</button>
+                    <button type="submit" class="action-button primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="customer-portal.js"></script>
+    <script>
+        // Initialize the page with authentication
+        window.addEventListener('load', async () => {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const customerPortalSection = document.getElementById('customer-portal-section');
+            const noProjects = document.getElementById('no-projects');
+            const projectsContainer = document.getElementById('projects-container');
+            
+            try {
+                // For testing Clinovators view (remove in production)
+                if (!window.b2cInstance) {
+                    const mockAccount = {
+                        username: 'user@clinovators.com',
+                        name: 'Marcus Norman'
+                    };
+                    window.b2cInstance = {
+                        getAllAccounts: () => [mockAccount],
+                        logoutRedirect: () => window.location.href = 'login.html'
+                    };
+                }
+
+                // Get the active account
+                const accounts = window.b2cInstance.getAllAccounts();
+                if (accounts.length === 0) {
+                    // No authenticated user, redirect to login
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const account = accounts[0];
+                console.log('Active account:', account);
+
+                // Get customer organization based on email
+                const organization = window.getCustomerOrganization(account.username);
+                if (!organization) {
+                    console.error('No organization found for email:', account.username);
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Update UI with organization info
+                document.getElementById('organization-name').textContent = organization.name;
+                document.getElementById('company-logo').src = organization.logo;
+                document.getElementById('user-name').textContent = account.name;
+
+                // Get projects for this customer
+                const customerProjects = window.getCustomerProjects(account.username);
+                
+                if (customerProjects.length === 0) {
+                    noProjects.style.display = 'flex';
+                } else {
+                    // Clear existing projects
+                    projectsContainer.innerHTML = '';
+                    
+                    // Filter and display only this customer's projects
+                    customerProjects.forEach(projectId => {
+                        const project = window.projectsData[projectId];
+                        if (project) {
+                            projectsContainer.innerHTML += `
+                                <div class="project-card" data-project-id="${project.id}">
+                                    <div class="card-header">
+                                        <h3>${project.title}</h3>
+                                        <div class="status-wrapper">
+                                            <span class="status-badge ${project.status}">${project.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+                                        </div>
+                                    </div>
+                                    <div class="project-phase">${project.phase}</div>
+                                    <div class="project-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress ${project.status}" style="width: ${project.progress}%"></div>
+                                        </div>
+                                        <div class="progress-text">${project.progress}% Complete</div>
+                                    </div>
+                                    <div class="project-meta">
+                                        <div class="meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            ${project.dueDate}
+                                        </div>
+                                        <div class="meta-item">
+                                            <i class="fas fa-users"></i>
+                                            ${project.team}
+                                        </div>
+                                    </div>
+                                    <button class="view-button" onclick="showProjectDetails('${project.id}')">
+                                        View Details
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    // Add smooth transitions
+                    document.querySelectorAll('.progress').forEach(progress => {
+                        const width = progress.style.width;
+                        progress.style.width = '0';
+                        setTimeout(() => {
+                            progress.style.width = width;
+                        }, 100);
+                    });
+
+                    // Add hover effects
+                    document.querySelectorAll('.project-card').forEach(card => {
+                        card.addEventListener('mouseenter', () => {
+                            card.style.transform = 'translateY(-4px)';
+                        });
+                        
+                        card.addEventListener('mouseleave', () => {
+                            card.style.transform = 'translateY(0)';
+                        });
+                    });
+                }
+
+                // Show the portal section
+                loadingOverlay.style.display = 'none';
+                customerPortalSection.style.display = 'block';
+
+                // Handle logout
+                document.getElementById('logout-button').addEventListener('click', async () => {
+                    await window.b2cInstance.logoutRedirect();
+                });
+
+            } catch (error) {
+                console.error('Error loading customer portal:', error);
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
 </body>
 </html> 

@@ -4,296 +4,445 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - P5 Tech Solutions</title>
-    <link rel="stylesheet" href="Project-Price-Calculator.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
     <script src="auth-config.js"></script>
-    <script src="auth-handler.js"></script>
+    <script src="customer-data.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--background-color);
+            background-color: #f5f5f7;
         }
 
         .header {
             background: white;
-            width: 100%;
             padding: 1.5rem;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
             position: relative;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
         }
 
         .header-logo {
             height: 100px;
             object-fit: contain;
-            transition: transform 0.3s ease;
-        }
-
-        .team-login-link {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            max-width: 100%;
+            cursor: pointer;
             transition: all 0.3s ease;
+            animation: logoEntrance 1s ease-out, logoPulse 3s ease-in-out infinite;
         }
 
-        .team-login-link:hover {
-            background-color: var(--background-color);
-            color: var(--primary-color);
+        .header-logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+        }
+
+        @keyframes logoEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes logoPulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Add a ripple effect when clicking the logo */
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(0, 102, 204, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .header.ripple::after {
+            width: 300px;
+            height: 300px;
+            opacity: 1;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 180px);
+            padding: 0 2rem 1rem;
         }
 
         .login-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        .login-card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: var(--shadow-lg);
-            width: 100%;
-            max-width: 400px;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(to right, var(--primary-color), var(--primary-hover));
-        }
-
-        .login-content {
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
+            max-width: 400px;
+            width: 90%;
         }
 
-        .login-title {
-            font-size: 1.75rem;
-            color: var(--text-primary);
+        h1 {
+            color: #333;
             margin-bottom: 0.5rem;
-            font-weight: 600;
+            font-size: 1.75rem;
         }
 
-        .login-subtitle {
-            color: var(--text-secondary);
+        .subtitle {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .login-button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
             font-size: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .customer-login-button {
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            padding: 1.25rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 1.125rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            gap: 0.5rem;
             width: 100%;
-            background-color: var(--primary-color);
-            color: white;
-            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
         }
 
-        .customer-login-button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 102, 204, 0.3);
+        .login-button:hover {
+            background-color: #0055b3;
+            transform: translateY(-1px);
+        }
+
+        .login-button.team {
+            background-color: #4a4a4a;
+        }
+
+        .login-button.team:hover {
+            background-color: #333;
         }
 
         .error-message {
-            background-color: #fee2e2;
-            color: #dc2626;
+            color: #dc3545;
+            margin-top: 1rem;
             padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
+            background-color: rgba(220, 53, 69, 0.1);
+            border-radius: 4px;
             display: none;
-            font-size: 0.875rem;
-            border-left: 4px solid #dc2626;
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
 
-        @media (max-width: 640px) {
-            .login-container {
-                padding: 1rem;
-            }
-
-            .login-card {
-                padding: 1.5rem;
-            }
-
-            .login-title {
-                font-size: 1.5rem;
-            }
-
-            .team-login-link {
-                top: 1rem;
-                right: 1rem;
-            }
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            text-align: center;
         }
 
-        /* Modal styles for team login */
-        .modal {
+        #loading p {
+            margin-top: 1rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Add overlay when loading */
+        .overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            z-index: 999;
         }
 
-        .modal.show {
+        /* Show overlay when loading */
+        .loading .overlay {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0066cc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+
+        .divider {
+            margin: 1rem 0;
             display: flex;
+            align-items: center;
+            text-align: center;
+            color: #666;
         }
 
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            width: 90%;
-            max-width: 400px;
-            position: relative;
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
         }
 
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.25rem;
-            cursor: pointer;
-            color: var(--text-secondary);
+        .divider span {
+            padding: 0 1rem;
+            color: #666;
+            font-size: 0.9rem;
         }
 
-        .close-modal:hover {
-            color: var(--text-primary);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .header-logo {
+                height: 70px;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .login-container {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
-        <img src="P5TS Logo.png" alt="P5 Tech Solutions" class="header-logo">
-        <a href="#" class="team-login-link" id="team-login-trigger">
-            <i class="fas fa-user-tie"></i>
-            Team Login
-        </a>
+        <img src="P5TS Logo.png" alt="P5 Tech Solutions" class="header-logo" id="headerLogo">
     </header>
 
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-content">
-                <h1 class="login-title">Welcome Back</h1>
-                <p class="login-subtitle">Sign in to access your P5TS portal</p>
-                <div id="error-message" class="error-message"></div>
-                <button id="signin-button" class="customer-login-button" onclick="handleLogin()">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Sign in with Microsoft
+    <main class="main-content">
+        <div class="login-container">
+            <h1>Welcome to P5 Tech Solutions</h1>
+            <p class="subtitle">Choose your portal to continue</p>
+            
+            <div class="login-options">
+                <button id="customerLoginBtn" class="login-button">
+                    <i class="fas fa-building"></i>
+                    Customer Portal
+                </button>
+
+                <div class="divider">
+                    <span>or</span>
+                </div>
+
+                <button id="teamLoginBtn" class="login-button team">
+                    <i class="fas fa-users"></i>
+                    Team Portal
                 </button>
             </div>
-        </div>
-    </div>
 
-    <!-- Team Login Modal -->
-    <div id="team-modal" class="modal">
-        <div class="modal-content">
-            <button class="close-modal" id="close-modal">×</button>
-            <h2 class="login-title">Team Login</h2>
-            <p class="login-subtitle">Access the P5TS internal portal</p>
-            <button id="team-login-button" class="customer-login-button">
-                <i class="fas fa-user-tie"></i>
-                Sign in with Microsoft
-            </button>
+            <div id="loading">
+                <div class="spinner"></div>
+                <p>Signing you in...</p>
+            </div>
+            <div id="errorMessage" class="error-message"></div>
         </div>
-    </div>
+    </main>
 
     <script>
-        // Handle the login process
-        async function handleLogin() {
-            const button = document.getElementById('signin-button');
-            const errorMessage = document.getElementById('error-message');
-            
-            try {
-                // Disable button and show loading state
-                button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
-                errorMessage.style.display = 'none';
+        // Remove duplicate initialization since it's already done in auth-config.js
+        // window.b2cInstance = new msal.PublicClientApplication(window.b2cConfig);
+        // window.msalInstance = new msal.PublicClientApplication(window.msalConfig);
 
-                // Try to login
-                await window.msalInstance.loginPopup(window.loginRequest);
+        function showError(message, details = '') {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = `<strong>${message}</strong>${details ? '<br>' + details : ''}`;
+            errorDiv.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('customerLoginBtn').style.display = 'block';
+            document.getElementById('teamLoginBtn').style.display = 'block';
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('customerLoginBtn').style.display = 'none';
+            document.getElementById('teamLoginBtn').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('customerLoginBtn').style.display = 'block';
+            document.getElementById('teamLoginBtn').style.display = 'block';
+        }
+
+        async function handleCustomerLogin() {
+            console.log("Starting customer login process...");
+            try {
+                showLoading();
                 
-                // Redirect to home page on success
-                window.location.replace('home.html');
+                // Clear any existing auth data
+                sessionStorage.removeItem('authResult');
+
+                // Use multi-tenant configuration for customer login
+                await window.msalInstance.loginRedirect({
+                    ...window.loginRequest,
+                    prompt: "select_account"
+                });
             } catch (error) {
-                console.error('Login failed:', error);
-                errorMessage.textContent = 'Sign in failed. Please try again.';
-                errorMessage.style.display = 'block';
+                console.error("Login error:", error);
+                hideLoading();
                 
-                // Reset button state
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign in with Microsoft';
+                if (error.errorCode === "user_cancelled") {
+                    showError("Login Cancelled", "You cancelled the login process. Please try again when you are ready.");
+                } else if (error.errorCode === "access_denied") {
+                    showError("Access Denied", "Your account does not have permission to access this portal. Please contact support if you believe this is an error.");
+                } else {
+                    showError("Login Error", `An error occurred during login. Please try again or contact support. (${error.errorCode || 'Unknown error'})`);
+                    console.log("Error details:", error);
+                }
             }
         }
 
-        // Check if we're already logged in
+        async function handleTeamLogin() {
+            try {
+                showLoading();
+                console.log('Starting team login process...');
+
+                // Start login flow with explicit redirect URI
+                await window.msalInstance.loginRedirect({
+                    ...window.loginRequest,
+                    redirectUri: "http://localhost:5501/home.html",
+                    prompt: "select_account"
+                });
+
+            } catch (error) {
+                console.error('Team login error:', error);
+                hideLoading();
+                
+                if (error.errorCode === 'user_cancelled') {
+                    showError('Login cancelled', 'Please try again when you are ready.');
+                } else if (error.errorCode === 'access_denied') {
+                    showError('Access denied', 'Please ensure you have the correct permissions to access the team portal.');
+                } else {
+                    showError(
+                        'Unable to sign in',
+                        'We encountered an unexpected error. Please try again or contact IT support if the problem persists.'
+                    );
+                }
+            }
+        }
+
+        // Initialize MSAL instance when the page loads
         window.addEventListener('load', async () => {
             try {
-                const accounts = window.msalInstance.getAllAccounts();
-                if (accounts.length > 0) {
-                    // We have an account, redirect to home
-                    window.location.replace('home.html');
+                console.log('Checking for auth responses...');
+                
+                // Handle the redirect response
+                const response = await window.msalInstance.handleRedirectPromise();
+                if (response) {
+                    console.log('Received auth response:', response);
+                    
+                    // Check if the user's domain is authorized
+                    const userEmail = response.account.username.toLowerCase();
+                    const organization = window.getCustomerOrganization(userEmail);
+                    
+                    if (!organization) {
+                        console.log('Unauthorized domain:', userEmail);
+                        await window.msalInstance.logout();
+                        showError(
+                            'Unauthorized Domain',
+                            'Your organization is not authorized to access this portal. Please contact P5 Tech Solutions if you believe this is an error.'
+                        );
+                        return;
+                    }
+
+                    // Store the auth result and organization info
+                    const authData = {
+                        ...response,
+                        organization: organization
+                    };
+                    sessionStorage.setItem('authResult', JSON.stringify(authData));
+                    window.location.href = 'customer-portal.html';
                 }
             } catch (error) {
-                console.error('Error checking authentication state:', error);
-                const errorMessage = document.getElementById('error-message');
-                errorMessage.textContent = 'Error checking authentication state. Please refresh the page.';
-                errorMessage.style.display = 'block';
+                console.error('Error handling auth response:', error);
+                showError(
+                    'Authentication Error',
+                    'An error occurred while processing your login. Please try again.'
+                );
             }
         });
 
-        // Handle team login trigger
-        document.getElementById('team-login-trigger').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('team-modal').classList.add('show');
-        });
+        // Add click handlers
+        document.getElementById('customerLoginBtn').addEventListener('click', handleCustomerLogin);
+        document.getElementById('teamLoginBtn').addEventListener('click', handleTeamLogin);
 
-        // Handle close modal
-        document.getElementById('close-modal').addEventListener('click', () => {
-            document.getElementById('team-modal').classList.remove('show');
-        });
+        // Logo handling
+        const logo = document.getElementById('headerLogo');
+        if (logo) {
+            // Fix logo path to be relative to the current page
+            logo.src = window.location.origin + '/P5TS Logo.png';
+            
+            // Add ripple effect
+            logo.addEventListener('click', () => {
+                header.classList.add('ripple');
+                setTimeout(() => {
+                    header.classList.remove('ripple');
+                }, 500);
+            });
 
-        // Close modal if clicking outside
-        document.getElementById('team-modal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('team-modal')) {
-                document.getElementById('team-modal').classList.remove('show');
-            }
-        });
+            // Add hover effect
+            logo.addEventListener('mousemove', (e) => {
+                const rect = logo.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Calculate tilt based on mouse position
+                const tiltX = (y / rect.height - 0.5) * 4;
+                const tiltY = (x / rect.width - 0.5) * 4;
+                
+                logo.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.05)`;
+            });
+
+            logo.addEventListener('mouseleave', () => {
+                logo.style.transform = 'none';
+            });
+        }
     </script>
 </body>
 </html> 

@@ -1,187 +1,270 @@
 // Project Data
-const projectsData = {
+window.projectsData = {
     'patient-portal': {
         id: 'patient-portal',
-        title: 'Patient Portal CRM',
-        status: 'in-progress',
-        phase: 'Build Phase',
-        progress: 65,
-        dueDate: 'May 12, 2025',
-        team: 'Development',
+        title: 'Patient Portal Enhancement',
+        status: 'pending',
+        phase: 'Development',
+        progress: 25,
+        dueDate: '2024-05-31',
+        team: '5 members',
+        description: 'Developing a modern patient portal with secure access to medical records and appointment scheduling.',
         completedTasks: [
-            { name: 'Initial Design Mockups', date: 'Mar 1, 2025' },
-            { name: 'Database Schema', date: 'Mar 5, 2025' },
-            { name: 'API Documentation', date: 'Mar 10, 2025' }
+            {
+                id: 'task-1',
+                name: 'UI/UX Design',
+                description: 'Design new user interface for enhanced patient experience',
+                date: '2024-04-10',
+                assignee: 'Sarah Johnson',
+                status: 'completed',
+                requirements: [
+                    'User dashboard layout',
+                    'Patient information forms',
+                    'Appointment scheduling interface'
+                ]
+            }
         ],
         inProgressTasks: [
-            { name: 'Frontend Development', progress: 75 },
-            { name: 'API Integration', progress: 40 }
+            {
+                id: 'task-2',
+                name: 'Feature Implementation',
+                description: 'Implement new features and functionality',
+                date: '2024-04-30',
+                assignee: 'Mike Wilson',
+                status: 'in-progress',
+                requirements: [
+                    'Patient records integration',
+                    'Appointment booking system',
+                    'Notification system'
+                ]
+            }
         ],
         upcomingTasks: [
-            { name: 'User Testing', date: 'Apr 1, 2025' },
-            { name: 'Security Audit', date: 'Apr 10, 2025' },
-            { name: 'Deployment', date: 'Apr 15, 2025' }
+            {
+                id: 'task-3',
+                name: 'Testing & Deployment',
+                description: 'Conduct testing and prepare for deployment',
+                date: '2024-05-15',
+                assignee: 'Emily Brown',
+                status: 'upcoming',
+                requirements: [
+                    'User acceptance testing',
+                    'Performance testing',
+                    'Security testing'
+                ]
+            }
         ],
         updates: [
             {
-                author: 'Marcus Norman',
-                time: '2 hours ago',
-                content: 'Frontend development is progressing well. We\'ve completed the main dashboard components and are now working on the patient management interface. The team has implemented all requested UI changes and is now focusing on responsive design improvements.'
-            },
-            {
-                author: 'Jonas Pascua',
-                time: '1 day ago',
-                content: 'API integration has started. Currently implementing the authentication endpoints and data validation. We\'ve completed the core API structure and are now working on optimizing database queries for better performance.'
-            },
-            {
-                author: 'Dez Grayson',
+                author: 'Sarah Johnson',
                 time: '2 days ago',
-                content: 'UAT testing complete. All core functionality meets requirements and workflow aligns with our needs. Signed off on current phase - Dez'
+                content: 'Completed the UI/UX design phase with stakeholder approval.'
             }
         ]
     },
     'scheduling-tool': {
         id: 'scheduling-tool',
-        title: 'Scheduling Tool',
-        status: 'complete',
-        phase: 'Done',
-        progress: 100,
-        dueDate: 'Completed Mar 15',
-        team: 'Development',
+        title: 'Appointment Scheduling Tool',
+        status: 'review',
+        phase: 'Testing',
+        progress: 85,
+        dueDate: '2024-05-01',
+        team: '4 members',
+        description: 'Building a comprehensive scheduling system for healthcare providers.',
         completedTasks: [
-            { name: 'Requirements Gathering', date: 'Jan 15, 2025' },
-            { name: 'UI/UX Design', date: 'Jan 30, 2025' },
-            { name: 'Development', date: 'Feb 28, 2025' },
-            { name: 'Testing', date: 'Mar 10, 2025' },
-            { name: 'Deployment', date: 'Mar 15, 2025' }
+            {
+                id: 'task-5',
+                name: 'Calendar Integration',
+                description: 'Integrate with popular calendar systems',
+                date: '2024-03-10',
+                assignee: 'Alex Turner',
+                status: 'completed',
+                requirements: [
+                    'Google Calendar sync',
+                    'Outlook integration',
+                    'iCal support'
+                ]
+            }
         ],
-        inProgressTasks: [],
-        upcomingTasks: [],
+        inProgressTasks: [
+            {
+                id: 'task-6',
+                name: 'Automated Notifications',
+                description: 'Implement notification system',
+                date: '2024-03-25',
+                assignee: 'Lisa Chen',
+                status: 'in-progress',
+                requirements: [
+                    'SMS notifications',
+                    'Email reminders',
+                    'Custom templates'
+                ]
+            }
+        ],
+        upcomingTasks: [
+            {
+                id: 'task-7',
+                name: 'Analytics Dashboard',
+                description: 'Create analytics reporting system',
+                date: '2024-04-10',
+                assignee: 'David Kim',
+                status: 'upcoming',
+                requirements: [
+                    'Usage statistics',
+                    'Performance metrics',
+                    'Custom reports'
+                ]
+            }
+        ],
         updates: [
             {
-                author: 'Project Manager',
-                time: '5 days ago',
-                content: 'Project successfully completed and deployed. All features are working as expected. Client has signed off on the deliverables.'
-            },
-            {
-                author: 'QA Team',
-                time: '7 days ago',
-                content: 'Final testing completed. All test cases passed. No critical issues found.'
+                author: 'Alex Turner',
+                time: '3 days ago',
+                content: 'Completed calendar integration with major providers.'
             }
         ]
     },
     'internal-dashboard': {
         id: 'internal-dashboard',
-        title: 'Internal Dashboard',
-        status: 'review',
-        phase: 'UAT Phase',
-        progress: 85,
-        dueDate: 'Apr 4, 2025',
-        team: 'Development',
+        title: 'Internal Analytics Dashboard',
+        status: 'complete',
+        phase: 'Deployment',
+        progress: 100,
+        dueDate: '2024-03-01',
+        team: '3 members',
+        description: 'Creating a comprehensive dashboard for internal business analytics.',
         completedTasks: [
-            { name: 'Design Phase', date: 'Feb 15, 2025' },
-            { name: 'Core Development', date: 'Mar 1, 2025' },
-            { name: 'Initial Testing', date: 'Mar 15, 2025' }
+            {
+                id: 'task-8',
+                name: 'Data Integration',
+                description: 'Connect all data sources',
+                date: '2024-02-15',
+                assignee: 'Rachel Green',
+                status: 'completed',
+                requirements: [
+                    'API connections',
+                    'Data validation',
+                    'Error handling'
+                ]
+            }
         ],
-        inProgressTasks: [
-            { name: 'User Acceptance Testing', progress: 60 },
-            { name: 'Documentation', progress: 80 }
-        ],
-        upcomingTasks: [
-            { name: 'Final Review', date: 'Mar 30, 2025' },
-            { name: 'Deployment', date: 'Apr 4, 2025' }
-        ],
+        inProgressTasks: [],
+        upcomingTasks: [],
         updates: [
             {
-                author: 'Test Lead',
-                time: '1 day ago',
-                content: 'UAT is progressing well. Users have reported minor UI improvements needed.'
-            },
-            {
-                author: 'Tech Writer',
-                time: '2 days ago',
-                content: 'Documentation is nearly complete. Adding final screenshots and user guides.'
+                author: 'Rachel Green',
+                time: '1 week ago',
+                content: 'Successfully deployed the dashboard to production.'
             }
         ]
     },
     'crm-dashboards': {
         id: 'crm-dashboards',
-        title: 'Clinovators CRM Dashboards',
+        title: 'CRM Dashboard Suite',
         status: 'in-progress',
-        phase: 'Development Phase',
+        phase: 'Development',
         progress: 45,
-        dueDate: 'Jun 30, 2025',
-        team: 'Development',
+        dueDate: '2024-07-01',
+        team: '6 members',
+        description: 'Building a suite of dashboards for customer relationship management.',
         completedTasks: [
-            { name: 'Requirements Analysis', date: 'Mar 1, 2025' },
-            { name: 'Data Model Design', date: 'Mar 15, 2025' },
-            { name: 'UI/UX Mockups', date: 'Mar 30, 2025' }
+            {
+                id: 'task-9',
+                name: 'Customer Overview',
+                description: 'Create main customer dashboard',
+                date: '2024-03-01',
+                assignee: 'Tom Wilson',
+                status: 'completed',
+                requirements: [
+                    'Customer profiles',
+                    'Interaction history',
+                    'Key metrics'
+                ]
+            }
         ],
         inProgressTasks: [
-            { name: 'Dashboard Development', progress: 60 },
-            { name: 'Data Integration', progress: 35 },
-            { name: 'Release Planning', progress: 40 }
+            {
+                id: 'task-10',
+                name: 'Sales Analytics',
+                description: 'Implement sales tracking system',
+                date: '2024-03-20',
+                assignee: 'Anna Martinez',
+                status: 'in-progress',
+                requirements: [
+                    'Revenue tracking',
+                    'Pipeline visualization',
+                    'Forecasting tools'
+                ]
+            }
         ],
         upcomingTasks: [
-            { name: 'User Testing', date: 'May 15, 2025' },
-            { name: 'Performance Optimization', date: 'Jun 1, 2025' },
-            { name: 'Final Deployment', date: 'Jun 30, 2025' }
+            {
+                id: 'task-11',
+                name: 'Customer Support',
+                description: 'Build support ticket system',
+                date: '2024-04-05',
+                assignee: 'Chris Lee',
+                status: 'upcoming',
+                requirements: [
+                    'Ticket management',
+                    'Response tracking',
+                    'Satisfaction surveys'
+                ]
+            }
         ],
         updates: [
             {
-                author: 'Marcus Norman',
-                time: '1 day ago',
-                content: 'Dashboard development is progressing well. Core visualizations are implemented and we\'re now working on interactive filters and drill-down capabilities.'
-            },
-            {
-                author: 'Jonas Pascua',
-                time: '3 days ago',
-                content: 'Data integration framework is set up. Currently working on real-time data synchronization and implementing caching mechanisms for better performance.'
-            },
-            {
-                author: 'AJ Moore Jr.',
-                time: '5 days ago',
-                content: 'Release plan draft completed. Timeline and milestones have been defined, awaiting stakeholder review.'
+                author: 'Tom Wilson',
+                time: '2 days ago',
+                content: 'Completed the customer overview dashboard with key metrics.'
             }
         ]
     },
     'rfp-pricing-tool': {
         id: 'rfp-pricing-tool',
         title: 'RFP Pricing Tool',
-        status: 'review',
-        phase: 'Testing Phase',
-        progress: 75,
-        dueDate: 'May 15, 2025',
-        team: 'Development',
-        completedTasks: [
-            { name: 'Requirements Gathering', date: 'Feb 1, 2025' },
-            { name: 'Architecture Design', date: 'Feb 15, 2025' },
-            { name: 'Core Development', date: 'Mar 20, 2025' }
-        ],
+        status: 'upcoming',
+        phase: 'Planning',
+        progress: 20,
+        dueDate: '2024-08-01',
+        team: '4 members',
+        description: 'Developing a tool for managing RFP pricing and proposals.',
+        completedTasks: [],
         inProgressTasks: [
-            { name: 'Integration Testing', progress: 80 },
-            { name: 'User Documentation', progress: 65 }
+            {
+                id: 'task-12',
+                name: 'Requirements Analysis',
+                description: 'Define core features and requirements',
+                date: '2024-03-15',
+                assignee: 'Mark Thompson',
+                status: 'in-progress',
+                requirements: [
+                    'User requirements',
+                    'System architecture',
+                    'Integration points'
+                ]
+            }
         ],
         upcomingTasks: [
-            { name: 'UAT Testing', date: 'Apr 30, 2025' },
-            { name: 'Performance Testing', date: 'May 5, 2025' },
-            { name: 'Production Release', date: 'May 15, 2025' }
+            {
+                id: 'task-13',
+                name: 'Database Design',
+                description: 'Design database schema',
+                date: '2024-04-01',
+                assignee: 'Laura White',
+                status: 'upcoming',
+                requirements: [
+                    'Data modeling',
+                    'Relationships',
+                    'Indexing strategy'
+                ]
+            }
         ],
         updates: [
             {
-                author: 'Jonas Pascua',
-                time: '6 hours ago',
-                content: 'Integration testing is nearly complete. All core pricing calculations are working correctly and API endpoints are properly handling all test cases.'
-            },
-            {
-                author: 'AJ Moore Jr.',
-                time: '2 days ago',
-                content: 'User documentation is progressing well. Added detailed guides for pricing configuration and RFP response generation.'
-            },
-            {
-                author: 'Marcus Norman',
-                time: '4 days ago',
-                content: 'Core development completed. All planned features have been implemented and initial testing shows positive results.'
+                author: 'Mark Thompson',
+                time: '1 day ago',
+                content: 'Completed initial requirements gathering session.'
             }
         ]
     }
@@ -277,8 +360,7 @@ const taskDetails = {
             'Monitoring configuration',
             'Backup system setup'
         ]
-    },
-    // Add more task details as needed
+    }
 };
 
 // DOM Elements
@@ -336,138 +418,126 @@ function handleLogin(e) {
 }
 
 // Show Project Details
-function showProjectDetails(projectId) {
-    const project = projectsData[projectId];
-    if (!project) return;
+window.showProjectDetails = function(projectId) {
+    const project = window.projectsData[projectId];
+    if (!project) {
+        console.error('Project not found:', projectId);
+        return;
+    }
 
-    // Update project details content
-    updateProjectHeader(project);
-    updateTaskLists(project);
-    updateUpdates(project);
+    // Get current user's email
+    const accounts = window.b2cInstance.getAllAccounts();
+    if (accounts.length === 0) {
+        console.error('No authenticated user found');
+        return;
+    }
+    const userEmail = accounts[0].username;
 
-    // Show details section
-    customerPortalSection.style.display = 'none';
-    projectDetailsSection.style.display = 'block';
+    // Check if user has access to this project
+    if (!window.isProjectForCustomer(projectId, userEmail)) {
+        console.error('User does not have access to this project');
+        return;
+    }
 
-    // Add a small delay to ensure the section is visible before scrolling
-    setTimeout(() => {
-        const projectHeader = document.querySelector('.details-header');
-        if (projectHeader) {
-            projectHeader.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
+    const projectDetails = document.getElementById('project-details');
+    const customerPortal = document.getElementById('customer-portal-section');
+
+    if (!projectDetails || !customerPortal) {
+        console.error('Required DOM elements not found');
+        return;
+    }
+
+    try {
+        // Update header
+        const titleElement = projectDetails.querySelector('.project-title h1');
+        const statusBadge = projectDetails.querySelector('.status-badge');
+        
+        if (titleElement) titleElement.textContent = project.title;
+        if (statusBadge) {
+            statusBadge.textContent = project.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            statusBadge.className = `status-badge ${project.status}`;
         }
-    }, 100);
-}
 
-// Update Project Header
-function updateProjectHeader(project) {
-    const header = projectDetailsSection.querySelector('.details-header');
-    header.querySelector('.project-title h1').textContent = project.title;
-    header.querySelector('.status-badge').className = `status-badge ${project.status}`;
-    header.querySelector('.status-badge').textContent = project.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
-    
-    const metaItems = header.querySelectorAll('.meta-item');
-    metaItems[0].querySelector('i + span, i').textContent = project.dueDate;
-    metaItems[1].querySelector('i + span, i').textContent = `Team: ${project.team}`;
-    metaItems[2].querySelector('i + span, i').textContent = `${project.progress}% Complete`;
-}
+        // Update meta information
+        const metaItems = projectDetails.querySelectorAll('.meta-item span:not(.meta-label)');
+        if (metaItems.length >= 2) {
+            metaItems[0].textContent = project.dueDate;
+            metaItems[1].textContent = `${project.progress}%`;
+        }
 
-// Update Task Lists
-function updateTaskLists(project) {
-    // Update Completed Tasks
-    const completedList = projectDetailsSection.querySelector('.details-card:nth-child(1) .task-list');
-    completedList.innerHTML = project.completedTasks.map(task => `
-        <li class="task-item complete">
-            <span>${task.name}</span>
-            <span class="task-date">${task.date}</span>
-        </li>
-    `).join('');
+        // Update task lists
+        const completedTasksList = projectDetails.querySelector('#completed-tasks');
+        const inProgressTasksList = projectDetails.querySelector('#in-progress-tasks');
+        const upcomingTasksList = projectDetails.querySelector('#upcoming-tasks');
 
-    // Update In Progress Tasks
-    const inProgressList = projectDetailsSection.querySelector('.details-card:nth-child(2) .task-list');
-    inProgressList.innerHTML = project.inProgressTasks.map(task => `
-        <li class="task-item current">
-            <div>
-                <span>${task.name}</span>
-                <div class="task-progress">
-                    <div class="progress-bar">
-                        <div class="progress" style="width: ${task.progress}%"></div>
+        if (completedTasksList) {
+            completedTasksList.innerHTML = project.completedTasks.map(task => createTaskListItem(task)).join('');
+        }
+        if (inProgressTasksList) {
+            inProgressTasksList.innerHTML = project.inProgressTasks.map(task => createTaskListItem(task)).join('');
+        }
+        if (upcomingTasksList) {
+            upcomingTasksList.innerHTML = project.upcomingTasks.map(task => createTaskListItem(task)).join('');
+        }
+
+        // Update updates/comments section
+        const updateList = projectDetails.querySelector('.update-list');
+        if (updateList) {
+            updateList.innerHTML = project.updates.map(update => `
+                <div class="update-item">
+                    <div class="update-header">
+                        <span class="update-author">${update.author}</span>
+                        <span class="update-time">${update.time}</span>
                     </div>
-                    <span>${task.progress}%</span>
+                    <p class="update-content">${update.content}</p>
+                </div>
+            `).join('');
+        }
+
+        // Show project details section
+        customerPortal.style.display = 'none';
+        projectDetails.style.display = 'block';
+
+        // Add smooth transitions
+        document.querySelectorAll('.task-item').forEach(item => {
+            item.style.transition = 'all 0.2s ease';
+        });
+
+    } catch (error) {
+        console.error('Error updating project details:', error);
+    }
+};
+
+// Create task list item with modern styling
+function createTaskListItem(task) {
+    return `
+        <li class="task-item" onclick="showTaskDetails('${task.id}')">
+            <div class="task-header">
+                <div class="task-name">
+                    <i class="fas fa-circle-check"></i>
+                    <span>${task.name}</span>
+                </div>
+                <div class="task-date">
+                    <i class="fas fa-calendar"></i>
+                    <span>${task.date}</span>
+                </div>
+            </div>
+            <div class="task-description">${task.description}</div>
+            <div class="task-meta">
+                <div class="task-assignee">
+                    <i class="fas fa-user"></i>
+                    <span>${task.assignee}</span>
                 </div>
             </div>
         </li>
-    `).join('');
-
-    // Update Upcoming Tasks
-    const upcomingList = projectDetailsSection.querySelector('.details-card:nth-child(3) .task-list');
-    upcomingList.innerHTML = project.upcomingTasks.map(task => `
-        <li class="task-item upcoming">
-            <span>${task.name}</span>
-            <span class="task-date">${task.date}</span>
-        </li>
-    `).join('');
-
-    // Add click handlers to all task items after updating the lists
-    attachTaskClickHandlers();
+    `;
 }
 
-// Function to attach click handlers to task items
-function attachTaskClickHandlers() {
-    const taskItems = document.querySelectorAll('.task-item');
-    taskItems.forEach(task => {
-        task.addEventListener('click', function() {
-            const taskName = this.querySelector('span:first-child').textContent;
-            const taskDate = this.querySelector('.task-date')?.textContent;
-            const taskProgress = this.querySelector('.task-progress .progress')?.style.width;
-            
-            let status;
-            if (this.classList.contains('complete')) {
-                status = 'Complete';
-            } else if (this.classList.contains('current')) {
-                status = 'In Progress';
-            } else if (this.classList.contains('upcoming')) {
-                status = 'Upcoming';
-            }
-            
-            showTaskOverlay(taskName, taskDate, status, taskProgress);
-        });
-    });
-}
-
-// Update Updates List
-function updateUpdates(project) {
-    const updatesList = projectDetailsSection.querySelector('.update-list');
-    updatesList.innerHTML = project.updates.map(update => `
-        <div class="update-item">
-            <div class="update-header">
-                <span class="update-author">${update.author}</span>
-                <span class="update-date">${update.time}</span>
-            </div>
-            <p class="update-content">${update.content}</p>
-        </div>
-    `).join('');
-}
-
-// Show Customer Portal
-function showCustomerPortal() {
-    // Add a small delay to ensure smooth transition
-    setTimeout(() => {
-        projectDetailsSection.style.display = 'none';
-        customerPortalSection.style.display = 'block';
-        
-        // Scroll to the projects section
-        const projectsSection = document.querySelector('.page-header');
-        if (projectsSection) {
-            projectsSection.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    }, 100);
-}
+// Format date
+window.formatDate = function(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+};
 
 // Smooth Progress Bar Animation
 document.querySelectorAll('.progress').forEach(progress => {
@@ -539,19 +609,36 @@ document.querySelectorAll('button').forEach(button => {
 
 // Task Overlay Functions
 function showTaskDetails(taskId) {
-    const task = taskDetails[taskId];
-    if (!task) return;
+    let task = null;
+
+    // Find the task in all projects
+    for (const project of Object.values(window.projectsData)) {
+        const foundTask = [...project.completedTasks, ...project.inProgressTasks, ...project.upcomingTasks]
+            .find(t => t.id === taskId);
+        if (foundTask) {
+            task = foundTask;
+            break;
+        }
+    }
+
+    if (!task) {
+        console.error('Task not found:', taskId);
+        return;
+    }
 
     const overlay = document.getElementById('task-overlay');
     
-    // Update overlay content
-    document.getElementById('task-title').textContent = task.title;
+    // Update the content
+    document.getElementById('task-title').textContent = task.name;
     document.getElementById('task-date').textContent = task.date;
     document.getElementById('task-assignee').textContent = task.assignee;
-    document.getElementById('task-status').textContent = task.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
-    document.getElementById('task-status').className = `status-badge ${task.status}`;
-    document.getElementById('task-description').textContent = task.description;
     
+    const statusElement = document.getElementById('task-status');
+    statusElement.textContent = task.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    statusElement.className = `status-badge ${task.status}`;
+    
+    document.getElementById('task-description').textContent = task.description;
+
     // Update requirements list
     const requirementsList = document.getElementById('task-requirements');
     requirementsList.innerHTML = task.requirements.map(req => `
@@ -565,25 +652,25 @@ function showTaskDetails(taskId) {
     overlay.style.display = 'flex';
     setTimeout(() => overlay.classList.add('show'), 10);
 
-    // Add click outside to close
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
-            closeTaskOverlay();
-        }
-    });
-
-    // Add escape key to close
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeTaskOverlay();
-        }
-    });
+    // Add escape key listener
+    document.addEventListener('keydown', handleEscapeKey);
 }
 
 function closeTaskOverlay() {
     const overlay = document.getElementById('task-overlay');
     overlay.classList.remove('show');
-    setTimeout(() => overlay.style.display = 'none', 300);
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 300);
+
+    // Remove escape key listener
+    document.removeEventListener('keydown', handleEscapeKey);
+}
+
+function handleEscapeKey(event) {
+    if (event.key === 'Escape') {
+        window.closeTaskOverlay();
+    }
 }
 
 function showTaskOverlay(taskName, date, status, progress) {
@@ -685,4 +772,27 @@ document.addEventListener('click', function(e) {
     } else if (e.target === newProjectOverlay) {
         closeNewProjectOverlay();
     }
-}); 
+});
+
+// Task click handlers
+function attachTaskClickHandlers() {
+    const taskItems = document.querySelectorAll('.task-item');
+    taskItems.forEach(task => {
+        task.addEventListener('click', function() {
+            const taskName = this.querySelector('span:first-child').textContent;
+            const taskDate = this.querySelector('.task-date')?.textContent;
+            const taskProgress = this.querySelector('.task-progress .progress')?.style.width;
+            
+            let status;
+            if (this.classList.contains('complete')) {
+                status = 'Complete';
+            } else if (this.classList.contains('current')) {
+                status = 'In Progress';
+            } else if (this.classList.contains('upcoming')) {
+                status = 'Upcoming';
+            }
+            
+            showTaskOverlay(taskName, taskDate, status, taskProgress);
+        });
+    });
+} 
