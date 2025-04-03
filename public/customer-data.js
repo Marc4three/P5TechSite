@@ -18,22 +18,40 @@ const customerOrganizations = {
 };
 
 // Get customer organization based on email
-window.getCustomerOrganization = function(email) {
+function getCustomerOrganization(email) {
+    if (!email) {
+        console.error('No email provided to getCustomerOrganization');
+        return null;
+    }
+    
     const domain = email.split('@')[1];
-    return customerOrganizations[domain];
-};
+    if (!domain) {
+        console.error('Invalid email format:', email);
+        return null;
+    }
+    
+    const organization = customerOrganizations[domain];
+    console.log('Organization lookup for domain', domain, ':', organization);
+    return organization;
+}
 
 // Get projects for a specific customer
-window.getCustomerProjects = function(email) {
-    const organization = window.getCustomerOrganization(email);
+function getCustomerProjects(email) {
+    const organization = getCustomerOrganization(email);
     return organization ? organization.projects : [];
-};
+}
 
 // Check if a project belongs to a customer
-window.isProjectForCustomer = function(projectId, email) {
-    const customerProjects = window.getCustomerProjects(email);
+function isProjectForCustomer(projectId, email) {
+    const customerProjects = getCustomerProjects(email);
     return customerProjects.includes(projectId);
-};
+}
 
 // Make functions and data available globally
-window.customerOrganizations = customerOrganizations; 
+window.customerOrganizations = customerOrganizations;
+window.getCustomerOrganization = getCustomerOrganization;
+window.getCustomerProjects = getCustomerProjects;
+window.isProjectForCustomer = isProjectForCustomer;
+
+// Log that the module has been loaded
+console.log('Customer data module loaded successfully'); 

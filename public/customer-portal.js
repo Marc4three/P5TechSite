@@ -484,15 +484,15 @@ window.showProjectDetails = function(projectId) {
         const updateList = projectDetails.querySelector('.update-list');
         if (updateList) {
             updateList.innerHTML = project.updates.map(update => `
-                <div class="update-item">
-                    <div class="update-header">
-                        <span class="update-author">${update.author}</span>
+        <div class="update-item">
+            <div class="update-header">
+                <span class="update-author">${update.author}</span>
                         <span class="update-time">${update.time}</span>
-                    </div>
-                    <p class="update-content">${update.content}</p>
-                </div>
-            `).join('');
-        }
+            </div>
+            <p class="update-content">${update.content}</p>
+        </div>
+    `).join('');
+}
 
         // Show project details section
         customerPortal.style.display = 'none';
@@ -638,7 +638,7 @@ function showTaskDetails(taskId) {
     statusElement.className = `status-badge ${task.status}`;
     
     document.getElementById('task-description').textContent = task.description;
-
+    
     // Update requirements list
     const requirementsList = document.getElementById('task-requirements');
     requirementsList.innerHTML = task.requirements.map(req => `
@@ -772,7 +772,7 @@ document.addEventListener('click', function(e) {
     } else if (e.target === newProjectOverlay) {
         closeNewProjectOverlay();
     }
-});
+}); 
 
 // Task click handlers
 function attachTaskClickHandlers() {

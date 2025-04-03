@@ -1,0 +1,13 @@
+# Set correct MIME types
+AddType application/javascript .js
+AddType text/javascript .js
+
+# Enable CORS
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type"
+
+# Cache control
+<FilesMatch "\.(js|css)$">
+    Header set Cache-Control "max-age=31536000, public"
+</FilesMatch> 

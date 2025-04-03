@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner Integration Debug</title>
+    <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+    <script src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+    <script src="https://js.live.net/v7.2/OneDrive.js"></script>
+    <script src="https://graph.microsoft.com/v1.0/js/graph-js-sdk.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+            font-size: 14px;
+        }
+        h1 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 16px;
+            margin: 5px 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 2px;
+        }
+        h3 {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .test-section {
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #eee;
+        }
+        .test-item {
+            margin: 5px 0;
+            padding: 5px;
+            background: #f9f9f9;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .pending {
+            color: orange;
+        }
+        button {
+            padding: 3px 8px;
+            margin: 2px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        pre {
+            background: #f0f0f0;
+            padding: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+        .comparison {
+            display: flex;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        .expected, .received {
+            flex: 1;
+            padding: 5px;
+            margin: 0 2px;
+        }
+        .expected {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+        }
+        .received {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+        }
+        .comparison h4 {
+            margin: 2px 0;
+            font-size: 12px;
+        }
+        .missing {
+            background-color: #fff1f0;
+            border: 1px solid #ffa39e;
+        }
+        .extra {
+            background-color: #f9f0ff;
+            border: 1px solid #d3adf7;
+        }
+        .permission-error {
+            background-color: #fff1f0;
+            border: 1px solid #ffa39e;
+            padding: 5px;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .permission-error h3 {
+            color: #cf1322;
+            margin: 2px 0;
+            font-size: 13px;
+        }
+        .permission-error ul {
+            margin: 2px 0;
+            padding-left: 20px;
+        }
+        .permission-error li {
+            margin-bottom: 2px;
+        }
+        .steps {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            padding: 5px;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .steps h3 {
+            color: #389e0d;
+            margin: 2px 0;
+            font-size: 13px;
+        }
+        .steps ol {
+            margin: 2px 0;
+            padding-left: 20px;
+        }
+        .steps li {
+            margin-bottom: 2px;
+        }
+        .token-info {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 5px;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .token-info h3 {
+            color: #1890ff;
+            margin: 2px 0;
+            font-size: 13px;
+        }
+        .token-details {
+            display: flex;
+            flex-wrap: wrap;
+            font-size: 12px;
+        }
+        .token-detail {
+            width: 50%;
+            margin-bottom: 2px;
+        }
+        .token-detail strong {
+            display: inline-block;
+            width: 120px;
+        }
+        .compact-view {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .compact-section {
+            width: 48%;
+            margin-right: 2%;
+            margin-bottom: 10px;
+        }
+        .compact-item {
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+        }
+        .compact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .compact-title {
+            font-weight: bold;
+            margin: 0;
+        }
+        .compact-status {
+            font-weight: bold;
+        }
+        .compact-content {
+            font-size: 12px;
+        }
+        .compact-pre {
+            background: #f0f0f0;
+            padding: 3px;
+            margin: 3px 0;
+            font-size: 11px;
+            overflow-x: auto;
+        }
+        .compact-error {
+            color: red;
+            font-size: 12px;
+            margin: 3px 0;
+        }
+        .compact-success {
+            color: green;
+            font-size: 12px;
+            margin: 3px 0;
+        }
+        .compact-warning {
+            color: orange;
+            font-size: 12px;
+            margin: 3px 0;
+        }
+        .compact-permission-error {
+            background-color: #fff1f0;
+            border: 1px solid #ffa39e;
+            padding: 3px;
+            margin: 3px 0;
+            font-size: 11px;
+        }
+        .compact-steps {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            padding: 3px;
+            margin: 3px 0;
+            font-size: 11px;
+        }
+        .compact-steps ol {
+            margin: 2px 0;
+            padding-left: 20px;
+        }
+        .compact-steps li {
+            margin-bottom: 1px;
+        }
+        .compact-troubleshoot {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 3px;
+            margin: 3px 0;
+            font-size: 11px;
+        }
+        .compact-troubleshoot h3 {
+            color: #1890ff;
+            margin: 2px 0;
+            font-size: 12px;
+        }
+        .compact-troubleshoot ul {
+            margin: 2px 0;
+            padding-left: 20px;
+        }
+        .compact-troubleshoot li {
+            margin-bottom: 1px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Planner Integration Debug Page</h1>
+    
+    <div class="compact-view">
+        <div class="compact-section">
+            <div class="compact-item">
+                <div class="compact-header">
+                    <h3 class="compact-title">1. Authentication Status</h3>
+                    <button onclick="checkAuth()">Check</button>
+                </div>
+                <div id="auth-details" class="compact-content"></div>
+            </div>
+        </div>
+
+        <div class="compact-section">
+            <div class="compact-item">
+                <div class="compact-header">
+                    <h3 class="compact-title">2. Token Information</h3>
+                    <button onclick="checkToken()">Check</button>
+                </div>
+                <div id="token-details" class="compact-content"></div>
+            </div>
+        </div>
+
+        <div class="compact-section">
+            <div class="compact-item">
+                <div class="compact-header">
+                    <h3 class="compact-title">3. Permission Status</h3>
+                    <button onclick="checkPermissions()">Check</button>
+                </div>
+                <div id="permission-details" class="compact-content"></div>
+            </div>
+        </div>
+
+        <div class="compact-section">
+            <div class="compact-item">
+                <div class="compact-header">
+                    <h3 class="compact-title">4. Tenant Configuration</h3>
+                    <button onclick="checkTenantConfig()">Check</button>
+                </div>
+                <div id="tenant-details" class="compact-content"></div>
+            </div>
+        </div>
+
+        <div class="compact-section">
+            <div class="compact-item">
+                <div class="compact-header">
+                    <h3 class="compact-title">5. Organization Mapping</h3>
+                    <button onclick="checkOrgMapping()">Check</button>
+                </div>
+                <div id="org-details" class="compact-content"></div>
+            </div>
+        </div>
+
+        <div class="compact-section">
+            <div class="compact-item">
+                <div class="compact-header">
+                    <h3 class="compact-title">6. Planner Access</h3>
+                    <button onclick="testPlannerAccess()">Check</button>
+                </div>
+                <div id="planner-details" class="compact-content"></div>
+            </div>
+        </div>
+
+        <div class="compact-section">
+            <div class="compact-item">
+                <div class="compact-header">
+                    <h3 class="compact-title">7. Graph API Connection</h3>
+                    <button onclick="testGraphAPI()">Check</button>
+                </div>
+                <div id="graph-details" class="compact-content"></div>
+            </div>
+        </div>
+
+        <div class="compact-section">
+            <div class="compact-item">
+                <div class="compact-header">
+                    <h3 class="compact-title">8. Planner Plans</h3>
+                    <button onclick="checkPlannerPlans()">Check</button>
+                </div>
+                <div id="plans-details" class="compact-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth-config.js"></script>
+    <script src="customer-data.js"></script>
+    <script src="planner-config.js"></script>
+    <script src="planner-integration.js"></script>
+    <script>
+        // Debug logging function
+        function log(message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Update UI with test results
+        function updateTestResult(elementId, success, message, details = null, expected = null) {
+            const element = document.getElementById(elementId);
+            
+            let content = `<div class="compact-status ${success ? 'compact-success' : 'compact-error'}">${message}</div>`;
+            
+            if (expected && details) {
+                content += `
+                    <div class="comparison">
+                        <div class="expected">
+                            <h4>Expected</h4>
+                            <pre class="compact-pre">${JSON.stringify(expected, null, 2)}</pre>
+                        </div>
+                        <div class="received">
+                            <h4>Received</h4>
+                            <pre class="compact-pre">${JSON.stringify(details, null, 2)}</pre>
+                        </div>
+                    </div>
+                `;
+            } else if (details) {
+                content += `<pre class="compact-pre">${JSON.stringify(details, null, 2)}</pre>`;
+            }
+            
+            element.innerHTML = content;
+        }
+
+        // 1. Authentication Check
+        async function checkAuth() {
+            try {
+                const accounts = await window.b2cInstance.getAllAccounts();
+                const currentAccount = accounts[0];
+                
+                const expected = {
+                    hasAccount: true,
+                    accountType: "B2C account",
+                    hasUsername: true,
+                    hasTenantId: true
+                };
+                
+                if (currentAccount) {
+                    const received = {
+                        hasAccount: true,
+                        accountType: currentAccount.homeAccountId.includes("b2c") ? "B2C account" : "Regular account",
+                        hasUsername: !!currentAccount.username,
+                        hasTenantId: !!currentAccount.tenantId,
+                        username: currentAccount.username,
+                        tenantId: currentAccount.tenantId,
+                        homeAccountId: currentAccount.homeAccountId
+                    };
+                    
+                    updateTestResult('auth-details', true, 'Authentication Active', received, expected);
+                } else {
+                    updateTestResult('auth-details', false, 'No Active Authentication', { hasAccount: false }, expected);
+                }
+            } catch (error) {
+                updateTestResult('auth-details', false, 'Authentication Error', error);
+            }
+        }
+
+        // 2. Token Information Check
+        async function checkToken() {
+            try {
+                const accounts = await window.b2cInstance.getAllAccounts();
+                const currentAccount = accounts[0];
+                
+                if (!currentAccount) {
+                    updateTestResult('token-details', false, 'No Active Account', null);
+                    return;
+                }
+
+                // Get token with all scopes
+                const scopes = [
+                    "offline_access", 
+                    "openid", 
+                    "https://graph.microsoft.com/User.Read",
+                    "https://graph.microsoft.com/GroupMember.Read.All",
+                    "https://graph.microsoft.com/Group.Read.All",
+                    "https://graph.microsoft.com/Tasks.Read",
+                    "https://graph.microsoft.com/Tasks.ReadWrite"
+                ];
+                
+                const tokenResponse = await window.b2cInstance.acquireTokenSilent({
+                    scopes: scopes,
+                    account: currentAccount
+                }).catch(async (error) => {
+                    if (error.name === 'InteractionRequiredAuthError') {
+                        return await window.b2cInstance.acquireTokenPopup({
+                            scopes: scopes
+                        });
+                    }
+                    throw error;
+                });
+                
+                const token = tokenResponse.accessToken;
+                const tokenParts = token.split('.');
+                const tokenPayload = tokenParts.length > 1 ? JSON.parse(atob(tokenParts[1])) : null;
+                
+                const expected = {
+                    hasToken: true,
+                    hasScopes: true,
+                    tokenFormat: "JWT"
+                };
+                
+                const received = {
+                    hasToken: !!token,
+                    tokenLength: token.length,
+                    tokenFormat: tokenParts.length === 3 ? "JWT" : "Unknown",
+                    hasScopes: tokenPayload && tokenPayload.scp ? true : false,
+                    scopes: tokenPayload && tokenPayload.scp ? tokenPayload.scp : [],
+                    expiresOn: tokenPayload && tokenPayload.exp ? new Date(tokenPayload.exp * 1000).toISOString() : null,
+                    issuedAt: tokenPayload && tokenPayload.iat ? new Date(tokenPayload.iat * 1000).toISOString() : null,
+                    issuer: tokenPayload && tokenPayload.iss ? tokenPayload.iss : null,
+                    audience: tokenPayload && tokenPayload.aud ? tokenPayload.aud : null
+                };
+                
+                updateTestResult('token-details', received.hasToken && received.hasScopes, 
+                    'Token Information', received, expected);
+            } catch (error) {
+                updateTestResult('token-details', false, 'Token Error', error);
+            }
+        }
+
+        // 3. Permission Status Check
+        async function checkPermissions() {
+            try {
+                const accounts = await window.b2cInstance.getAllAccounts();
+                const currentAccount = accounts[0];
+                
+                if (!currentAccount) {
+                    updateTestResult('permission-details', false, 'No Active Account', null);
+                    return;
+                }
+
+                // Get token with all scopes
+                const scopes = [
+                    "offline_access", 
+                    "openid", 
+                    "https://graph.microsoft.com/User.Read",
+                    "https://graph.microsoft.com/GroupMember.Read.All",
+                    "https://graph.microsoft.com/Group.Read.All",
+                    "https://graph.microsoft.com/Tasks.Read",
+                    "https://graph.microsoft.com/Tasks.ReadWrite"
+                ];
+                
+                const tokenResponse = await window.b2cInstance.acquireTokenSilent({
+                    scopes: scopes,
+                    account: currentAccount
+                }).catch(async (error) => {
+                    if (error.name === 'InteractionRequiredAuthError') {
+                        return await window.b2cInstance.acquireTokenPopup({
+                            scopes: scopes
+                        });
+                    }
+                    throw error;
+                });
+                
+                const token = tokenResponse.accessToken;
+                
+                // Use the new checkPermissions method from PlannerIntegration
+                const plannerIntegration = new PlannerIntegration();
+                plannerIntegration.msalInstance = window.b2cInstance;
+                plannerIntegration.account = currentAccount;
+                
+                const permissionResults = await plannerIntegration.checkPermissions();
+                
+                const expected = {
+                    userRead: true,
+                    groupRead: true,
+                    plannerRead: true
+                };
+                
+                const received = permissionResults.details || {
+                    userRead: false,
+                    groupRead: false,
+                    plannerRead: false,
+                    missingPermissions: ['User.Read', 'GroupMember.Read.All', 'Group.Read.All', 'Tasks.Read', 'Tasks.ReadWrite']
+                };
+                
+                const success = permissionResults.success;
+                
+                let content = `<div class="compact-status ${success ? 'compact-success' : 'compact-error'}">${permissionResults.message}</div>`;
+                
+                if (!success) {
+                    content += `
+                        <div class="compact-permission-error">
+                            <h3>Permission Error Detected</h3>
+                            <p>The application needs additional permissions to access Microsoft Graph API resources.</p>
+                            <p>Missing permissions:</p>
+                            <ul>
+                                ${received.missingPermissions.includes('User.Read') ? '<li>User.Read - To access basic user information</li>' : ''}
+                                ${received.missingPermissions.includes('GroupMember.Read.All') ? '<li>GroupMember.Read.All - To access group memberships</li>' : ''}
+                                ${received.missingPermissions.includes('Group.Read.All') ? '<li>Group.Read.All - To access group information</li>' : ''}
+                                ${received.missingPermissions.includes('Tasks.Read') ? '<li>Tasks.Read - To read Planner tasks</li>' : ''}
+                                ${received.missingPermissions.includes('Tasks.ReadWrite') ? '<li>Tasks.ReadWrite - To create and update Planner tasks</li>' : ''}
+                            </ul>
+                        </div>
+                        <div class="compact-steps">
+                            <h3>How to Fix</h3>
+                            <ol>
+                                <li>Go to the Azure Portal (https://portal.azure.com)</li>
+                                <li>Navigate to "Azure Active Directory" > "App registrations"</li>
+                                <li>Find your application (with client ID "${window.b2cConfig?.auth?.clientId || 'unknown'}")</li>
+                                <li>Click on "API permissions" in the left menu</li>
+                                <li>Click "Add a permission"</li>
+                                <li>Select "Microsoft Graph"</li>
+                                <li>Choose "Delegated permissions"</li>
+                                <li>Add the missing permissions listed above</li>
+                                <li>Click "Add permissions"</li>
+                                <li>Click "Grant admin consent" (this requires admin privileges)</li>
+                                <li>Clear your browser cache and sign out/sign back in</li>
+                            </ol>
+                        </div>
+                        <div class="compact-troubleshoot">
+                            <h3>Troubleshooting Tips</h3>
+                            <ul>
+                                <li>Make sure you have admin rights to grant consent for the application</li>
+                                <li>If you don't have admin rights, contact your Azure AD administrator</li>
+                                <li>After granting permissions, it may take a few minutes for them to propagate</li>
+                                <li>Try signing out and signing back in to get a new token with the updated permissions</li>
+                                <li>Check if your organization has any conditional access policies that might be blocking access</li>
+                                <li>Verify that your account has the necessary licenses for Microsoft Planner</li>
+                            </ul>
+                            <p>For more detailed instructions, see the <a href="azure-permissions-guide.md" target="_blank">Azure Permissions Guide</a>.</p>
+                        </div>
+                    `;
+                }
+                
+                content += `<pre class="compact-pre">${JSON.stringify(received, null, 2)}</pre>`;
+                
+                document.getElementById('permission-details').innerHTML = content;
+            } catch (error) {
+                updateTestResult('permission-details', false, 'Permission Check Error', error);
+            }
+        }
+
+        // 4. Tenant Configuration Check
+        async function checkTenantConfig() {
+            try {
+                const accounts = await window.b2cInstance.getAllAccounts();
+                const currentAccount = accounts[0];
+                
+                if (!currentAccount) {
+                    updateTestResult('tenant-details', false, 'No Active Account', null);
+                    return;
+                }
+
+                const tenantId = currentAccount.tenantId;
+                const planIds = window.PlannerConfig.getAllPlannerIdsForTenant(tenantId);
+                
+                const expected = {
+                    hasTenantId: true,
+                    hasPlanIds: true,
+                    planIdsFormat: "array"
+                };
+                
+                const received = {
+                    hasTenantId: !!tenantId,
+                    hasPlanIds: Array.isArray(planIds) && planIds.length > 0,
+                    planIdsFormat: Array.isArray(planIds) ? "array" : typeof planIds,
+                    tenantId: tenantId,
+                    planIds: planIds
+                };
+                
+                updateTestResult('tenant-details', received.hasTenantId && received.hasPlanIds, 
+                    'Tenant Configuration Check', received, expected);
+            } catch (error) {
+                updateTestResult('tenant-details', false, 'Tenant Configuration Error', error);
+            }
+        }
+
+        // 5. Organization Mapping Check
+        async function checkOrgMapping() {
+            try {
+                const accounts = await window.b2cInstance.getAllAccounts();
+                const currentAccount = accounts[0];
+                
+                if (!currentAccount) {
+                    updateTestResult('org-details', false, 'No Active Account', null);
+                    return;
+                }
+
+                const email = currentAccount.username;
+                const organization = window.PlannerConfig.getOrganizationFromEmail(email);
+                
+                const expected = {
+                    hasEmail: true,
+                    hasOrganization: true,
+                    organizationFormat: "object"
+                };
+                
+                const received = {
+                    hasEmail: !!email,
+                    hasOrganization: !!organization,
+                    organizationFormat: typeof organization,
+                    email: email,
+                    organization: organization
+                };
+                
+                updateTestResult('org-details', received.hasOrganization, 
+                    'Organization Mapping Check', received, expected);
+            } catch (error) {
+                updateTestResult('org-details', false, 'Organization Mapping Error', error);
+            }
+        }
+
+        // 6. Planner Access Check
+        async function testPlannerAccess() {
+            try {
+                const plannerIntegration = new PlannerIntegration();
+                await plannerIntegration.initialize();
+                
+                const expected = {
+                    initialized: true,
+                    hasPlanIds: true,
+                    canGetTasks: true
+                };
+                
+                const received = {
+                    initialized: true,
+                    hasPlanIds: plannerIntegration.planIds.length > 0,
+                    planIds: plannerIntegration.planIds
+                };
+                
+                // Try to get tasks from the first plan
+                if (plannerIntegration.planIds.length > 0) {
+                    const tasks = await plannerIntegration.getTasks(plannerIntegration.planIds[0]);
+                    received.canGetTasks = true;
+                    received.tasks = tasks;
+                } else {
+                    received.canGetTasks = false;
+                }
+                
+                updateTestResult('planner-details', received.initialized && received.hasPlanIds && received.canGetTasks, 
+                    'Planner Access Check', received, expected);
+            } catch (error) {
+                updateTestResult('planner-details', false, 'Planner Access Error', error);
+            }
+        }
+
+        // 7. Graph API Check
+        async function testGraphAPI() {
+            try {
+                const plannerIntegration = new PlannerIntegration();
+                await plannerIntegration.initialize();
+                
+                const token = await plannerIntegration.getAccessToken();
+                
+                const expected = {
+                    hasToken: true,
+                    canAccessGraph: true
+                };
+                
+                const received = {
+                    hasToken: !!token,
+                    tokenPrefix: token ? token.substring(0, 10) + '...' : null
+                };
+                
+                // Test a simple Graph API call
+                if (token) {
+                    const response = await fetch('https://graph.microsoft.com/v1.0/me', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        received.canAccessGraph = true;
+                        received.userInfo = {
+                            displayName: data.displayName,
+                            email: data.userPrincipalName
+                        };
+                    } else {
+                        received.canAccessGraph = false;
+                        received.error = await response.text();
+                    }
+                }
+                
+                updateTestResult('graph-details', received.hasToken && received.canAccessGraph, 
+                    'Graph API Check', received, expected);
+            } catch (error) {
+                updateTestResult('graph-details', false, 'Graph API Error', error);
+            }
+        }
+
+        // 8. Planner Plans Check
+        async function checkPlannerPlans() {
+            try {
+                const plannerIntegration = new PlannerIntegration();
+                await plannerIntegration.initialize();
+                
+                const token = await plannerIntegration.getAccessToken();
+                
+                const expected = {
+                    hasPlans: true,
+                    plansFormat: "array"
+                };
+                
+                const received = {
+                    configuredPlanIds: plannerIntegration.planIds,
+                    actualPlans: []
+                };
+                
+                // Get all groups (teams) the user is a member of
+                const groupsResponse = await fetch('https://graph.microsoft.com/v1.0/me/memberOf', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!groupsResponse.ok) {
+                    const errorText = await groupsResponse.text();
+                    console.error('Failed to fetch groups:', {
+                        status: groupsResponse.status,
+                        statusText: groupsResponse.statusText,
+                        error: errorText
+                    });
+                    
+                    let content = `<div class="compact-status compact-error">Planner Plans Check</div>`;
+                    
+                    if (groupsResponse.status === 403) {
+                        content += `
+                            <div class="compact-permission-error">
+                                <h3>Permission Error Detected</h3>
+                                <p>The application needs additional permissions to access your groups.</p>
+                                <p>Missing permissions:</p>
+                                <ul>
+                                    <li>GroupMember.Read.All - To access group memberships</li>
+                                    <li>Group.Read.All - To access group information</li>
+                                    <li>Tasks.Read - To read Planner tasks</li>
+                                    <li>Tasks.ReadWrite - To create and update Planner tasks</li>
+                                </ul>
+                            </div>
+                            <div class="compact-steps">
+                                <h3>How to Fix</h3>
+                                <ol>
+                                    <li>Go to the Azure Portal (https://portal.azure.com)</li>
+                                    <li>Navigate to "Azure Active Directory" > "App registrations"</li>
+                                    <li>Find your application (with client ID "${window.b2cConfig?.auth?.clientId || 'unknown'}")</li>
+                                    <li>Click on "API permissions" in the left menu</li>
+                                    <li>Click "Add a permission"</li>
+                                    <li>Select "Microsoft Graph"</li>
+                                    <li>Choose "Delegated permissions"</li>
+                                    <li>Add the missing permissions listed above</li>
+                                    <li>Click "Add permissions"</li>
+                                    <li>Click "Grant admin consent" (this requires admin privileges)</li>
+                                    <li>Clear your browser cache and sign out/sign back in</li>
+                                </ol>
+                            </div>
+                            <div class="compact-troubleshoot">
+                                <h3>Troubleshooting Tips</h3>
+                                <ul>
+                                    <li>Make sure you have admin rights to grant consent for the application</li>
+                                    <li>If you don't have admin rights, contact your Azure AD administrator</li>
+                                    <li>After granting permissions, it may take a few minutes for them to propagate</li>
+                                    <li>Try signing out and signing back in to get a new token with the updated permissions</li>
+                                    <li>Check if your organization has any conditional access policies that might be blocking access</li>
+                                    <li>Verify that your account has the necessary licenses for Microsoft Planner</li>
+                                </ul>
+                                <p>For more detailed instructions, see the <a href="azure-permissions-guide.md" target="_blank">Azure Permissions Guide</a>.</p>
+                            </div>
+                        `;
+                    }
+                    
+                    content += `<pre class="compact-pre">${JSON.stringify({
+                        error: errorText,
+                        status: groupsResponse.status,
+                        statusText: groupsResponse.statusText
+                    }, null, 2)}</pre>`;
+                    
+                    document.getElementById('plans-details').innerHTML = content;
+                    return;
+                }
+                
+                const groups = await groupsResponse.json();
+                received.groups = groups.value.map(g => ({
+                    id: g.id,
+                    displayName: g.displayName
+                }));
+                
+                // For each group, try to get its plans
+                for (const group of groups.value) {
+                    try {
+                        const plansResponse = await fetch(`https://graph.microsoft.com/v1.0/groups/${group.id}/planner/plans`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (plansResponse.ok) {
+                            const plans = await plansResponse.json();
+                            if (plans.value && plans.value.length > 0) {
+                                received.actualPlans.push(...plans.value.map(p => ({
+                                    id: p.id,
+                                    title: p.title,
+                                    groupId: group.id,
+                                    groupName: group.displayName
+                                })));
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`Error fetching plans for group ${group.displayName}:`, error);
+                    }
+                }
+                
+                // Compare configured plans with actual plans
+                received.missingPlans = received.configuredPlanIds.filter(
+                    id => !received.actualPlans.some(p => p.id === id)
+                );
+                
+                received.extraPlans = received.actualPlans.filter(
+                    p => !received.configuredPlanIds.includes(p.id)
+                );
+                
+                const success = received.actualPlans.length > 0 && received.missingPlans.length === 0;
+                
+                updateTestResult('plans-details', success, 
+                    'Planner Plans Check', received, expected);
+            } catch (error) {
+                updateTestResult('plans-details', false, 'Planner Plans Error', error);
+            }
+        }
+
+        // Run initial checks
+        window.onload = () => {
+            checkAuth();
+            checkToken();
+            checkPermissions();
+            checkTenantConfig();
+            checkOrgMapping();
+            testPlannerAccess();
+            testGraphAPI();
+            checkPlannerPlans();
+        };
+    </script>
+</body>
+</html> 
