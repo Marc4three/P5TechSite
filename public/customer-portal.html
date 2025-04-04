@@ -505,16 +505,17 @@
         .forecast-info-panel {
             position: fixed;
             left: 0;
-            top: 380px;
-            width: 200px;
+            top: 0;
+            bottom: 0;
+            width: 250px;
             background: white;
-            border-radius: 0 12px 12px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             padding: 20px;
+            z-index: 1000;
             transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
-            z-index: 99;
+            transition: transform 0.3s ease;
+            max-height: 100vh;
+            overflow-y: auto;
         }
 
         .forecast-info-panel.visible {
@@ -1138,6 +1139,9 @@
                             const projectCard = document.createElement('div');
                             projectCard.className = 'project-card';
                             projectCard.setAttribute('data-plan-id', project.planId);
+                            projectCard.setAttribute('data-channel', project.channel || '');
+                            projectCard.setAttribute('data-start-date', project.startDate || '');
+                            projectCard.setAttribute('data-due-date', project.dueDate ? project.dueDate.toLocaleDateString() : '');
                             
                             // Calculate project progress
                             let totalTasks = 0;
@@ -1179,19 +1183,19 @@
                                             <div class="project-card-customer">${project.team}</div>
                                             <div class="project-status-tag ${forecastStatus.class}">
                                                 ${forecastStatus.status} - ${forecastStatus.detail}
-                        </div>
-                            </div>
+                                            </div>
+                                        </div>
                                         <div class="header-buttons">
                                             <button class="view-toggle" onclick="toggleProjectDetails(event, '${project.planId}')">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
+                                                View Details
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div class="info-button-container">
                                         <button class="info-button" onclick="toggleForecastInfo(event)" title="Show forecast calculation info">
                                             ℹ️
-                            </button>
-                        </div>
+                                        </button>
+                                    </div>
                                     <div class="project-summary">
                                         <div class="project-summary-item">
                                             <svg viewBox="0 0 20 20" fill="currentColor">
@@ -1199,7 +1203,7 @@
                                                 <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
                                             </svg>
                                             <span>${completedTasks} of ${totalTasks} tasks completed</span>
-                    </div>
+                                        </div>
                                         <div class="project-summary-item">
                                             <svg viewBox="0 0 20 20" fill="currentColor">
                                                 ${blockerIcon}
@@ -1207,23 +1211,24 @@
                                             <span class="${hasBlockers ? 'project-blocker' : 'project-no-blocker'}">
                                                 ${blockerText}
                                             </span>
-                        </div>
+                                        </div>
                                         <div class="project-summary-item">
                                             <svg viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                                             </svg>
                                             <span class="project-phase">Phase: ${getProjectPhase(progressPercent)}</span>
-                        </div>
-                            </div>
+                                        </div>
+                                    </div>
                                     <div class="project-card-meta">
                                         <div class="project-card-due-date">
                                             ${projectDueDate ? `Due: ${projectDueDate.toLocaleDateString()}` : 'No due date'}
-                            </div>
+                                        </div>
                                         <div class="project-card-progress">
-                            <div class="progress-bar">
+                                            <div class="progress-bar">
                                                 <div class="progress-fill" style="width: ${progressPercent}%"></div>
-                            </div>
+                                            </div>
                                             <span class="progress-text">${progressPercent}%</span>
+                                        </div>
                         </div>
                         </div>
                                     <div class="project-details" id="details-${project.planId}">
@@ -1359,6 +1364,17 @@
                     projectCard.classList.add('expanded');
                 });
 
+                // Fetch tasks first
+                const tasks = await plannerIntegration.getTasks(planId);
+                
+                // Calculate metrics
+                const totalTasks = tasks.length;
+                const completedTasks = tasks.filter(t => t.percentComplete === 100).length;
+                const inProgressTasks = tasks.filter(t => t.percentComplete > 0 && t.percentComplete < 100).length;
+                const overdueTasks = tasks.filter(t => {
+                    return t.dueDate && new Date(t.dueDate) < new Date() && t.percentComplete < 100;
+                }).length;
+
                 // Create the content for the details view
                 detailsContainer.innerHTML = '';
 
@@ -1371,7 +1387,7 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M19 12H5M12 19l-7-7 7-7"/>
                         </svg>
-                    Back to Projects
+                        Back to Projects
                     `;
                     backButton.onclick = () => closeProjectDetails(
                         projectCard,
@@ -1382,106 +1398,214 @@
                     existingHeader.appendChild(backButton);
                 }
 
-                // Create buckets container
-                const bucketsContainer = document.createElement('div');
-                bucketsContainer.className = 'buckets-container';
-                
-                // Load tasks and organize by buckets
-                const tasks = await plannerIntegration.getTasks(planId);
-                const buckets = {};
-                
-                // Initialize all buckets
-                bucketOrder.forEach(bucket => {
-                    buckets[bucket.id] = {
-                        name: bucket.name,
-                        class: bucket.class,
-                        tasks: []
-                    };
-                });
-                
-                // Group tasks by bucket
-                tasks.forEach(task => {
-                    let bucketId = 'todo'; // default bucket
-                    const bucketName = (task.bucketName || '').toLowerCase();
-                    
-                    if (bucketName.includes('planning')) bucketId = 'planning';
-                    else if (bucketName.includes('to-do') || bucketName.includes('todo')) bucketId = 'todo';
-                    else if (bucketName.includes('in progress') || bucketName.includes('in-progress')) bucketId = 'in-progress';
-                    else if (bucketName.includes('qa') || bucketName.includes('quality')) bucketId = 'in-qa';
-                    else if (bucketName.includes('uat') || bucketName.includes('retest')) bucketId = 'uat';
-                    else if (bucketName.includes('complete') || bucketName.includes('done')) bucketId = 'completed';
-                    
-                    buckets[bucketId].tasks.push(task);
-                });
+                // Create details container with new panels
+                const detailsPanelsContainer = document.createElement('div');
+                detailsPanelsContainer.className = 'details-container';
 
-                // Create bucket sections in the specified order
-                bucketOrder.forEach(({ id, name, class: bucketClass }) => {
-                    const bucket = buckets[id];
-                    const bucketSection = document.createElement('div');
-                    bucketSection.className = `bucket-section ${bucketClass}`;
-                    
-                    const bucketHeader = document.createElement('div');
-                    bucketHeader.className = 'bucket-header';
-                    bucketHeader.innerHTML = `
-                        <h4 class="bucket-title">
-                            <span class="bucket-icon"></span>
-                            ${bucket.name}
-                        </h4>
-                        <span class="task-count">${bucket.tasks.length} tasks</span>
-                    `;
-                    bucketSection.appendChild(bucketHeader);
-                    
-                    const taskList = document.createElement('ul');
-                    taskList.className = 'task-list';
-                    
-                    bucket.tasks.sort((a, b) => {
-                        if (a.dueDate && b.dueDate) {
-                            return new Date(a.dueDate) - new Date(b.dueDate);
-                        }
-                        return a.dueDate ? -1 : b.dueDate ? 1 : 0;
-                    });
-                    
-                    bucket.tasks.forEach(task => {
-                        const taskItem = document.createElement('li');
-                        taskItem.className = 'task-item';
-                        
-                        let statusClass = 'status-not-started';
-                        let statusText = 'Not Started';
-                        
-                        if (task.percentComplete === 100) {
-                            statusClass = 'status-completed';
-                            statusText = 'Completed';
-                        } else if (task.percentComplete > 0) {
-                            statusClass = 'status-in-progress';
-                            statusText = 'In Progress';
-                        }
-                        
-                        taskItem.innerHTML = `
-                            <div class="task-item-content">
-                                <input type="checkbox" class="task-checkbox" ${task.percentComplete === 100 ? 'checked' : ''} 
-                                       onchange="updateTaskStatus('${task.id}', this.checked)">
-                                <div class="task-details">
-                                    <span class="task-title">${task.title}</span>
-                                    <div class="task-meta">
-                                        ${task.dueDate ? `<span class="task-due-date">${new Date(task.dueDate).toLocaleDateString()}</span>` : ''}
-                                        <span class="task-status ${statusClass}">${statusText}</span>
-                </div>
+                // Check for blockers in tasks
+                const hasBlockers = tasks.some(task => task.hasBlocker);
+                const activeBlockers = tasks
+                    .filter(task => task.hasBlocker)
+                    .map(task => ({
+                        title: task.title,
+                        severity: "high",
+                        description: task.description || "No description provided",
+                        dateIdentified: new Date(task.createdDateTime).toLocaleDateString(),
+                        tasksAffected: 1
+                    }));
+
+                // Add Blockers Panel
+                detailsPanelsContainer.innerHTML = `
+                    <div class="details-panel analytics-panel">
+                        <div class="panel-header">
+                            <h3>Task Analytics</h3>
+                        </div>
+                        <div class="panel-content">
+                            <div class="analytics-grid">
+                                <div class="metric-card">
+                                    <label>Total Tasks</label>
+                                    <span class="metric-value">${totalTasks}</span>
+                                </div>
+                                <div class="metric-card">
+                                    <label>Completed</label>
+                                    <span class="metric-value">${completedTasks}</span>
+                                </div>
+                                <div class="metric-card">
+                                    <label>In Progress</label>
+                                    <span class="metric-value">${inProgressTasks}</span>
+                                </div>
+                                <div class="metric-card ${overdueTasks > 0 ? 'warning' : ''}">
+                                    <label>Overdue</label>
+                                    <span class="metric-value">${overdueTasks}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="details-panel blocker-panel ${hasBlockers ? 'has-blockers' : ''}">
+                        <div class="panel-header">
+                            <h3>
+                                <span class="status-icon ${hasBlockers ? 'warning' : 'ok'}">
+                                    ${hasBlockers ? '⚠️' : '✓'}
+                                </span>
+                                Project Blockers
+                            </h3>
+                            <span class="blocker-count">${activeBlockers.length} Active</span>
+                        </div>
+                        <div class="panel-content">
+                            ${!hasBlockers ? `
+                                <div class="no-blockers">
+                                    <span class="check-icon">✓</span>
+                                    <p>No active blockers</p>
+                                </div>
+                            ` : `
+                                <div class="blocker-list">
+                                    ${activeBlockers.map(blocker => `
+                                        <div class="blocker-item ${blocker.severity}">
+                                            <div class="blocker-header">
+                                                <h4>${blocker.title}</h4>
+                                                <span class="severity ${blocker.severity}">${blocker.severity.toUpperCase()}</span>
+                                            </div>
+                                            <p class="blocker-description">${blocker.description}</p>
+                                            <div class="blocker-meta">
+                                                <span>Identified: ${blocker.dateIdentified}</span>
+                                                <span>${blocker.tasksAffected} tasks affected</span>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `}
+                        </div>
                     </div>
-                        `;
-                        taskList.appendChild(taskItem);
-                    });
-                    
-                    bucketSection.appendChild(taskList);
-                    bucketsContainer.appendChild(bucketSection);
-                });
-                
-                detailsContainer.appendChild(bucketsContainer);
-                
-                // Trigger animation for buckets container
-                requestAnimationFrame(() => {
-                    bucketsContainer.classList.add('visible');
-                });
+                `;
+
+                detailsContainer.appendChild(detailsPanelsContainer);
+
+                // Add the styles
+                const styleSheet = document.createElement('style');
+                styleSheet.textContent = `
+                    .details-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 20px;
+                        padding: 20px;
+                    }
+
+                    .details-panel {
+                        background: white;
+                        border-radius: 12px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+
+                    .panel-header {
+                        padding: 15px 20px;
+                        border-bottom: 1px solid #e5e5e7;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+
+                    .panel-content {
+                        padding: 20px;
+                    }
+
+                    .blocker-panel.has-blockers {
+                        border-left: 4px solid #ff3b30;
+                    }
+
+                    .blocker-item {
+                        border: 1px solid #e5e5e7;
+                        border-radius: 8px;
+                        padding: 15px;
+                        margin-bottom: 15px;
+                    }
+
+                    .blocker-item.high {
+                        border-left: 4px solid #ff3b30;
+                    }
+
+                    .blocker-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 10px;
+                    }
+
+                    .severity {
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                        font-weight: 600;
+                    }
+
+                    .severity.high {
+                        background: #ffe5e5;
+                        color: #ff3b30;
+                    }
+
+                    .blocker-meta {
+                        display: flex;
+                        gap: 15px;
+                        margin-top: 10px;
+                        font-size: 0.9em;
+                        color: #666;
+                    }
+
+                    .analytics-grid {
+                        display: grid;
+                        grid-template-columns: repeat(4, 1fr);
+                        gap: 15px;
+                    }
+
+                    .metric-card {
+                        background: #f5f5f7;
+                        padding: 15px;
+                        border-radius: 8px;
+                        text-align: center;
+                    }
+
+                    .metric-card.warning .metric-value {
+                        color: #ff3b30;
+                    }
+
+                    .metric-card label {
+                        font-size: 0.9em;
+                        color: #666;
+                    }
+
+                    .metric-value {
+                        font-size: 24px;
+                        font-weight: 600;
+                        display: block;
+                        margin-top: 5px;
+                    }
+
+                    .status-icon {
+                        margin-right: 8px;
+                    }
+
+                    .blocker-count {
+                        background: #ff3b30;
+                        color: white;
+                        padding: 4px 8px;
+                        border-radius: 12px;
+                        font-size: 14px;
+                    }
+
+                    .no-blockers {
+                        text-align: center;
+                        padding: 20px;
+                        color: #34c759;
+                    }
+
+                    .no-blockers .check-icon {
+                        font-size: 24px;
+                        margin-bottom: 10px;
+                        display: block;
+                    }
+                `;
+                document.head.appendChild(styleSheet);
                 
             } catch (error) {
                 console.error('Error loading project details:', error);
