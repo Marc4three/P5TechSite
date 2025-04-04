@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner to Customer Portal Mapping Documentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f7;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            color: #2b579a;
+            margin-top: 30px;
+        }
+
+        .mapping-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e1e1e1;
+            border-radius: 4px;
+        }
+
+        .mapping-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .mapping-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .planner-side {
+            border-left: 4px solid #2b579a;
+        }
+
+        .portal-side {
+            border-left: 4px solid #107c10;
+        }
+
+        .data-flow {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            margin: 2px;
+        }
+
+        .status-notStarted { background: #e9ecef; }
+        .status-inProgress { background: #cff4fc; }
+        .status-completed { background: #d1e7dd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Planner to Customer Portal Mapping Documentation</h1>
+        
+        <div class="mapping-section">
+            <h2>1. Project Level Mapping</h2>
+            <div class="mapping-grid">
+                <div class="mapping-item planner-side">
+                    <h3>Planner Plan</h3>
+                    <ul>
+                        <li>Plan ID → Project Card ID</li>
+                        <li>Plan Title → Project Title</li>
+                        <li>Plan Description → Project Description</li>
+                        <li>Plan Buckets → Task Categories</li>
+                    </ul>
+                </div>
+                <div class="mapping-item portal-side">
+                    <h3>Customer Portal Project Card</h3>
+                    <ul>
+                        <li>data-plan-id attribute</li>
+                        <li>.project-card-title</li>
+                        <li>.project-card-customer</li>
+                        <li>Task Analytics Panel</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mapping-section">
+            <h2>2. Task Level Mapping</h2>
+            <div class="mapping-grid">
+                <div class="mapping-item planner-side">
+                    <h3>Planner Task Properties</h3>
+                    <ul>
+                        <li>Task ID</li>
+                        <li>Title</li>
+                        <li>Percent Complete</li>
+                        <li>Due Date</li>
+                        <li>Bucket Name</li>
+                        <li>Completed Date</li>
+                    </ul>
+                </div>
+                <div class="mapping-item portal-side">
+                    <h3>Customer Portal Task Display</h3>
+                    <ul>
+                        <li>Task Analytics Metrics</li>
+                        <li>Task Lists in Categories</li>
+                        <li>Progress Indicators</li>
+                        <li>Due Date Display</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mapping-section">
+            <h2>3. Status Mapping</h2>
+            <div class="mapping-grid">
+                <div class="mapping-item">
+                    <h3>Planner Status</h3>
+                    <div class="status-badge status-notStarted">Not Started (0%)</div>
+                    <div class="status-badge status-inProgress">In Progress (50%)</div>
+                    <div class="status-badge status-completed">Completed (100%)</div>
+                </div>
+                <div class="mapping-item">
+                    <h3>Portal Categories</h3>
+                    <ul>
+                        <li>Pending Start</li>
+                        <li>In Progress</li>
+                        <li>Testing</li>
+                        <li>Completed</li>
+                        <li>Overdue</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mapping-section">
+            <h2>4. Data Flow</h2>
+            <div class="data-flow">
+                <h3>Update Process</h3>
+                <ol>
+                    <li>Planner Task Updated</li>
+                    <li>Portal Refresh Triggered</li>
+                    <li>Tasks Fetched via API</li>
+                    <li>Metrics Calculated</li>
+                    <li>UI Updated</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="mapping-section">
+            <h2>5. Code Examples</h2>
+            <div class="code-block">
+                <pre>
+// Task Status Mapping
+const statusMap = {
+    'notStarted': 0,
+    'inProgress': 50,
+    'completed': 100
+};
+
+// Task Metrics Calculation
+const totalTasks = tasks.length;
+const completedTasks = tasks.filter(t => t.percentComplete === 100).length;
+const inProgressTasks = tasks.filter(t => t.percentComplete > 0 && t.percentComplete < 100).length;
+const overdueTasks = tasks.filter(t => t.dueDate && new Date(t.dueDate) < new Date() && t.percentComplete < 100).length;
+                </pre>
+            </div>
+        </div>
+
+        <div class="mapping-section">
+            <h2>6. Real-World Example: Clinovators CRM App Phase 2</h2>
+            
+            <div class="mapping-grid">
+                <div class="mapping-item">
+                    <h3>1. Automatically Pulled from Planner</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #f0f0f0;">
+                            <th style="padding: 10px; text-align: left;">Planner Value</th>
+                            <th style="padding: 10px; text-align: left;">UI Location</th>
+                            <th style="padding: 10px; text-align: left;">Actual Value</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Plan ID: "12345"</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">data-plan-id</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"12345"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Plan Title: "Clinovators CRM App Phase 2"</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">.project-card-title</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"Clinovators CRM App Phase 2"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Total Tasks: 42</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Total Tasks Badge</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"42 tasks"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Completed: 15</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Completed Card</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"15 tasks"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">In Progress: 20</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">In Progress Card</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"20 tasks"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Testing: 5</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Testing Card</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"5 tasks"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Pending: 2</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Pending Card</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"2 tasks"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Overdue: 3</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Overdue Card</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"3 tasks"</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mapping-grid">
+                <div class="mapping-item">
+                    <h3>2. Manually Set in Customer Portal</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #f0f0f0;">
+                            <th style="padding: 10px; text-align: left;">Field</th>
+                            <th style="padding: 10px; text-align: left;">UI Location</th>
+                            <th style="padding: 10px; text-align: left;">Actual Value</th>
+                            <th style="padding: 10px; text-align: left;">How Set</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Customer</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">.project-card-customer</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"Clinovators"</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Set when creating project card, stored in data attributes, used for filtering and display</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Start Date</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">data-start-date</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"2024-03-01"</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Manually entered during project setup, stored as data attribute, used for timeline display</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Due Date</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">data-due-date</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"2024-06-30"</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Manually entered during project setup, stored as data attribute, used for deadline tracking</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Channel</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">data-channel</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"Development"</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Set during project creation, used for categorization, stored as data attribute</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mapping-grid">
+                <div class="mapping-item">
+                    <h3>3. Sample Task (Pulled from Planner)</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #f0f0f0;">
+                            <th style="padding: 10px; text-align: left;">Planner Task</th>
+                            <th style="padding: 10px; text-align: left;">UI Location</th>
+                            <th style="padding: 10px; text-align: left;">Actual Value</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"Implement User Authentication"</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">.task-title</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"Implement User Authentication"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Status: 50%</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Task Status</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"In Progress (50%)"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Due: 2024-04-15</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">.task-meta</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"Due: 2024-04-15"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Bucket: "Development"</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">Task Category</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">"Development"</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> This documentation reflects the current state of the integration. 
+            Any changes to the Planner API or Customer Portal structure may require updates to this mapping.
+        </div>
+    </div>
+</body>
+</html> 
