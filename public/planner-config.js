@@ -74,97 +74,25 @@ async function getProjectsForOrganization(organization) {
     }
     
     try {
-        // Get current account
-        const currentAccounts = window.msalInstance.getAllAccounts();
-        if (!currentAccounts || currentAccounts.length === 0) {
-            throw new Error('No active account! Please sign in first.');
+        // Check if we have projects in plannerConfig
+        if (window.plannerConfig && window.plannerConfig.projects) {
+            console.log('Using cached projects from plannerConfig');
+            const projects = Object.values(window.plannerConfig.projects);
+            
+            // Filter projects for the organization's groups
+            const orgProjects = projects.filter(project => {
+                // Check if the project's group ID is in the organization's plannerGroups
+                return organization.plannerGroups?.includes(project.groupId);
+            });
+            
+            console.log('Found projects for organization:', orgProjects);
+            return orgProjects;
         }
         
-        // Set active account
-        window.msalInstance.setActiveAccount(currentAccounts[0]);
-        
-        // Get the user's groups from Microsoft Graph API
-        const token = await window.msalInstance.acquireTokenSilent({
-            scopes: ["https://graph.microsoft.com/GroupMember.Read.All"],
-            account: currentAccounts[0]
-        });
-
-        const groupsResponse = await fetch('https://graph.microsoft.com/v1.0/me/memberOf', {
-            headers: {
-                'Authorization': `Bearer ${token.accessToken}`,
-                'Accept': 'application/json'
-            }
-        });
-
-        if (!groupsResponse.ok) {
-            throw new Error('Failed to fetch groups: ' + groupsResponse.statusText);
-        }
-
-        const groups = await groupsResponse.json();
-        
-        // Filter to only the groups that contain Planner plans
-        const plannerGroups = groups.value.filter(group => 
-            organization.plannerGroups?.includes(group.id)
-        );
-
-        console.log('Found Planner groups:', plannerGroups);
-
-        // Get plans for each group
-        const projects = [];
-        for (const group of plannerGroups) {
-            try {
-                // Get a fresh token for each request to avoid expiration
-                const planToken = await window.msalInstance.acquireTokenSilent({
-                    scopes: ["https://graph.microsoft.com/GroupMember.Read.All"],
-                    account: currentAccounts[0]
-                });
-
-                const plansResponse = await fetch(`https://graph.microsoft.com/v1.0/groups/${group.id}/planner/plans`, {
-                    headers: {
-                        'Authorization': `Bearer ${planToken.accessToken}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (plansResponse.ok) {
-                    const plans = await plansResponse.json();
-                    projects.push(...plans.value.map(plan => ({
-                        id: plan.id,
-                        name: plan.title,
-                        description: `Planner board for ${group.displayName}`,
-                        planId: plan.id,
-                        team: group.displayName,
-                        channel: plan.title,
-                        groupId: group.id
-                    })));
-                } else {
-                    console.error(`Failed to fetch plans for group ${group.displayName}:`, plansResponse.statusText);
-                }
-            } catch (groupError) {
-                console.error(`Error fetching plans for group ${group.displayName}:`, groupError);
-                // Continue with other groups even if one fails
-                continue;
-            }
-        }
-
-        console.log('Found projects:', projects);
-        return projects;
+        console.warn('No projects found in plannerConfig, returning empty array');
+        return [];
     } catch (error) {
         console.error('Error getting projects:', error);
-        if (error.name === 'BrowserAuthError' || error.message.includes('Please sign in')) {
-            // Trigger interactive login if silent token acquisition fails
-            try {
-                const response = await window.msalInstance.loginPopup({
-                    scopes: ["https://graph.microsoft.com/GroupMember.Read.All"]
-                });
-                if (response?.account) {
-                    // Retry getting projects after successful login
-                    return getProjectsForOrganization(organization);
-                }
-            } catch (loginError) {
-                console.error('Login failed:', loginError);
-            }
-        }
         return [];
     }
 }
