@@ -306,26 +306,37 @@ class PlannerIntegration {
     // Get access token for Microsoft Graph API
     async getAccessToken() {
         try {
-            const result = await this.msalInstance.acquireTokenSilent({
-                scopes: this.requiredScopes,
-                account: this.account
-            });
-            return result.accessToken;
-        } catch (error) {
-            if (error instanceof msal.InteractionRequiredAuthError) {
-                try {
-                    const result = await this.msalInstance.acquireTokenPopup({
-                        scopes: this.requiredScopes,
-                        account: this.account
-                    });
-                    return result.accessToken;
-                } catch (popupError) {
-                    console.error('Error during popup authentication:', popupError);
-                    return null;
-                }
+            // Check if MSAL instance exists
+            if (!window.msalInstance) {
+                throw new Error('MSAL instance not initialized');
             }
-            console.error('Error getting access token:', error);
-            return null;
+
+            // Get all accounts
+            const accounts = window.msalInstance.getAllAccounts();
+            if (accounts.length === 0) {
+                throw new Error('No authenticated user found');
+            }
+
+            // Try to get token silently first
+            try {
+                const response = await window.msalInstance.acquireTokenSilent({
+                    ...window.loginRequest,
+                    account: accounts[0]
+                });
+                return response.accessToken;
+            } catch (silentError) {
+                console.log('Silent token acquisition failed, trying interactive:', silentError);
+                
+                // If silent fails, try interactive
+                const response = await window.msalInstance.acquireTokenPopup({
+                    ...window.loginRequest,
+                    account: accounts[0]
+                });
+                return response.accessToken;
+            }
+        } catch (error) {
+            console.error(' Error getting access token:', error);
+            throw new Error('Failed to get access token: ' + error.message);
         }
     }
 

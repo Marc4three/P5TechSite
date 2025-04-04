@@ -284,17 +284,12 @@
     </main>
 
     <script>
-        // Remove duplicate initialization since it's already done in auth-config.js
-        // window.b2cInstance = new msal.PublicClientApplication(window.b2cConfig);
-        // window.msalInstance = new msal.PublicClientApplication(window.msalConfig);
-
+        // Utility functions
         function showError(message, details = '') {
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.innerHTML = `<strong>${message}</strong>${details ? '<br>' + details : ''}`;
             errorDiv.style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('customerLoginBtn').style.display = 'block';
-            document.getElementById('teamLoginBtn').style.display = 'block';
+            hideLoading();
         }
 
         function showLoading() {
@@ -310,6 +305,66 @@
             document.getElementById('teamLoginBtn').style.display = 'block';
         }
 
+        async function initializePage() {
+            try {
+                console.log('Initializing login page...');
+                
+                // Handle the redirect promise
+                const response = await window.msalInstance.handleRedirectPromise();
+                
+                if (response) {
+                    console.log('Handling auth response:', response);
+                    const account = response.account;
+                    const email = account.username.toLowerCase();
+                    
+                    // Check user type
+                    const isTeamMember = email.includes('p5techsolutions.com') || 
+                                       email.includes('p5ts.com');
+                    const isGuest = email.includes('clinovators.com') || 
+                                  account.username.includes('#EXT#');
+                    
+                    console.log('User type:', {
+                        email: email,
+                        isTeamMember: isTeamMember,
+                        isGuest: isGuest
+                    });
+                    
+                    // Redirect to appropriate portal
+                    if (isTeamMember) {
+                        window.location.href = 'home.html';
+                    } else if (isGuest) {
+                        window.location.href = 'customer-portal.html';
+                    } else {
+                        showError('Unauthorized Access', 'Your account is not authorized to access this portal.');
+                    }
+                    return;
+                }
+                
+                // Check if we already have an authenticated user
+                const accounts = window.msalInstance.getAllAccounts();
+                if (accounts.length > 0) {
+                    const account = accounts[0];
+                    const email = account.username.toLowerCase();
+                    
+                    // Check user type
+                    const isTeamMember = email.includes('p5techsolutions.com') || 
+                                       email.includes('p5ts.com');
+                    const isGuest = email.includes('clinovators.com') || 
+                                  account.username.includes('#EXT#');
+                    
+                    // Redirect to appropriate portal
+                    if (isTeamMember) {
+                        window.location.href = 'home.html';
+                    } else if (isGuest) {
+                        window.location.href = 'customer-portal.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Login page initialization error:', error);
+                showError('Login Error', 'An error occurred during login. Please try again.');
+            }
+        }
+
         async function handleCustomerLogin() {
             console.log("Starting customer login process...");
             try {
@@ -318,7 +373,6 @@
                 // Clear any existing auth data
                 sessionStorage.removeItem('authResult');
 
-                // Use multi-tenant configuration for customer login
                 await window.msalInstance.loginRedirect({
                     ...window.loginRequest,
                     prompt: "select_account"
@@ -333,7 +387,6 @@
                     showError("Access Denied", "Your account does not have permission to access this portal. Please contact support if you believe this is an error.");
                 } else {
                     showError("Login Error", `An error occurred during login. Please try again or contact support. (${error.errorCode || 'Unknown error'})`);
-                    console.log("Error details:", error);
                 }
             }
         }
@@ -343,13 +396,10 @@
                 showLoading();
                 console.log('Starting team login process...');
 
-                // Start login flow with explicit redirect URI
                 await window.msalInstance.loginRedirect({
                     ...window.loginRequest,
-                    redirectUri: "http://localhost:5501/home.html",
                     prompt: "select_account"
                 });
-
             } catch (error) {
                 console.error('Team login error:', error);
                 hideLoading();
@@ -367,46 +417,12 @@
             }
         }
 
-        // Initialize MSAL instance when the page loads
-        window.addEventListener('load', async () => {
-            try {
-                console.log('Checking for auth responses...');
-                
-                // Handle the redirect response
-                const response = await window.msalInstance.handleRedirectPromise();
-                if (response) {
-                    console.log('Received auth response:', response);
-                    
-                    // Check if the user's domain is authorized
-                    const userEmail = response.account.username.toLowerCase();
-                    const organization = window.getCustomerOrganization(userEmail);
-                    
-                    if (!organization) {
-                        console.log('Unauthorized domain:', userEmail);
-                        await window.msalInstance.logout();
-                        showError(
-                            'Unauthorized Domain',
-                            'Your organization is not authorized to access this portal. Please contact P5 Tech Solutions if you believe this is an error.'
-                        );
-                        return;
-                    }
-
-                    // Store the auth result and organization info
-                    const authData = {
-                        ...response,
-                        organization: organization
-                    };
-                    sessionStorage.setItem('authResult', JSON.stringify(authData));
-                    window.location.href = 'customer-portal.html';
-                }
-            } catch (error) {
-                console.error('Error handling auth response:', error);
-                showError(
-                    'Authentication Error',
-                    'An error occurred while processing your login. Please try again.'
-                );
-            }
-        });
+        // Initialize when the page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
+        }
 
         // Add click handlers
         document.getElementById('customerLoginBtn').addEventListener('click', handleCustomerLogin);

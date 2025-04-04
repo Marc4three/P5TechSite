@@ -1,31 +1,17 @@
-// MSAL configuration for customer portal (B2C)
-const b2cPolicies = {
-    names: {
-        signUpSignIn: "B2C_1_1_signup_signin"
-    },
-    authorities: {
-        signUpSignIn: {
-            authority: "https://p5tsportal.b2clogin.com/p5tsportal.onmicrosoft.com/B2C_1_1_signup_signin"
-        }
-    },
-    authorityDomain: "p5tsportal.b2clogin.com"
-};
-
-const b2cConfig = {
+// MSAL configuration for Azure AD
+const msalConfig = {
     auth: {
-        clientId: "239638c9-4484-4eab-8820-9f070d2b1998",
-        authority: b2cPolicies.authorities.signUpSignIn.authority,
-        knownAuthorities: [b2cPolicies.authorityDomain],
-        redirectUri: "http://localhost:5501/customer-portal.html",
-        postLogoutRedirectUri: "http://localhost:5501/login.html",
+        clientId: "f70b0b12-7688-4e6a-92da-6dabcf271950",
+        authority: "https://login.microsoftonline.com/202abb20-ccd1-4194-aa83-a8e73f57d637",
+        redirectUri: window.location.origin + "/login.html", // Default redirect to login
+        postLogoutRedirectUri: window.location.origin + "/login.html",
         navigateToLoginRequestUrl: true
     },
     cache: {
         cacheLocation: "sessionStorage",
-        storeAuthStateInCookie: true
+        storeAuthStateInCookie: false
     },
     system: {
-        allowNativeBroker: false,
         loggerOptions: {
             loggerCallback: (level, message, containsPii) => {
                 if (containsPii) return;
@@ -45,59 +31,10 @@ const b2cConfig = {
     }
 };
 
-// B2C login request configuration
-const b2cLoginRequest = {
-    scopes: ["offline_access", "openid"],
-    prompt: "select_account"
-};
-
-// Initialize MSAL instance
-if (!window.b2cInstance) {
-    window.b2cInstance = new msal.PublicClientApplication(b2cConfig);
-}
-
-// MSAL configuration
-const msalConfig = {
-    auth: {
-        clientId: "f70b0b12-7688-4e6a-92da-6dabcf271950",
-        authority: "https://login.microsoftonline.com/202abb20-ccd1-4194-aa83-a8e73f57d637",
-        redirectUri: "http://localhost:5501/home.html",
-        postLogoutRedirectUri: "http://localhost:5501/login.html",
-        navigateToLoginRequestUrl: true
-    },
-    cache: {
-        cacheLocation: "sessionStorage",
-        storeAuthStateInCookie: false
-    },
-    system: {
-        loggerOptions: {
-            loggerCallback: (level, message, containsPii) => {
-                if (containsPii) {
-                    return;
-                }
-                switch (level) {
-                    case msal.LogLevel.Error:
-                        console.error(message);
-                        return;
-                    case msal.LogLevel.Info:
-                        console.info(message);
-                        return;
-                    case msal.LogLevel.Verbose:
-                        console.debug(message);
-                        return;
-                    case msal.LogLevel.Warning:
-                        console.warn(message);
-                        return;
-                }
-            }
-        }
-    }
-};
-
-// Login request object for customer portal
+// Login request object
 const loginRequest = {
     scopes: ["openid", "profile", "email", "Group.Read.All", "User.Read"],
-    redirectUri: "http://localhost:5501/customer-portal.html"
+    prompt: "select_account"
 };
 
 // Make configurations available globally
@@ -105,75 +42,175 @@ window.msalConfig = msalConfig;
 window.loginRequest = loginRequest;
 
 // Initialize MSAL instance
-window.msalInstance = new msal.PublicClientApplication(msalConfig);
+if (!window.msalInstance) {
+    window.msalInstance = new msal.PublicClientApplication(msalConfig);
+}
 
-// Initialize auth handler
-window.addEventListener('load', function() {
-    if (window.AuthHandler) {
-        window.AuthHandler.initialize();
+// Enhanced force refresh function
+async function forceRefreshLogin() {
+    try {
+        console.log('Starting force refresh login...');
+        
+        // Clear all session storage
+        sessionStorage.clear();
+        
+        // Clear any cookies related to authentication
+        document.cookie.split(";").forEach(function(c) {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+        
+        // Use login request with forced prompt
+        const loginRequestWithPrompt = {
+            ...loginRequest,
+            prompt: "select_account"
+        };
+        
+        await window.msalInstance.loginRedirect(loginRequestWithPrompt);
+    } catch (error) {
+        console.error('Force refresh login failed:', error);
+        throw error;
+    }
+}
+
+// Enhanced load event listener
+window.addEventListener('load', async function() {
+    try {
+        console.log('Checking authentication state...');
+        
+        // Handle the redirect promise
+        const response = await window.msalInstance.handleRedirectPromise();
+        
+        if (response) {
+            console.log('Handling redirect response:', response);
+            
+            // Get the authenticated account
+            const account = response.account;
+            
+            if (account) {
+                // Determine correct portal based on user type
+                const isGuest = account.username.includes('#EXT#') || 
+                              account.username.toLowerCase().includes('clinovators.com');
+                              
+                const portal = isGuest ? 'customer-portal.html' : 'home.html';
+                
+                console.log('Redirecting to portal:', portal);
+                window.location.href = portal;
+                return;
+            }
+        }
+        
+        // Check URL parameters for force refresh
+        const urlParams = new URLSearchParams(window.location.search);
+        const forceRefresh = urlParams.get('forceRefresh');
+        
+        if (forceRefresh === 'true') {
+            console.log('Force refresh requested...');
+            await forceRefreshLogin();
+            return;
+        }
+        
+        // Initialize auth handler if available
+        if (window.AuthHandler) {
+            console.log('Initializing AuthHandler...');
+            await window.AuthHandler.initialize();
+        }
+        
+    } catch (error) {
+        console.error('Auth initialization error:', error);
+        // On error, redirect to login
+        window.location.href = 'login.html';
     }
 });
 
-// Run this in browser console to see what task data we're getting
-const planId = '1fQUq0NDQEyqbwY1NVxMrGUAGgM8'; // Your default board ID from config
-window.plannerIntegration.getTasks(planId)
-  .then(tasks => {
-    console.log('Tasks:', tasks);
-    // Let's see what plan/project info we get with each task
-    console.log('First task plan info:', tasks[0]?.planId, tasks[0]?.planTitle);
-  });
+// Debug logging - only run if we have the required objects
+async function logDebugInfo() {
+    try {
+        // Wait for MSAL to be ready
+        if (typeof msal === 'undefined') {
+            console.log('MSAL library not loaded yet');
+            return;
+        }
 
-console.log('PlannerConfig state:', {
-    exists: !!window.plannerConfig,
-    projects: window.plannerConfig?.projects,
-    organizations: window.customerOrganizations
-});
+        // Wait for MSAL instance to be initialized
+        if (!window.msalInstance) {
+            console.log('MSAL instance not initialized yet');
+            return;
+        }
 
-window.fetchPlansForGroup('00f3ccab-022c-4b18-a290-9849685e3dde')
-    .then(plans => console.log('Fresh plans fetch:', plans))
-    .catch(err => console.log('Fetch error:', err));
+        // Check for authenticated user
+        const accounts = window.msalInstance.getAllAccounts();
+        if (accounts.length === 0) {
+            console.log('No authenticated user found');
+            return;
+        }
 
-// Check organization detection
-const email = window.msalInstance.getAllAccounts()[0].username;
-console.log('Current user:', email);
-const org = window.PlannerConfig.getOrganizationFromEmail(email);
-console.log('Organization config:', org);
-console.log('Organization planner groups:', org?.plannerGroups);
+        // Log customer organizations if available
+        if (window.customerOrganizations) {
+            console.log('Customer Organizations:', window.customerOrganizations);
+        } else {
+            console.log('Customer Organizations not initialized yet');
+        }
 
-// Check if plans match organization groups
-const allProjects = window.plannerConfig.projects;
-console.log('All cached projects:', allProjects);
-Object.values(allProjects).forEach(project => {
-    console.log('Project group ID:', project.groupId, 
-                'Matches org groups?:', org?.plannerGroups?.includes(project.groupId));
-});
+        // Log current user info
+        const email = accounts[0].username;
+        const domain = email.split('@')[1].toLowerCase();
+        console.log('Current user:', email);
 
-// Run this in console
-console.log('Customer Organizations:', window.customerOrganizations);
-console.log('Current email:', window.msalInstance.getAllAccounts()[0].username);
+        // Check organization config
+        if (window.PlannerConfig && window.PlannerConfig.getOrganizationFromEmail) {
+            const org = window.PlannerConfig.getOrganizationFromEmail(email);
+            if (org) {
+                console.log('Organization config:', org);
+                console.log('Organization planner groups:', org.plannerGroups);
+            } else {
+                console.log('No organization config found for user');
+            }
+        }
 
-// Check the specific organization config
-const orgConfig = window.customerOrganizations["marcus.norman@clinovators.com"];
-console.log('Org Config:', orgConfig);
-console.log('Planner Groups:', orgConfig?.plannerGroups);
+        // Check planner config
+        if (window.plannerConfig?.projects) {
+            const projects = window.plannerConfig.projects;
+            console.log('Project Group IDs:', Object.values(projects).map(p => p.groupId));
+            console.log('Expected Group ID:', '00f3ccab-022c-4b18-a290-9849685e3dde');
 
-// Check if group IDs match
-const projects = window.plannerConfig.projects;
-console.log('Project Group IDs:', Object.values(projects).map(p => p.groupId));
-console.log('Expected Group ID:', '00f3ccab-022c-4b18-a290-9849685e3dde');
+            // Check project properties
+            console.log('Project properties:', Object.values(projects).map(p => ({
+                id: p.id,
+                name: p.name,
+                groupId: p.groupId,
+                planId: p.planId
+            })));
+        } else {
+            console.log('Planner config not initialized yet');
+        }
 
-// Check what properties the cached projects have
-console.log('Project properties:', Object.values(window.plannerConfig.projects).map(p => ({
-    id: p.id,
-    name: p.name,
-    groupId: p.groupId,  // This is probably undefined or wrong
-    planId: p.planId
-})));
+        // Check plans data
+        if (window.fetchPlansForGroup) {
+            try {
+                const plans = await window.fetchPlansForGroup('00f3ccab-022c-4b18-a290-9849685e3dde');
+                console.log('Raw plans:', plans);
+                if (plans && plans.length > 0) {
+                    plans.forEach(plan => console.log('Plan group:', plan.owner));
+                } else {
+                    console.log('No plans found for group');
+                }
+            } catch (error) {
+                console.log('Error fetching plans:', error.message);
+            }
+        } else {
+            console.log('fetchPlansForGroup not available yet');
+        }
+    } catch (error) {
+        console.error('Error in debug logging:', error);
+    }
+}
 
-// Check the raw plans data
-window.fetchPlansForGroup('00f3ccab-022c-4b18-a290-9849685e3dde')
-    .then(plans => {
-        console.log('Raw plans:', plans);
-        // Each plan should have an owner property that contains the group ID
-        plans.forEach(plan => console.log('Plan group:', plan.owner));
-    }); 
+// Run debug logging after a delay to allow for initialization
+setTimeout(logDebugInfo, 2000);
+
+try {
+    // Authentication code
+} catch (error) {
+    console.error('Authentication error:', error);
+    // Show error to user
+} 

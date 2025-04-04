@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner Polling Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .test-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .test-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .status-running {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-paused {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-error {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .log-panel {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .log-time {
+            color: #569cd6;
+        }
+
+        .log-info {
+            color: #4ec9b0;
+        }
+
+        .log-error {
+            color: #f14c4c;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1565c0;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c62828;
+        }
+
+        .task-details-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task-item {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-title {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .task-status {
+            font-size: 0.8em;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .task-status.completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .task-status.in-progress {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .task-status.not-started {
+            background: #f5f5f5;
+            color: #757575;
+        }
+
+        .refresh-timer {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Planner Polling Test</h1>
+        
+        <div class="test-panel">
+            <h2>Status Dashboard</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <span class="status-label">Polling Status:</span>
+                    <span id="pollingStatus" class="test-status status-stopped">Stopped</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Last Update:</span>
+                    <span id="lastUpdate">Never</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Next Refresh:</span>
+                    <span id="nextRefresh">N/A</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Total Tasks:</span>
+                    <span id="totalTasks">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">API Calls:</span>
+                    <span id="apiCalls">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Tab Visible:</span>
+                    <span id="tabVisible">Yes</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Auth Status:</span>
+                    <span id="authStatus" class="test-status status-stopped">Checking...</span>
+                </div>
+            </div>
+            
+            <h2>Control Panel</h2>
+            <div class="control-panel">
+                <button id="startPolling" class="control-button">Start Polling</button>
+                <button id="pausePolling" class="control-button">Pause Polling</button>
+                <button id="forceRefresh" class="control-button">Force Refresh</button>
+                <button id="clearLogs" class="control-button">Clear Logs</button>
+                <button id="loginButton" class="control-button">Login</button>
+            </div>
+            
+            <h2>Task Details</h2>
+            <div id="taskList" class="task-list">
+                <div class="task-item empty">
+                    <span>No tasks available</span>
+                </div>
+            </div>
+            
+            <h2>Log Panel</h2>
+            <div id="logPanel" class="log-panel"></div>
+        </div>
+    </div>
+
+    <!-- Load MSAL first -->
+    <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
+    
+    <!-- Load configuration files -->
+    <script src="auth-config.js"></script>
+    <script src="auth-handler.js"></script>
+    <script src="planner-config.js"></script>
+    <script src="planner-integration.js"></script>
+    <script src="smart-planner-service.js"></script>
+    
+    <script>
+        // Global variables
+        let plannerIntegration = null;
+        let isTracking = false;
+        let lastUpdateTime = null;
+        let nextRefreshTime = null;
+        let refreshTimer = null;
+        let apiCallCount = 0;
+        let isAuthenticated = false;
+        
+        // Initialize test page
+        async function initializeTestPage() {
+            try {
+                log('Initializing test page...');
+                
+                // Wait for MSAL to be ready
+                if (typeof msal === 'undefined') {
+                    throw new Error('MSAL library not loaded');
+                }
+                
+                // Wait for auth-config.js to initialize MSAL
+                let attempts = 0;
+                while (!window.msalInstance && attempts < 10) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    attempts++;
+                }
+                
+                if (!window.msalInstance) {
+                    throw new Error('MSAL instance not initialized after timeout');
+                }
+                
+                // Initialize auth handler
+                if (window.authHandler) {
+                    const authInitialized = await window.authHandler.initialize();
+                    isAuthenticated = authInitialized;
+                    updateAuthStatus();
+                    
+                    if (!authInitialized) {
+                        log('Not authenticated. Please login first.', 'error');
+                        return;
+                    }
+                } else {
+                    // Fallback to old authentication check
+                    const isAuth = await checkAuthentication();
+                    isAuthenticated = isAuth;
+                    updateAuthStatus();
+                    
+                    if (!isAuth) {
+                        return; // Stop initialization if not authenticated
+                    }
+                }
+                
+                // Wait for planner-integration.js to be loaded
+                if (typeof PlannerIntegration === 'undefined') {
+                    throw new Error('PlannerIntegration class not loaded');
+                }
+                
+                // Initialize Planner integration
+                plannerIntegration = new PlannerIntegration();
+                const initialized = await plannerIntegration.initialize();
+                
+                if (initialized) {
+                    log('Planner integration initialized successfully');
+                    
+                    // Make plannerIntegration available globally
+                    window.plannerIntegration = plannerIntegration;
+                    
+                    // Start polling only if not already tracking
+                    if (plannerIntegration.smartService && !isTracking) {
+                        plannerIntegration.smartService.startTracking();
+                        isTracking = true;
+                        log('Polling started');
+                        
+                        // Set up task update listener
+                        plannerIntegration.smartService.onTaskUpdate = (tasks) => {
+                            lastUpdateTime = new Date();
+                            document.getElementById('totalTasks').textContent = tasks.length;
+                            updateTaskList(tasks);
+                            updateMetrics();
+                            log(`Tasks updated: ${tasks.length} tasks found`);
+                            
+                            // Set next refresh time (30 seconds from now)
+                            nextRefreshTime = new Date(lastUpdateTime.getTime() + 30000);
+                            
+                            // Clear existing timer
+                            if (refreshTimer) {
+                                clearInterval(refreshTimer);
+                            }
+                            
+                            // Start countdown timer
+                            refreshTimer = setInterval(() => {
+                                updateMetrics();
+                            }, 1000);
+                        };
+                    }
+                } else {
+                    log('Failed to initialize Planner integration', 'error');
+                }
+            } catch (error) {
+                log(`Error initializing: ${error.message}`, 'error');
+                document.getElementById('pollingStatus').className = 'test-status status-error';
+                document.getElementById('pollingStatus').textContent = 'Error';
+                
+                // Show more detailed error information
+                const errorDetails = document.createElement('div');
+                errorDetails.style.color = '#d32f2f';
+                errorDetails.style.marginTop = '10px';
+                errorDetails.textContent = `Initialization Error: ${error.message}`;
+                document.querySelector('.test-panel').appendChild(errorDetails);
+            }
+        }
+        
+        // Update authentication status in UI
+        function updateAuthStatus() {
+            const authStatusElement = document.getElementById('authStatus');
+            if (isAuthenticated) {
+                authStatusElement.className = 'test-status status-running';
+                authStatusElement.textContent = 'Authenticated';
+                
+                // Hide login button
+                document.getElementById('loginButton').style.display = 'none';
+            } else {
+                authStatusElement.className = 'test-status status-stopped';
+                authStatusElement.textContent = 'Not Authenticated';
+                
+                // Show login button
+                document.getElementById('loginButton').style.display = 'inline-block';
+            }
+        }
+        
+        // Check if user is authenticated
+        async function checkAuthentication() {
+            try {
+                log('Checking authentication...');
+                
+                // Check if MSAL instance exists
+                if (!window.msalInstance) {
+                    log('MSAL instance not initialized', 'error');
+                    return false;
+                }
+                
+                // Get all accounts
+                const accounts = window.msalInstance.getAllAccounts();
+                if (accounts.length === 0) {
+                    log('No authenticated user found', 'error');
+                    return false;
+                }
+                
+                log(`User authenticated: ${accounts[0].username}`);
+                return true;
+            } catch (error) {
+                log(`Authentication check failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        // Login function
+        async function login() {
+            try {
+                log('Attempting to login...');
+                
+                if (window.authHandler) {
+                    const success = await window.authHandler.login();
+                    if (success) {
+                        isAuthenticated = true;
+                        updateAuthStatus();
+                        log('Login successful');
+                        
+                        // Reinitialize the page
+                        await initializeTestPage();
+                    } else {
+                        log('Login failed', 'error');
+                    }
+                } else {
+                    // Fallback to old login method
+                    if (!window.msalInstance) {
+                        log('MSAL instance not initialized', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        const response = await window.msalInstance.loginPopup(window.loginRequest);
+                        isAuthenticated = true;
+                        updateAuthStatus();
+                        log('Login successful');
+                        
+                        // Reinitialize the page
+                        await initializeTestPage();
+                    } catch (error) {
+                        log(`Login failed: ${error.message}`, 'error');
+                    }
+                }
+            } catch (error) {
+                log(`Login error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Event Listeners
+        document.getElementById('startPolling').addEventListener('click', async () => {
+            if (!isAuthenticated) {
+                log('Cannot start polling: Not authenticated', 'error');
+                return;
+            }
+            
+            if (!plannerIntegration) {
+                log('Cannot start polling: Planner integration not initialized', 'error');
+                return;
+            }
+            
+            if (plannerIntegration.smartService && !isTracking) {
+                try {
+                    plannerIntegration.smartService.startTracking();
+                    isTracking = true;
+                    document.getElementById('pollingStatus').className = 'test-status status-running';
+                    document.getElementById('pollingStatus').textContent = 'Running';
+                    log('Polling started');
+                } catch (error) {
+                    log(`Error starting polling: ${error.message}`, 'error');
+                }
+            } else {
+                log('Polling is already running', 'info');
+            }
+        });
+
+        document.getElementById('pausePolling').addEventListener('click', () => {
+            if (plannerIntegration?.smartService && isTracking) {
+                plannerIntegration.smartService.stopTracking();
+                isTracking = false;
+                document.getElementById('pollingStatus').className = 'test-status status-paused';
+                document.getElementById('pollingStatus').textContent = 'Paused';
+                log('Polling paused');
+                
+                // Clear refresh timer
+                if (refreshTimer) {
+                    clearInterval(refreshTimer);
+                    refreshTimer = null;
+                }
+                nextRefreshTime = null;
+                updateMetrics();
+            } else {
+                log('Polling is already paused', 'info');
+            }
+        });
+
+        document.getElementById('forceRefresh').addEventListener('click', async () => {
+            if (!isAuthenticated) {
+                log('Cannot refresh: Not authenticated', 'error');
+                return;
+            }
+            
+            if (plannerIntegration?.smartService) {
+                log('Forcing refresh...');
+                await plannerIntegration.smartService.checkForUpdates();
+                lastUpdateTime = new Date();
+                updateMetrics();
+                log('Refresh completed');
+            }
+        });
+
+        document.getElementById('clearLogs').addEventListener('click', () => {
+            document.getElementById('logPanel').innerHTML = '';
+            log('Logs cleared');
+        });
+
+        // Tab visibility handling
+        document.addEventListener('visibilitychange', () => {
+            updateMetrics();
+            log(`Tab visibility changed to: ${document.visibilityState}`);
+        });
+
+        // Add login button event listener
+        document.getElementById('loginButton').addEventListener('click', login);
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeTestPage);
+    </script>
+</body>
+</html> 
