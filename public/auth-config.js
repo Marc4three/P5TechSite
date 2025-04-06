@@ -47,7 +47,16 @@ const ALLOWED_PAGES = [
 
 // Login request object with redirect URI
 const loginRequest = {
-    scopes: ["openid", "profile", "email", "Group.Read.All", "User.Read"],
+    scopes: [
+        "openid",
+        "profile",
+        "email",
+        "Group.Read.All",
+        "User.Read",
+        "Tasks.Read",
+        "Tasks.ReadWrite",
+        "Tasks.Read.Shared"
+    ],
     prompt: "select_account",
     redirectUri: window.location.origin + "/home.html" // Explicitly set redirect URI for login
 };

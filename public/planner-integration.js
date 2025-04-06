@@ -419,7 +419,7 @@ class PlannerIntegration {
                 return [
                     {
                         id: 'mock-task-1',
-                        title: 'Task 1',
+                        title: 'Initial Project Setup',
                         planId: planId,
                         bucketId: 'mock-bucket-1',
                         percentComplete: 0,
@@ -429,7 +429,7 @@ class PlannerIntegration {
                     },
                     {
                         id: 'mock-task-2',
-                        title: 'Task 2',
+                        title: 'Requirements Gathering',
                         planId: planId,
                         bucketId: 'mock-bucket-2',
                         percentComplete: 50,
@@ -439,7 +439,7 @@ class PlannerIntegration {
                     },
                     {
                         id: 'mock-task-3',
-                        title: 'Task 3',
+                        title: 'Project Documentation',
                         planId: planId,
                         bucketId: 'mock-bucket-3',
                         percentComplete: 100,
@@ -474,7 +474,7 @@ class PlannerIntegration {
                     return [
                         {
                             id: 'mock-task-1',
-                            title: 'Task 1',
+                            title: 'Initial Project Setup',
                             planId: planId,
                             bucketId: 'mock-bucket-1',
                             percentComplete: 0,
@@ -484,7 +484,7 @@ class PlannerIntegration {
                         },
                         {
                             id: 'mock-task-2',
-                            title: 'Task 2',
+                            title: 'Requirements Gathering',
                             planId: planId,
                             bucketId: 'mock-bucket-2',
                             percentComplete: 50,
@@ -494,7 +494,7 @@ class PlannerIntegration {
                         },
                         {
                             id: 'mock-task-3',
-                            title: 'Task 3',
+                            title: 'Project Documentation',
                             planId: planId,
                             bucketId: 'mock-bucket-3',
                             percentComplete: 100,
@@ -518,7 +518,7 @@ class PlannerIntegration {
             return [
                 {
                     id: 'mock-task-1',
-                    title: 'Task 1',
+                    title: 'Initial Project Setup',
                     planId: planId,
                     bucketId: 'mock-bucket-1',
                     percentComplete: 0,
@@ -528,7 +528,7 @@ class PlannerIntegration {
                 },
                 {
                     id: 'mock-task-2',
-                    title: 'Task 2',
+                    title: 'Requirements Gathering',
                     planId: planId,
                     bucketId: 'mock-bucket-2',
                     percentComplete: 50,
@@ -538,7 +538,7 @@ class PlannerIntegration {
                 },
                 {
                     id: 'mock-task-3',
-                    title: 'Task 3',
+                    title: 'Project Documentation',
                     planId: planId,
                     bucketId: 'mock-bucket-3',
                     percentComplete: 100,

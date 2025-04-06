@@ -680,7 +680,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             z-index: 20;
-            max-height: 400px;
+            max-height: calc(90vh - 200px);  /* Changed from 400px to dynamic viewport-based height */
             overflow-y: auto;
             margin-top: 8px;
             width: 100%;
@@ -1018,11 +1018,29 @@
         }
 
         .project-details-overlay-content {
-            padding: 20px;
-            background-color: white;
-            width: 100%;
+            padding: 30px;
             max-width: 1800px;
             margin: 0 auto;
+            background: white;
+        }
+
+        .project-details-content {
+            display: grid;
+            gap: 30px;
+        }
+
+        .project-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .project-card-meta {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .back-button {
@@ -2344,24 +2362,65 @@
             backButton.onclick = () => hideProjectDetailsOverlay(projectCard);
             overlayHeader.appendChild(backButton);
             
-            // Add the project title to the header
-            const projectTitle = projectCard.querySelector('.project-card-title');
-            if (projectTitle) {
-                const titleClone = projectTitle.cloneNode(true);
-                titleClone.style.marginLeft = '60px';
-                titleClone.style.display = 'inline-block';
-                overlayHeader.appendChild(titleClone);
-            }
+            // Clone the project header content
+            const projectHeaderLeft = projectCard.querySelector('.project-header-left').cloneNode(true);
+            projectHeaderLeft.style.marginLeft = '60px';
+            overlayHeader.appendChild(projectHeaderLeft);
             
             // Clear and set up overlay content
             overlayContainer.innerHTML = '';
             overlayContainer.appendChild(overlayHeader);
             
-            // Create details container
+            // Create main content container
+            const mainContent = document.createElement('div');
+            mainContent.className = 'project-details-overlay-content';
+            
+            // Clone and add project summary
+            const projectSummary = projectCard.querySelector('.project-summary').cloneNode(true);
+            projectSummary.style.marginBottom = '30px';
+            mainContent.appendChild(projectSummary);
+            
+            // Clone and add project meta (due date and progress)
+            const projectMeta = projectCard.querySelector('.project-card-meta').cloneNode(true);
+            projectMeta.style.marginBottom = '30px';
+            mainContent.appendChild(projectMeta);
+            
+            // Create details container for tasks and analytics
             const detailsContainer = document.createElement('div');
             detailsContainer.id = `overlay-details-${planId}`;
-            detailsContainer.className = 'project-details-overlay-content';
-            overlayContainer.appendChild(detailsContainer);
+            detailsContainer.className = 'project-details-content';
+            mainContent.appendChild(detailsContainer);
+            
+            // Add main content to overlay
+            overlayContainer.appendChild(mainContent);
+            
+            // Add styles for the overlay content
+            const style = document.createElement('style');
+            style.textContent = `
+                .project-details-overlay-content {
+                    padding: 30px;
+                    max-width: 1800px;
+                    margin: 0 auto;
+                    background: white;
+                }
+                .project-details-content {
+                    display: grid;
+                    gap: 30px;
+                }
+                .project-summary {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 12px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .project-card-meta {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 12px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+            `;
+            document.head.appendChild(style);
             
             // Fade in overlay
             setTimeout(() => {
@@ -2415,8 +2474,35 @@
         
         // Function to fetch and display details in the overlay
         function fetchAndDisplayDetailsOverlay(planId, container) {
-            // Show loading indicator
-            container.innerHTML = '<div class="loading">Loading project details...</div>';
+            // Create analytics container first
+            const analyticsContainer = document.createElement('div');
+            analyticsContainer.className = 'analytics-panel';
+            analyticsContainer.style.marginTop = '30px';
+            analyticsContainer.style.marginBottom = '30px';
+            analyticsContainer.style.backgroundColor = 'white';
+            analyticsContainer.style.borderRadius = '8px';
+            analyticsContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            analyticsContainer.style.padding = '20px';
+            
+            // Add analytics grid
+            const grid = document.createElement('div');
+            grid.className = 'analytics-grid';
+            grid.style.display = 'grid';
+            grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(200px, 1fr))';
+            grid.style.gap = '20px';
+            analyticsContainer.appendChild(grid);
+            
+            // Add initial metric cards with 0 values
+            addMetricCardOverlay(grid, 'Total Tasks', '0');
+            addMetricCardOverlay(grid, 'To-Do', '0');
+            addMetricCardOverlay(grid, 'In Progress', '0');
+            addMetricCardOverlay(grid, 'Testing', '0');
+            addMetricCardOverlay(grid, 'Completed', '0');
+            addMetricCardOverlay(grid, 'Uncategorized', '0');
+            addMetricCardOverlay(grid, 'Completion', '0%');
+            
+            // Add analytics container to main container
+            container.appendChild(analyticsContainer);
             
             // Fetch tasks and buckets using your existing integration
             Promise.all([
@@ -2431,7 +2517,7 @@
                 });
                 
                 // Add bucket names to tasks
-            tasks.forEach(task => {
+                tasks.forEach(task => {
                     task.actualBucketName = bucketMap[task.bucketId];
                 });
                 
@@ -2456,7 +2542,7 @@
                     return bucketMapping['testing'].some(name => bucketName.includes(name));
                 });
                 
-                // For tasks that don't match any of the above categories, add them to a default category
+                // For tasks that don't match any of the above categories
                 const uncategorizedTasks = tasks.filter(t => {
                     const bucketName = t.actualBucketName?.toLowerCase() || '';
                     return !bucketMapping['to-do'].some(name => bucketName.includes(name)) && 
@@ -2465,19 +2551,39 @@
                            !bucketMapping['testing'].some(name => bucketName.includes(name));
                 });
                 
-                // Update the UI with bucket-based categorization
-                updateTaskListOverlay(container, 'to-do', toDoTasks);
-                updateTaskListOverlay(container, 'in-progress', inProgressTasks);
-                updateTaskListOverlay(container, 'completed', completedTasks);
-                updateTaskListOverlay(container, 'testing', testingTasks);
-                updateTaskListOverlay(container, 'uncategorized', uncategorizedTasks);
+                // Calculate completion percentage
+                const totalTasks = tasks.length;
+                const completionPercentage = totalTasks > 0 ? Math.round((completedTasks.length / totalTasks) * 100) : 0;
                 
-                // Update analytics metrics
-                updateAnalyticsMetricsOverlay(planId, tasks, container);
+                // Update metric cards with actual values
+                grid.innerHTML = ''; // Clear existing cards
+                addMetricCardOverlay(grid, 'Total Tasks', totalTasks);
+                addMetricCardOverlay(grid, 'To-Do', toDoTasks.length);
+                addMetricCardOverlay(grid, 'In Progress', inProgressTasks.length);
+                addMetricCardOverlay(grid, 'Testing', testingTasks.length);
+                addMetricCardOverlay(grid, 'Completed', completedTasks.length);
+                addMetricCardOverlay(grid, 'Uncategorized', uncategorizedTasks.length);
+                addMetricCardOverlay(grid, 'Completion', `${completionPercentage}%`, completionPercentage === 100);
+                
+                // Update task lists below analytics
+                const tasksContainer = document.createElement('div');
+                tasksContainer.className = 'tasks-container';
+                tasksContainer.style.display = 'grid';
+                tasksContainer.style.gap = '20px';
+                tasksContainer.style.marginTop = '20px';
+                
+                // Add task lists for each category
+                updateTaskListOverlay(tasksContainer, 'to-do', toDoTasks);
+                updateTaskListOverlay(tasksContainer, 'in-progress', inProgressTasks);
+                updateTaskListOverlay(tasksContainer, 'testing', testingTasks);
+                updateTaskListOverlay(tasksContainer, 'completed', completedTasks);
+                updateTaskListOverlay(tasksContainer, 'uncategorized', uncategorizedTasks);
+                
+                container.appendChild(tasksContainer);
             })
             .catch(error => {
                 console.error('Error fetching details:', error);
-                container.innerHTML = `<div class="error">Error loading project details: ${error.message}</div>`;
+                container.innerHTML += `<div class="error" style="margin-top: 20px; color: red;">Error loading project details: ${error.message}</div>`;
             });
         }
         
@@ -2612,81 +2718,6 @@
                 default:
                     return '#86868b';
             }
-        }
-        
-        // Helper function to update analytics metrics in the overlay
-        function updateAnalyticsMetricsOverlay(planId, tasks, container) {
-            // Create analytics container
-            const analyticsContainer = document.createElement('div');
-            analyticsContainer.className = 'analytics-panel';
-            analyticsContainer.style.marginTop = '30px';
-            analyticsContainer.style.marginBottom = '30px';
-            analyticsContainer.style.backgroundColor = 'white';
-            analyticsContainer.style.borderRadius = '8px';
-            analyticsContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-            analyticsContainer.style.padding = '20px';
-            
-            // Add header
-            const header = document.createElement('h3');
-            header.textContent = 'Project Analytics';
-            header.style.marginTop = '0';
-            header.style.marginBottom = '20px';
-            header.style.paddingBottom = '10px';
-            header.style.borderBottom = '1px solid #f0f0f0';
-            analyticsContainer.appendChild(header);
-            
-            // Add analytics grid
-            const grid = document.createElement('div');
-            grid.className = 'analytics-grid';
-            grid.style.display = 'grid';
-            grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(200px, 1fr))';
-            grid.style.gap = '20px';
-            analyticsContainer.appendChild(grid);
-            
-            // Calculate metrics based on bucket names using the mapping
-            const totalTasks = tasks.length;
-            
-            const toDoTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['to-do'].some(name => bucketName.includes(name));
-            }).length;
-            
-            const inProgressTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['in-progress'].some(name => bucketName.includes(name));
-            }).length;
-            
-            const completedTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['completed'].some(name => bucketName.includes(name));
-            }).length;
-            
-            const testingTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['testing'].some(name => bucketName.includes(name));
-            }).length;
-            
-            const uncategorizedTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return !bucketMapping['to-do'].some(name => bucketName.includes(name)) && 
-                       !bucketMapping['in-progress'].some(name => bucketName.includes(name)) && 
-                       !bucketMapping['completed'].some(name => bucketName.includes(name)) && 
-                       !bucketMapping['testing'].some(name => bucketName.includes(name));
-            }).length;
-            
-            // Calculate completion percentage
-            const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-            
-            // Add metric cards
-            addMetricCardOverlay(grid, 'Total Tasks', totalTasks);
-            addMetricCardOverlay(grid, 'To-Do', toDoTasks);
-            addMetricCardOverlay(grid, 'In Progress', inProgressTasks);
-            addMetricCardOverlay(grid, 'Testing', testingTasks);
-            addMetricCardOverlay(grid, 'Completed', completedTasks);
-            addMetricCardOverlay(grid, 'Uncategorized', uncategorizedTasks);
-            addMetricCardOverlay(grid, 'Completion', `${completionPercentage}%`, completionPercentage === 100);
-            
-            container.appendChild(analyticsContainer);
         }
         
         // Helper function to add metric cards to the overlay
