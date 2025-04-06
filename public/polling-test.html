@@ -302,6 +302,7 @@
                 <button id="clearLogs" class="control-button">Clear Logs</button>
                 <button id="loginButton" class="control-button">Login</button>
                 <button id="checkAuthButton" class="control-button">Check Auth</button>
+                <button id="testBucketsButton" class="control-button">Test Buckets</button>
             </div>
             
             <h2>Task Details</h2>
@@ -1046,6 +1047,53 @@
                 console.log('Preventing replace to:', url);
             }
         };
+
+        // Add test buckets button event listener
+        document.getElementById('testBucketsButton').addEventListener('click', async () => {
+            if (!isAuthenticated) {
+                log('Cannot test buckets: Not authenticated', 'error');
+                return;
+            }
+            
+            if (!plannerIntegration) {
+                log('Cannot test buckets: Planner integration not initialized', 'error');
+                return;
+            }
+            
+            try {
+                log('Testing bucket fetching...');
+                
+                // Get the first plan ID from the available plans
+                const plans = await plannerIntegration.discoverPlans();
+                if (!plans || plans.length === 0) {
+                    log('No plans available to test buckets', 'error');
+                    return;
+                }
+                
+                const planId = plans[0].id;
+                log(`Testing buckets for plan: ${planId}`);
+                
+                // Fetch buckets for the plan
+                const buckets = await plannerIntegration.getBuckets(planId);
+                log(`Found ${buckets.length} buckets:`, 'info');
+                
+                // Log each bucket's details
+                buckets.forEach(bucket => {
+                    log(`Bucket: ${bucket.name} (ID: ${bucket.id})`, 'info');
+                });
+                
+                // Update the task list with bucket information
+                updateTaskList(buckets.map(bucket => ({
+                    title: bucket.name,
+                    status: 'bucket',
+                    id: bucket.id
+                })));
+                
+                log('Bucket test completed successfully', 'info');
+            } catch (error) {
+                log(`Error testing buckets: ${error.message}`, 'error');
+            }
+        });
     </script>
 </body>
 </html> 

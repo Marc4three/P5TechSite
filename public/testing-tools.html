@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Tools - P5 Tech Solutions</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/release-planner.css">
+    <style>
+        :root {
+            --primary-color: #0071e3;
+            --primary-hover: #0077ed;
+            --success-color: #059669;
+            --warning-color: #c2410c;
+            --error-color: #dc2626;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #4b5563;
+            --border-color: #d2d2d7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .header {
+            background: var(--card-background);
+            padding: 16px 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .nav-bar {
+            background: var(--text-primary);
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sign-out-button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: var(--background-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .sign-out-button:hover {
+            background: #e5e7eb;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 32px;
+        }
+
+        .tool-card {
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            height: auto;
+        }
+
+        .tool-header {
+            flex: 0 0 auto;
+        }
+
+        .status-panel, .metric-panel {
+            flex: 0 0 auto;
+        }
+
+        .tool-actions {
+            flex: 0 0 auto;
+        }
+
+        .log-panel {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 24px;
+            height: 400px;
+            font-size: 1em;
+            overflow-y: auto;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 1600px) {
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tool-icon {
+            font-size: 32px;
+        }
+
+        .tool-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .tool-description {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .button-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .button-secondary {
+            background: #e5e7eb;
+            color: var(--text-primary);
+        }
+
+        .status-panel {
+            background: var(--background-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 1em;
+        }
+
+        .status-label {
+            color: var(--text-secondary);
+        }
+
+        .status-value {
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .status-running {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-stopped {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--error-color);
+        }
+
+        .log-entry {
+            color: #e5e7eb;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .log-time {
+            color: #60a5fa;
+        }
+
+        .log-success {
+            color: #34d399;
+        }
+
+        .log-error {
+            color: #f87171;
+        }
+
+        .log-warning {
+            color: #fbbf24;
+        }
+
+        .refresh-timer {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .metric-panel {
+            background: var(--background-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0 80px 0;
+        }
+
+        .progress-tool .metric-panel {
+            margin: 24px 0 12px 0;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+            margin-bottom: 16px;
+        }
+
+        .metric-label {
+            font-size: 1em;
+        }
+
+        .metric-value {
+            font-weight: 500;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <img src="P5TS Logo.png" alt="P5TS" class="nav-logo">
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="Project-Price-Calculator.html">Project Pricer</a>
+                <a href="release-planner.html">Release Planner</a>
+                <a href="repository.html">Quote Repository</a>
+                <a href="admin-portal.html">Admin Portal</a>
+                <a href="testing-tools.html" class="active">Testing Tools</a>
+            </div>
+            <div class="nav-profile">
+                <span class="profile-name">Marcus Norman</span>
+                <img src="marc.png" alt="Profile Picture" class="profile-pic">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="tools-grid">
+            <!-- Polling Status Tool -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <span class="tool-icon">🔄</span>
+                    <h2 class="tool-title">Polling Status</h2>
+                </div>
+                <div class="tool-actions">
+                    <button class="button button-primary" onclick="startPolling()">Start Polling</button>
+                    <button class="button button-secondary" onclick="stopPolling()">Stop Polling</button>
+                    <button class="button button-primary" onclick="forceRefresh()">Force Refresh</button>
+                    <button class="button button-secondary" onclick="clearLogs()">Clear Logs</button>
+                </div>
+                <div class="status-panel">
+                    <div class="status-item">
+                        <span class="status-label">Status:</span>
+                        <span id="pollingStatus" class="status-badge status-stopped">Stopped</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Last Update:</span>
+                        <span id="lastUpdate">Never</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Next Update:</span>
+                        <span id="nextUpdate">-</span>
+                    </div>
+                </div>
+                <div id="pollingLogs" class="log-panel"></div>
+            </div>
+
+            <!-- Bucket Testing Tool -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <span class="tool-icon">📦</span>
+                    <h2 class="tool-title">Bucket Testing</h2>
+                </div>
+                <div class="tool-actions">
+                    <button class="button button-primary" onclick="testBucketFetching()">Test Buckets</button>
+                    <button class="button button-secondary" onclick="clearBucketLogs()">Clear Logs</button>
+                </div>
+                <div class="metric-panel">
+                    <div class="metric-item">
+                        <span class="metric-label">Total Buckets:</span>
+                        <span id="totalBuckets" class="metric-value">-</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Total Tasks:</span>
+                        <span id="totalTasks" class="metric-value">-</span>
+                    </div>
+                </div>
+                <div id="bucketLogs" class="log-panel"></div>
+            </div>
+
+            <!-- Progress Testing Tool -->
+            <div class="tool-card progress-tool">
+                <div class="tool-header">
+                    <span class="tool-icon">📊</span>
+                    <h2 class="tool-title">Progress Testing</h2>
+                </div>
+                <div class="tool-actions">
+                    <button class="button button-primary" onclick="testProgressCalculation()">Test Progress</button>
+                    <button class="button button-secondary" onclick="clearProgressLogs()">Clear Logs</button>
+                </div>
+                <div class="metric-panel">
+                    <div class="metric-item">
+                        <span class="metric-label">Overall Progress:</span>
+                        <span id="overallProgress" class="metric-value">-</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Project Status:</span>
+                        <span id="projectStatus" class="metric-value">-</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Days Behind:</span>
+                        <span id="daysBehind" class="metric-value">-</span>
+                    </div>
+                </div>
+                <div id="progressLogs" class="log-panel"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Import necessary functions and variables
+        let pollingInterval;
+        let refreshTimer;
+        const POLLING_INTERVAL = 5000; // 5 seconds
+
+        const bucketMapping = {
+            'to-do': ['planning', 'to do', 'to-do', 'todo'],
+            'in-progress': ['in progress', 'in-progress', 'inprogress'],
+            'completed': ['completed', 'done', 'finished'],
+            'testing': ['in-qa', 'in qa', 'qa', 'in-uat', 'in uat', 'uat', 'testing', 'test'],
+            'issues': ['issues', 'issue', 'blocked', 'blocker', 'blockers', 'problem', 'problems', 'Issues']
+        };
+
+        // Logging functions
+        function logToPanel(panelId, message, type = 'info') {
+            const panel = document.getElementById(panelId);
+            const timestamp = new Date().toLocaleTimeString();
+            const logClass = type === 'success' ? 'log-success' : 
+                           type === 'error' ? 'log-error' : 
+                           type === 'warning' ? 'log-warning' : '';
+            
+            panel.innerHTML += `<div class="log-entry">
+                <span class="log-time">[${timestamp}]</span>
+                <span class="${logClass}">${message}</span>
+            </div>`;
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        // Polling functions
+        async function startPolling() {
+            if (pollingInterval) {
+                logToPanel('pollingLogs', 'Polling is already running', 'warning');
+                return;
+            }
+
+            document.getElementById('pollingStatus').className = 'status-badge status-running';
+            document.getElementById('pollingStatus').textContent = 'Running';
+            logToPanel('pollingLogs', 'Starting polling...', 'info');
+
+            await updatePolling();
+            pollingInterval = setInterval(updatePolling, POLLING_INTERVAL);
+            updateRefreshTimer();
+        }
+
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+                clearInterval(refreshTimer);
+                refreshTimer = null;
+                
+                document.getElementById('pollingStatus').className = 'status-badge status-stopped';
+                document.getElementById('pollingStatus').textContent = 'Stopped';
+                document.getElementById('nextUpdate').textContent = '-';
+                logToPanel('pollingLogs', 'Polling stopped', 'warning');
+            }
+        }
+
+        async function updatePolling() {
+            try {
+                const tasks = await plannerIntegration.getTasks(planId);
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+                logToPanel('pollingLogs', `Retrieved ${tasks.length} tasks`, 'success');
+            } catch (error) {
+                logToPanel('pollingLogs', `Error: ${error.message}`, 'error');
+                stopPolling();
+            }
+        }
+
+        function updateRefreshTimer() {
+            let timeLeft = POLLING_INTERVAL / 1000;
+            
+            if (refreshTimer) clearInterval(refreshTimer);
+            
+            refreshTimer = setInterval(() => {
+                timeLeft -= 1;
+                document.getElementById('nextUpdate').textContent = `${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    timeLeft = POLLING_INTERVAL / 1000;
+                }
+            }, 1000);
+        }
+
+        async function forceRefresh() {
+            logToPanel('pollingLogs', 'Forcing refresh...', 'info');
+            await updatePolling();
+            if (pollingInterval) {
+                clearInterval(refreshTimer);
+                timeLeft = POLLING_INTERVAL / 1000;
+                updateRefreshTimer();
+            }
+        }
+
+        // Bucket testing functions
+        async function testBucketFetching() {
+            logToPanel('bucketLogs', 'Testing bucket fetching...', 'info');
+            try {
+                const buckets = await plannerIntegration.getBuckets(planId);
+                document.getElementById('totalBuckets').textContent = buckets.length;
+                logToPanel('bucketLogs', `Retrieved ${buckets.length} buckets`, 'success');
+                
+                buckets.forEach(bucket => {
+                    logToPanel('bucketLogs', `Bucket: ${bucket.name}`, 'info');
+                });
+
+                const tasks = await plannerIntegration.getTasks(planId);
+                document.getElementById('totalTasks').textContent = tasks.length;
+
+                // Create bucket map
+                const bucketMap = {};
+                buckets.forEach(bucket => bucketMap[bucket.id] = bucket.name);
+
+                // Categorize tasks
+                const categorizedTasks = {};
+                Object.keys(bucketMapping).forEach(category => {
+                    categorizedTasks[category] = tasks.filter(task => {
+                        const bucketName = (bucketMap[task.bucketId] || '').toLowerCase();
+                        return bucketMapping[category].some(name => bucketName.includes(name));
+                    });
+                });
+
+                // Log categorization results
+                Object.entries(categorizedTasks).forEach(([category, tasks]) => {
+                    logToPanel('bucketLogs', `${category}: ${tasks.length} tasks`, 'success');
+                });
+
+            } catch (error) {
+                logToPanel('bucketLogs', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Progress testing functions
+        async function testProgressCalculation() {
+            logToPanel('progressLogs', 'Testing progress calculation...', 'info');
+            try {
+                const tasks = await plannerIntegration.getTasks(planId);
+                const progress = calculateProjectProgress(tasks);
+                document.getElementById('overallProgress').textContent = `${progress.toFixed(1)}%`;
+                logToPanel('progressLogs', `Progress calculation: ${progress.toFixed(1)}%`, 'success');
+
+                const status = getForecastStatus(tasks, progress);
+                document.getElementById('projectStatus').textContent = status.status;
+                document.getElementById('daysBehind').textContent = status.daysBehind > 0 ? 
+                    `${status.daysBehind} days` : 'On track';
+
+                logToPanel('progressLogs', `Status: ${status.status}`, 'info');
+                logToPanel('progressLogs', `Detail: ${status.detail}`, 'info');
+                if (status.daysBehind > 0) {
+                    logToPanel('progressLogs', `Days behind: ${status.daysBehind}`, 'warning');
+                }
+
+                // Test priority-based progress
+                const tasksByPriority = {
+                    urgent: tasks.filter(t => t.labels?.includes('urgent')),
+                    important: tasks.filter(t => t.labels?.includes('important')),
+                    medium: tasks.filter(t => t.labels?.includes('medium')),
+                    low: tasks.filter(t => t.labels?.includes('low'))
+                };
+
+                Object.entries(tasksByPriority).forEach(([priority, priorityTasks]) => {
+                    if (priorityTasks.length > 0) {
+                        const completed = priorityTasks.filter(t => t.percentComplete === 100).length;
+                        logToPanel('progressLogs', 
+                            `${priority}: ${completed}/${priorityTasks.length} completed`, 
+                            'info'
+                        );
+                    }
+                });
+
+            } catch (error) {
+                logToPanel('progressLogs', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Clear log functions
+        function clearLogs() {
+            document.getElementById('pollingLogs').innerHTML = '';
+        }
+
+        function clearBucketLogs() {
+            document.getElementById('bucketLogs').innerHTML = '';
+            document.getElementById('totalBuckets').textContent = '-';
+            document.getElementById('totalTasks').textContent = '-';
+        }
+
+        function clearProgressLogs() {
+            document.getElementById('progressLogs').innerHTML = '';
+            document.getElementById('overallProgress').textContent = '-';
+            document.getElementById('projectStatus').textContent = '-';
+            document.getElementById('daysBehind').textContent = '-';
+        }
+    </script>
+</body>
+</html> 

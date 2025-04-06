@@ -484,10 +484,9 @@
             gap: 4px;
             opacity: 0.7;
             transition: all 0.2s ease;
-            margin-top: 8px;
             border-radius: 20px;
             width: auto;
-            align-self: flex-end;
+            margin: 0;  /* Remove any margin */
         }
 
         .info-button:hover {
@@ -497,15 +496,9 @@
 
         .header-buttons {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
+            gap: 8px;
             margin-top: 5px;
-        }
-
-        .info-button-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 8px;
-            margin-right: 10px;
         }
 
         .forecast-info-panel {
@@ -513,15 +506,16 @@
             left: 0;
             top: 0;
             bottom: 0;
-            width: 250px;
+            width: 300px;
             background: white;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            padding: 20px;
+            padding: 24px;
             z-index: 1000;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
             max-height: 100vh;
             overflow-y: auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         .forecast-info-panel.visible {
@@ -529,43 +523,115 @@
         }
 
         .forecast-info-panel h4 {
-            font-size: 0.95em;
+            font-size: 1.1em;
             font-weight: 600;
-            margin: 0 0 15px 0;
+            margin: 24px 0 12px 0;
             color: #1d1d1f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .forecast-info-panel h4:first-child {
+            margin-top: 0;
+            color: #0071e3;
+            font-size: 1.2em;
         }
 
         .forecast-info-panel p {
-            font-size: 0.85em;
+            font-size: 0.9em;
             color: #4b5563;
-            margin: 0 0 12px 0;
+            margin: 0 0 16px 0;
             line-height: 1.5;
         }
 
         .forecast-info-panel ul {
-            font-size: 0.85em;
+            font-size: 0.9em;
             color: #4b5563;
-            margin: 0 0 12px 0;
-            padding-left: 20px;
+            margin: 0 0 16px 0;
+            padding-left: 24px;
+            list-style: none;
         }
 
         .forecast-info-panel li {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             line-height: 1.4;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .forecast-info-panel li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: #0071e3;
+        }
+
+        .forecast-info-panel strong {
+            color: #1d1d1f;
+            font-weight: 600;
+        }
+
+        .forecast-info-panel .status-example {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin: 4px 0;
+            gap: 4px;
+        }
+
+        .forecast-info-panel .status-on-track {
+            background-color: #ecfdf5;
+            color: #059669;
+        }
+
+        .forecast-info-panel .status-at-risk {
+            background-color: #fff7ed;
+            color: #c2410c;
+        }
+
+        .forecast-info-panel .status-off-track {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+
+        .forecast-info-panel .category-group {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .forecast-info-panel .category-title {
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .forecast-info-panel .category-items {
+            color: #6b7280;
+            font-size: 0.85em;
         }
 
         .close-panel {
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: 16px;
+            right: 16px;
             background: none;
             border: none;
-            padding: 4px;
+            padding: 8px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.2em;
             line-height: 1;
             opacity: 0.5;
             transition: opacity 0.2s ease;
+            color: #1d1d1f;
         }
 
         .close-panel:hover {
@@ -600,12 +666,18 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            min-height: 24px; /* Ensure consistent height */
         }
 
         .project-summary-item svg {
             flex-shrink: 0;
             width: 16px;
             height: 16px;
+        }
+
+        .project-summary-item span {
+            font-size: 0.9em;
+            line-height: 1.2;
         }
 
         .project-blocker {
@@ -1133,6 +1205,150 @@
             background: rgba(0, 113, 227, 0.15);
             transform: translateY(-1px);
         }
+
+        /* Add styles for issues panel */
+        .issues-panel {
+            margin-top: 30px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid rgba(220, 38, 38, 0.1);
+        }
+
+        .issues-panel-header {
+            background: rgba(220, 38, 38, 0.05);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(220, 38, 38, 0.1);
+        }
+
+        .issues-panel-header h3 {
+            margin: 0;
+            color: rgb(220, 38, 38);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .issues-panel-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .issues-panel-content.expanded {
+            max-height: 2000px;
+            padding: 20px;
+        }
+
+        .issue-card {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .issue-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .issue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .issue-title {
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0;
+        }
+
+        .issue-severity {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .severity-high {
+            background: rgba(220, 38, 38, 0.1);
+            color: rgb(220, 38, 38);
+        }
+
+        .severity-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: rgb(245, 158, 11);
+        }
+
+        .severity-low {
+            background: rgba(59, 130, 246, 0.1);
+            color: rgb(59, 130, 246);
+        }
+
+        .issue-description {
+            color: #4b5563;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Add styles for the new forecast days display */
+        .project-forecast-days {
+            margin-top: 8px;
+            font-size: 0.9em;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .forecast-range {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .days-behind {
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        /* Existing styles ... */
+        
+        .projects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+        
+        .projects-header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .control-button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .control-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -1164,27 +1380,60 @@
                     </div>
     </header>
 
-    <div id="forecastInfoPanel" class="forecast-info-panel">
-        <button class="close-panel" onclick="closeForecastInfo()">✕</button>
-        <h4>How Forecast Status Works</h4>
-        <p>Project progress is calculated based on:</p>
-        <ul>
-            <li>Start date: First task moved to To-Do</li>
-            <li>Expected progress: Based on elapsed time vs. total duration</li>
+    <div class="forecast-info-panel" id="forecastInfoPanel">
+        <button class="close-panel" onclick="toggleForecastInfo(event)">×</button>
+        <h4>📊 Project Status Calculation</h4>
+        <p>Project status is determined by comparing actual progress against expected progress based on task due dates.</p>
+        
+        <h4>🎯 Status Categories</h4>
+        <div class="category-group">
+            <div class="status-example status-on-track">On Track: Meeting or exceeding expected progress</div>
+            <div class="status-example status-at-risk">At Risk: 5-15% behind expected progress</div>
+            <div class="status-example status-off-track">Off Track: More than 15% behind expected progress</div>
+        </div>
+
+        <h4>📈 Progress Calculation</h4>
+        <div class="category-group">
+            <div class="category-title">With Due Dates:</div>
+            <ul>
+                <li>Expected progress is calculated based on elapsed time between earliest and latest due dates</li>
+                <li>Actual progress is based on completed tasks</li>
+                <li>Days behind is calculated from the difference between expected and actual progress</li>
         </ul>
-        <p>Task weights by status:</p>
-        <ul>
-            <li>To-Do: 0%</li>
-            <li>In Progress: 50%</li>
-            <li>QA/Testing: 75%</li>
-            <li>Done: 100%</li>
+        </div>
+
+        <div class="category-group">
+            <div class="category-title">Without Due Dates:</div>
+            <ul>
+                <li>Status defaults to "On Track"</li>
+                <li>No days behind calculation</li>
+                <li>Progress is based solely on completed tasks</li>
         </ul>
-        <p>Status thresholds:</p>
-        <ul>
-            <li>✅ On Track: Meeting or ahead of schedule</li>
-            <li>⚠️ At Risk: 5-15% behind schedule</li>
-            <li>❌ Off Track: More than 15% behind</li>
-        </ul>
+        </div>
+
+        <h4>📋 Task Categories</h4>
+        <div class="category-group">
+            <div class="category-title">To-Do</div>
+            <div class="category-items">Planning, To Do, Todo</div>
+        </div>
+        <div class="category-group">
+            <div class="category-title">In Progress</div>
+            <div class="category-items">In Progress, In-Progress, Inprogress</div>
+        </div>
+        <div class="category-group">
+            <div class="category-title">Completed</div>
+            <div class="category-items">Completed, Done, Finished</div>
+        </div>
+        <div class="category-group">
+            <div class="category-title">Testing</div>
+            <div class="category-items">In-QA, In QA, QA, In-UAT, In UAT, UAT, Testing, Test</div>
+        </div>
+        <div class="category-group">
+            <div class="category-title">Issues</div>
+            <div class="category-items">Issues, Issue, Blocked, Blocker, Blockers, Problem, Problems</div>
+        </div>
+
+        <p><strong>Note:</strong> Tasks with issues are counted as active work in progress calculations.</p>
                 </div>
 
     <div id="dashboard" class="dashboard" style="display: none;">
@@ -1193,13 +1442,15 @@
                 <li><button class="active" onclick="showProjects()">Projects</button></li>
                 <li><button onclick="showMyTasks()">My Tasks</button></li>
                 <li><button onclick="showSettings()">Settings</button></li>
-                <li><button onclick="testBucketFetching()">Test Buckets</button></li>
             </ul>
         </aside>
 
             <main class="main-content">
-            <div id="projectsView">
-                <div class="projects-grid" id="projectsGrid">
+            <div id="projectsView" class="view">
+                <div class="projects-header">
+                    <h2>Projects</h2>
+                </div>
+                <div id="projectsGrid" class="projects-grid">
                     <!-- Projects will be loaded here -->
                     </div>
                         </div>
@@ -1252,7 +1503,16 @@
             'to-do': ['planning', 'to do', 'to-do', 'todo'],
             'in-progress': ['in progress', 'in-progress', 'inprogress'],
             'completed': ['completed', 'done', 'finished'],
-            'testing': ['in-qa', 'in qa', 'qa', 'in-uat', 'in uat', 'uat', 'testing', 'test']
+            'testing': ['in-qa', 'in qa', 'qa', 'in-uat', 'in uat', 'uat', 'testing', 'test'],
+            'issues': ['issues', 'issue', 'blocked', 'blocker', 'blockers', 'problem', 'problems', 'Issues']
+        };
+
+        // Define priority weights
+        const priorityWeights = {
+            'urgent': 2.0,    // Urgent tasks count double
+            'important': 1.5,  // Important tasks count 50% more
+            'medium': 1.0,    // Medium tasks count normal
+            'low': 0.5        // Low priority tasks count half
         };
 
         // Function to create the overlay container
@@ -1267,124 +1527,6 @@
                 console.log('Created overlay container');
             }
             return overlayContainer;
-        }
-
-        // Add a test function to verify bucket fetching
-        async function testBucketFetching() {
-            try {
-                console.log('Testing bucket fetching...');
-                const accounts = window.msalInstance.getAllAccounts();
-                if (accounts.length > 0) {
-                    // Get the first plan ID from the planner integration
-                    const planIds = plannerIntegration.planIds;
-                    if (planIds && planIds.length > 0) {
-                        const planId = planIds[0];
-                        console.log(`Testing bucket fetching for plan: ${planId}`);
-                        
-                        // Fetch buckets
-                        const buckets = await plannerIntegration.getBuckets(planId);
-                        console.log(`Fetched ${buckets.length} buckets for plan ${planId}:`, buckets);
-                        
-                        // Log detailed bucket information
-                        console.log('Bucket details:');
-                        buckets.forEach((bucket, index) => {
-                            console.log(`Bucket ${index + 1}:`, {
-                                id: bucket.id,
-                                name: bucket.name,
-                                planId: bucket.planId,
-                                orderHint: bucket.orderHint
-                            });
-                        });
-                        
-                        // Fetch tasks
-                        const tasks = await plannerIntegration.getTasks(planId);
-                        console.log(`Fetched ${tasks.length} tasks for plan ${planId}:`, tasks);
-                        
-                        // Log detailed task information
-                        console.log('Task details:');
-                        tasks.forEach((task, index) => {
-                            console.log(`Task ${index + 1}:`, {
-                                id: task.id,
-                                title: task.title,
-                                bucketId: task.bucketId,
-                                percentComplete: task.percentComplete,
-                                dueDateTime: task.dueDateTime
-                            });
-                        });
-                        
-                        // Create a map of bucket IDs to names
-                        const bucketMap = {};
-                        buckets.forEach(bucket => {
-                            bucketMap[bucket.id] = bucket.name;
-                        });
-                        
-                        // Add bucket names to tasks
-                        tasks.forEach(task => {
-                            task.actualBucketName = bucketMap[task.bucketId];
-                            console.log(`Task "${task.title}" is in bucket: "${task.actualBucketName}"`);
-                        });
-                        
-                        // Log task categorization using the new mapping
-                        console.log('Task categorization by bucket:');
-                        
-                        const toDoTasks = tasks.filter(t => {
-                            const bucketName = t.actualBucketName?.toLowerCase() || '';
-                            return bucketMapping['to-do'].some(name => bucketName.includes(name));
-                        });
-                        
-                        const inProgressTasks = tasks.filter(t => {
-                            const bucketName = t.actualBucketName?.toLowerCase() || '';
-                            return bucketMapping['in-progress'].some(name => bucketName.includes(name));
-                        });
-                        
-                        const completedTasks = tasks.filter(t => {
-                            const bucketName = t.actualBucketName?.toLowerCase() || '';
-                            return bucketMapping['completed'].some(name => bucketName.includes(name));
-                        });
-                        
-                        const testingTasks = tasks.filter(t => {
-                            const bucketName = t.actualBucketName?.toLowerCase() || '';
-                            return bucketMapping['testing'].some(name => bucketName.includes(name));
-                        });
-                        
-                        console.log('- To Do:', toDoTasks.length);
-                        console.log('- In Progress:', inProgressTasks.length);
-                        console.log('- Completed:', completedTasks.length);
-                        console.log('- Testing:', testingTasks.length);
-                        
-                        // Log task categorization by percent complete
-                        console.log('Task categorization by percent complete:');
-                        const pendingStart = tasks.filter(t => t.percentComplete === 0);
-                        const inProgress = tasks.filter(t => t.percentComplete > 0 && t.percentComplete < 100);
-                        const completed = tasks.filter(t => t.percentComplete === 100);
-                        
-                        console.log('- Pending Start:', pendingStart.length);
-                        console.log('- In Progress:', inProgress.length);
-                        console.log('- Completed:', completed.length);
-                        
-                        // Log tasks that would be categorized differently
-                        console.log('Tasks that would be categorized differently:');
-                        
-                        // Tasks in "To Do" bucket but not in Pending Start
-                        const toDoNotPending = toDoTasks.filter(t => t.percentComplete > 0);
-                        if (toDoNotPending.length > 0) {
-                            console.log('Tasks in "To Do" bucket but not in Pending Start:', toDoNotPending);
-                        }
-                        
-                        // Tasks in Pending Start but not in "To Do" bucket
-                        const pendingNotToDo = pendingStart.filter(t => !toDoTasks.includes(t));
-                        if (pendingNotToDo.length > 0) {
-                            console.log('Tasks in Pending Start but not in "To Do" bucket:', pendingNotToDo);
-                        }
-                    } else {
-                        console.error('No plan IDs available');
-                    }
-                } else {
-                    console.error('No authenticated user found');
-                }
-            } catch (error) {
-                console.error('Error testing bucket fetching:', error);
-            }
         }
 
         function showLoading() {
@@ -1561,7 +1703,7 @@
                             projectCard.setAttribute('data-start-date', project.startDate || '');
                             projectCard.setAttribute('data-due-date', project.dueDate ? project.dueDate.toLocaleDateString() : '');
                             
-                            // Calculate project progress
+                            // Calculate project progress based on forecast logic
                             let totalTasks = 0;
                             let completedTasks = 0;
                             let projectDueDate = null;
@@ -1569,11 +1711,30 @@
                             try {
                                 const tasks = await plannerIntegration.getTasks(project.planId);
                                 totalTasks = tasks.length;
-                                completedTasks = tasks.filter(task => task.percentComplete === 100).length;
-                                const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                                
+                                // Get buckets and set bucket names for tasks
+                                const buckets = await plannerIntegration.getBuckets(project.planId);
+                                const bucketMap = {};
+                                buckets.forEach(bucket => {
+                                    bucketMap[bucket.id] = bucket.name;
+                                });
+                                
+                                // Add bucket names to tasks
+                                tasks.forEach(task => {
+                                    task.actualBucketName = bucketMap[task.bucketId];
+                                });
+
+                                // Calculate progress using the new method
+                                const progressPercent = calculateProjectProgress(tasks);
+                                
+                                // Get completed tasks count for display
+                                completedTasks = tasks.filter(t => {
+                                    const bucketName = (t.actualBucketName || '').toLowerCase();
+                                    return bucketMapping['completed'].some(name => bucketName.includes(name));
+                                }).length;
                                 
                                 // Calculate forecast status
-                                const forecastStatus = getForecastStatus(tasks, progressPercent);
+                                const forecastStatus = getForecastStatus(tasks);
 
                                 // Find the earliest due date among all tasks
                                 const dueDates = tasks
@@ -1584,10 +1745,15 @@
                                     projectDueDate = new Date(Math.min(...dueDates));
                                 }
 
-                                // Check for blockers
-                                const hasBlockers = tasks.some(task => task.hasBlocker);
-                                const blockerText = getBlockerText(tasks);
-                                const blockerIcon = hasBlockers ? `
+                                // Check for issues
+                                const issuesTasks = tasks.filter(t => {
+                                    const bucketName = (t.actualBucketName || '').toLowerCase();
+                                    return bucketMapping['issues'].some(name => bucketName.includes(name));
+                                });
+                                
+                                const hasIssues = issuesTasks.length > 0;
+                                const issuesText = hasIssues ? `${issuesTasks.length} issue${issuesTasks.length === 1 ? '' : 's'}` : 'No issues';
+                                const issuesIcon = hasIssues ? `
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
                                 ` : `
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
@@ -1604,15 +1770,13 @@
                         </div>
                             </div>
                                         <div class="header-buttons">
+                                        <button class="info-button" onclick="toggleForecastInfo(event)" title="Show forecast calculation info">
+                                            ℹ️
+                                            </button>
                                             <button class="view-toggle" onclick="showProjectDetailsOverlay(event, '${project.planId}')">
                                 View Details
                             </button>
                         </div>
-                    </div>
-                                    <div class="info-button-container">
-                                        <button class="info-button" onclick="toggleForecastInfo(event)" title="Show forecast calculation info">
-                                            ℹ️
-                            </button>
                         </div>
                                     <div class="project-summary">
                                         <div class="project-summary-item">
@@ -1624,10 +1788,10 @@
                     </div>
                                         <div class="project-summary-item">
                                             <svg viewBox="0 0 20 20" fill="currentColor">
-                                                ${blockerIcon}
+                                                ${issuesIcon}
                                             </svg>
-                                            <span class="${hasBlockers ? 'project-blocker' : 'project-no-blocker'}">
-                                                ${blockerText}
+                                            <span class="${hasIssues ? 'project-blocker' : 'project-no-blocker'}">
+                                                ${issuesText}
                                             </span>
                         </div>
                                         <div class="project-summary-item">
@@ -1719,57 +1883,79 @@
             let status = 'On Track';
             let detail = 'Meeting schedule';
             let className = 'status-on-track';
+            let daysRange = '0-5';
+            let daysBehind = 0;
             
             // If no tasks, return default status
             if (!tasks || tasks.length === 0) {
-                return { status, detail, class: className };
+                return { status, detail, class: className, daysRange, daysBehind };
+            }
+            
+            const now = new Date();
+            const tasksWithDueDates = tasks.filter(task => task.dueDateTime);
+            
+            // If no tasks have due dates, return default status
+            if (tasksWithDueDates.length === 0) {
+                return { 
+                    status: 'On Track', 
+                    detail: 'No due dates set', 
+                    class: 'status-on-track',
+                    daysRange: '0-5',
+                    daysBehind: 0
+                };
             }
             
             // Calculate expected progress based on due dates
-            const now = new Date();
-            const dueDates = tasks
-                .filter(task => task.dueDateTime)
-                .map(task => new Date(task.dueDateTime));
+            const dueDates = tasksWithDueDates.map(task => new Date(task.dueDateTime));
+            const earliestDueDate = new Date(Math.min(...dueDates));
+            const latestDueDate = new Date(Math.max(...dueDates));
             
-            if (dueDates.length > 0) {
-                const earliestDueDate = new Date(Math.min(...dueDates));
-                const latestDueDate = new Date(Math.max(...dueDates));
-                
-                // Calculate total duration in days
-                const totalDuration = Math.ceil((latestDueDate - earliestDueDate) / (1000 * 60 * 60 * 24));
-                
-                // Calculate elapsed time
-                const elapsedTime = Math.ceil((now - earliestDueDate) / (1000 * 60 * 60 * 24));
-                
-                // Calculate expected progress
-                const expectedProgress = Math.min(100, Math.max(0, (elapsedTime / totalDuration) * 100));
-                
-                // Compare actual progress with expected progress
-                const progressDifference = expectedProgress - progressPercent;
-                
-                if (progressDifference > 15) {
-                    status = 'Off Track';
-                    detail = 'Significantly behind schedule';
-                    className = 'status-off-track';
-                } else if (progressDifference > 5) {
-                    status = 'At Risk';
-                    detail = 'Slightly behind schedule';
-                    className = 'status-at-risk';
-                }
+            // Calculate total duration in days
+            const totalDuration = Math.ceil((latestDueDate - earliestDueDate) / (1000 * 60 * 60 * 24));
+            
+            // Calculate elapsed time
+            const elapsedTime = Math.ceil((now - earliestDueDate) / (1000 * 60 * 60 * 24));
+            
+            // Calculate expected progress
+            const expectedProgress = Math.min(100, Math.max(0, (elapsedTime / totalDuration) * 100));
+            
+            // Compare actual progress with expected progress
+            const progressDifference = expectedProgress - progressPercent;
+            
+            if (progressDifference > 15) {
+                status = 'Off Track';
+                detail = 'Significantly behind schedule';
+                className = 'status-off-track';
+                daysBehind = Math.ceil(progressDifference * totalDuration / 100);
+            } else if (progressDifference > 5) {
+                status = 'At Risk';
+                detail = 'Slightly behind schedule';
+                className = 'status-at-risk';
+                daysBehind = Math.ceil(progressDifference * totalDuration / 100);
             }
             
-            return { status, detail, class: className };
+            return { status, detail, class: className, daysRange, daysBehind };
         }
 
         // Add the missing getBlockerText function
         function getBlockerText(tasks) {
-            const blockers = tasks.filter(task => task.hasBlocker);
-            if (blockers.length === 0) {
-                return 'No blockers';
-            } else if (blockers.length === 1) {
-                return '1 blocker';
+            // Count tasks in the Issues bucket
+            const issuesTasks = tasks.filter(t => {
+                const bucketName = (t.actualBucketName || '').toLowerCase();
+                // Check if the bucket name matches any of the issues mapping terms
+                return bucketMapping['issues'].some(name => bucketName.includes(name.toLowerCase()));
+            });
+
+            // Log for debugging
+            console.log('Issues bucket tasks:', issuesTasks);
+            console.log('Issues count:', issuesTasks.length);
+
+            if (issuesTasks.length === 0) {
+                return 'No issues';
+            } else if (issuesTasks.length === 1) {
+                return '1 issue';
             } else {
-                return `${blockers.length} blockers`;
+                return `${issuesTasks.length} issues`;
             }
         }
 
@@ -1964,7 +2150,7 @@
                     
                     // Add bucket names to tasks
                     tasks.forEach(task => {
-                        task.actualBucketName = bucketMap[task.bucketId];
+                        task.actualBucketName = bucketMap[task.bucketId] || '';
                     });
                     
                     // Categorize tasks based on bucket names using the mapping
@@ -2169,18 +2355,85 @@
             if (!analyticsContainer) {
                 analyticsContainer = document.createElement('div');
                 analyticsContainer.className = 'analytics-panel';
+                analyticsContainer.style.marginTop = '30px';
+                analyticsContainer.style.marginBottom = '30px';
+                analyticsContainer.style.backgroundColor = 'white';
+                analyticsContainer.style.borderRadius = '8px';
+                analyticsContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                analyticsContainer.style.padding = '0'; // Remove padding from container
                 
-                // Add header
-                const header = document.createElement('h3');
-                header.textContent = 'Project Analytics';
-                analyticsContainer.appendChild(header);
+                // Create header container with flex layout
+                const headerContainer = document.createElement('div');
+                headerContainer.style.borderBottom = '1px solid #e5e7eb';
+                headerContainer.style.padding = '20px 24px';
+                headerContainer.style.marginBottom = '24px';
+                headerContainer.style.backgroundColor = '#f9fafb';
+                headerContainer.style.borderTopLeftRadius = '8px';
+                headerContainer.style.borderTopRightRadius = '8px';
+                headerContainer.style.display = 'flex';
+                headerContainer.style.position = 'relative';
+                headerContainer.style.height = '60px';
                 
-                // Add analytics grid
+                // Add Task Analytics header
+                const analyticsHeader = document.createElement('h2');
+                analyticsHeader.textContent = 'Task Analytics';
+                analyticsHeader.style.fontSize = '1.5em';
+                analyticsHeader.style.fontWeight = '600';
+                analyticsHeader.style.color = '#1d1d1f';
+                analyticsHeader.style.margin = '0';
+                analyticsHeader.style.position = 'absolute';
+                analyticsHeader.style.left = '24px';
+                analyticsHeader.style.top = '50%';
+                analyticsHeader.style.transform = 'translateY(-50%)';
+                
+                // Create total tasks card
+                const totalTasksCard = document.createElement('div');
+                totalTasksCard.style.backgroundColor = 'white';
+                totalTasksCard.style.padding = '12px 24px';  // Increased padding
+                totalTasksCard.style.borderRadius = '12px';  // Increased border radius
+                totalTasksCard.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                totalTasksCard.style.display = 'flex';
+                totalTasksCard.style.alignItems = 'center';
+                totalTasksCard.style.gap = '16px';  // Increased gap
+                totalTasksCard.style.position = 'absolute';
+                totalTasksCard.style.left = '50%';
+                totalTasksCard.style.top = '50%';
+                totalTasksCard.style.transform = 'translate(-50%, -50%)';
+                totalTasksCard.style.zIndex = '1';
+                
+                const totalTasksLabel = document.createElement('span');
+                totalTasksLabel.textContent = 'Total Tasks';
+                totalTasksLabel.style.fontSize = '1.1em';  // Increased font size
+                totalTasksLabel.style.color = '#666';
+                totalTasksLabel.style.fontWeight = '500';  // Added font weight
+                
+                const totalTasksValue = document.createElement('span');
+                totalTasksValue.textContent = '0';  // Will be updated with actual value
+                totalTasksValue.style.fontSize = '1.5em';  // Increased font size
+                totalTasksValue.style.fontWeight = '600';
+                totalTasksValue.style.color = '#0078d4';
+                
+                totalTasksCard.appendChild(totalTasksLabel);
+                totalTasksCard.appendChild(totalTasksValue);
+                
+                // Add elements to header container
+                headerContainer.appendChild(analyticsHeader);
+                headerContainer.appendChild(totalTasksCard);
+                
+                // Add header to analytics container
+                analyticsContainer.appendChild(headerContainer);
+                
+                // Add analytics grid with padding
+                const gridContainer = document.createElement('div');
+                gridContainer.style.padding = '0 24px 24px 24px';
+                
                 const grid = document.createElement('div');
                 grid.className = 'analytics-grid';
-                analyticsContainer.appendChild(grid);
-                
-                detailsContainer.appendChild(analyticsContainer);
+                grid.style.display = 'grid';
+                grid.style.gridTemplateColumns = 'repeat(3, 1fr)';  // Fixed 3 columns
+                grid.style.gap = '24px';  // Increased gap
+                gridContainer.appendChild(grid);
+                analyticsContainer.appendChild(gridContainer);
             }
             
             // Get the analytics grid
@@ -2250,8 +2503,56 @@
 
         function toggleForecastInfo(event) {
             event.stopPropagation();
-            const panel = document.getElementById('forecastInfoPanel');
-            panel.classList.toggle('visible');
+            const infoPanel = document.querySelector('.forecast-info-panel');
+            
+            if (!infoPanel) {
+                // Create the info panel if it doesn't exist
+                const panel = document.createElement('div');
+                panel.className = 'forecast-info-panel';
+                panel.innerHTML = `
+                    <h4>Project Status Explanation</h4>
+                    
+                    <p><strong>On Track</strong> (Green)</p>
+                    <ul>
+                        <li>All tasks are on time or with minimal delays</li>
+                        <li>Current tasks progressing as expected</li>
+                        <li>No significant blockers</li>
+                        <li>Meeting planned schedule</li>
+                    </ul>
+
+                    <p><strong>At Risk</strong> (Yellow)</p>
+                    <ul>
+                        <li>Tasks are 5-15 days behind schedule</li>
+                        <li>Some tasks have delays or haven't started on time</li>
+                        <li>May have dependencies at risk</li>
+                        <li>Requires attention to get back on track</li>
+                    </ul>
+
+                    <p><strong>Off Track</strong> (Red)</p>
+                    <ul>
+                        <li>Project is 15+ days behind schedule</li>
+                        <li>Multiple tasks significantly delayed</li>
+                        <li>Critical path affected</li>
+                        <li>Immediate intervention needed</li>
+                    </ul>
+
+                    <p><strong>How Days Behind is Calculated</strong></p>
+                    <ul>
+                        <li>Checks each task's start and due dates</li>
+                        <li>Compares expected vs actual progress</li>
+                        <li>Considers overdue tasks and their delays</li>
+                        <li>Shows maximum delay across all tasks</li>
+                    </ul>
+
+                    <p><strong>Forecast Range</strong></p>
+                    <p>Shows the expected range of days the project might be delayed based on current progress and task status. This helps predict potential timeline impact.</p>
+                `;
+                
+                document.body.appendChild(panel);
+                setTimeout(() => panel.classList.add('visible'), 10);
+            } else {
+                infoPanel.classList.toggle('visible');
+            }
         }
 
         // Close info panel when clicking outside
@@ -2375,6 +2676,15 @@
             const mainContent = document.createElement('div');
             mainContent.className = 'project-details-overlay-content';
             
+            // Add Task Analytics header as the main header
+            const analyticsHeader = document.createElement('h2');
+            analyticsHeader.textContent = 'Task Analytics';
+            analyticsHeader.style.margin = '0 0 30px 0';
+            analyticsHeader.style.fontSize = '28px';
+            analyticsHeader.style.color = '#333';
+            analyticsHeader.style.fontWeight = '600';
+            mainContent.appendChild(analyticsHeader);
+            
             // Clone and add project summary
             const projectSummary = projectCard.querySelector('.project-summary').cloneNode(true);
             projectSummary.style.marginBottom = '30px';
@@ -2401,7 +2711,7 @@
                     padding: 30px;
                     max-width: 1800px;
                     margin: 0 auto;
-                    background: white;
+                        background: white;
                 }
                 .project-details-content {
                     display: grid;
@@ -2410,12 +2720,12 @@
                 .project-summary {
                     background: white;
                     padding: 20px;
-                    border-radius: 12px;
+                        border-radius: 12px;
                     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                }
+                    }
                 .project-card-meta {
                     background: white;
-                    padding: 20px;
+                        padding: 20px;
                     border-radius: 12px;
                     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 }
@@ -2482,15 +2792,80 @@
             analyticsContainer.style.backgroundColor = 'white';
             analyticsContainer.style.borderRadius = '8px';
             analyticsContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-            analyticsContainer.style.padding = '20px';
+            analyticsContainer.style.padding = '0'; // Remove padding from container
             
-            // Add analytics grid
+            // Create header container with flex layout
+            const headerContainer = document.createElement('div');
+            headerContainer.style.borderBottom = '1px solid #e5e7eb';
+            headerContainer.style.padding = '20px 24px';
+            headerContainer.style.marginBottom = '24px';
+            headerContainer.style.backgroundColor = '#f9fafb';
+            headerContainer.style.borderTopLeftRadius = '8px';
+            headerContainer.style.borderTopRightRadius = '8px';
+            headerContainer.style.display = 'flex';
+            headerContainer.style.position = 'relative';
+            headerContainer.style.height = '60px';
+            
+            // Add Task Analytics header
+            const analyticsHeader = document.createElement('h2');
+            analyticsHeader.textContent = 'Task Analytics';
+            analyticsHeader.style.fontSize = '1.5em';
+            analyticsHeader.style.fontWeight = '600';
+            analyticsHeader.style.color = '#1d1d1f';
+            analyticsHeader.style.margin = '0';
+            analyticsHeader.style.position = 'absolute';
+            analyticsHeader.style.left = '24px';
+            analyticsHeader.style.top = '50%';
+            analyticsHeader.style.transform = 'translateY(-50%)';
+            
+            // Create total tasks card
+            const totalTasksCard = document.createElement('div');
+            totalTasksCard.style.backgroundColor = 'white';
+            totalTasksCard.style.padding = '12px 24px';  // Increased padding
+            totalTasksCard.style.borderRadius = '12px';  // Increased border radius
+            totalTasksCard.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            totalTasksCard.style.display = 'flex';
+            totalTasksCard.style.alignItems = 'center';
+            totalTasksCard.style.gap = '16px';  // Increased gap
+            totalTasksCard.style.position = 'absolute';
+            totalTasksCard.style.left = '50%';
+            totalTasksCard.style.top = '50%';
+            totalTasksCard.style.transform = 'translate(-50%, -50%)';
+            totalTasksCard.style.zIndex = '1';
+            
+            const totalTasksLabel = document.createElement('span');
+            totalTasksLabel.textContent = 'Total Tasks';
+            totalTasksLabel.style.fontSize = '1.1em';  // Increased font size
+            totalTasksLabel.style.color = '#666';
+            totalTasksLabel.style.fontWeight = '500';  // Added font weight
+            
+            const totalTasksValue = document.createElement('span');
+            totalTasksValue.textContent = '0';  // Will be updated with actual value
+            totalTasksValue.style.fontSize = '1.5em';  // Increased font size
+            totalTasksValue.style.fontWeight = '600';
+            totalTasksValue.style.color = '#0078d4';
+            
+            totalTasksCard.appendChild(totalTasksLabel);
+            totalTasksCard.appendChild(totalTasksValue);
+            
+            // Add elements to header container
+            headerContainer.appendChild(analyticsHeader);
+            headerContainer.appendChild(totalTasksCard);
+            
+            // Add header to analytics container
+            analyticsContainer.appendChild(headerContainer);
+            
+            // Add analytics grid with padding
+            const gridContainer = document.createElement('div');
+            gridContainer.style.padding = '0 24px 24px 24px';
+            
             const grid = document.createElement('div');
             grid.className = 'analytics-grid';
             grid.style.display = 'grid';
-            grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(200px, 1fr))';
-            grid.style.gap = '20px';
-            analyticsContainer.appendChild(grid);
+            grid.style.gridTemplateColumns = 'repeat(3, 1fr)';  // Fixed 3 columns
+            grid.style.gap = '24px';  // Increased gap
+            gridContainer.appendChild(grid);
+            analyticsContainer.appendChild(gridContainer);
             
             // Add initial metric cards with 0 values
             addMetricCardOverlay(grid, 'Total Tasks', '0');
@@ -2555,31 +2930,90 @@
                 const totalTasks = tasks.length;
                 const completionPercentage = totalTasks > 0 ? Math.round((completedTasks.length / totalTasks) * 100) : 0;
                 
+                // Update total tasks in header card
+                const totalTasksValue = headerContainer.querySelector('span:last-child');
+                if (totalTasksValue) {
+                    totalTasksValue.textContent = totalTasks.toString();
+                }
+                
                 // Update metric cards with actual values
                 grid.innerHTML = ''; // Clear existing cards
-                addMetricCardOverlay(grid, 'Total Tasks', totalTasks);
-                addMetricCardOverlay(grid, 'To-Do', toDoTasks.length);
-                addMetricCardOverlay(grid, 'In Progress', inProgressTasks.length);
-                addMetricCardOverlay(grid, 'Testing', testingTasks.length);
-                addMetricCardOverlay(grid, 'Completed', completedTasks.length);
-                addMetricCardOverlay(grid, 'Uncategorized', uncategorizedTasks.length);
+                addMetricCardOverlay(grid, 'To-Do', toDoTasks.length, false, toDoTasks);
+                addMetricCardOverlay(grid, 'In Progress', inProgressTasks.length, false, inProgressTasks);
+                addMetricCardOverlay(grid, 'Testing', testingTasks.length, false, testingTasks);
+                addMetricCardOverlay(grid, 'Completed', completedTasks.length, false, completedTasks);
+                addMetricCardOverlay(grid, 'Uncategorized', uncategorizedTasks.length, false, uncategorizedTasks);
                 addMetricCardOverlay(grid, 'Completion', `${completionPercentage}%`, completionPercentage === 100);
+
+                // Add issues panel
+                const issuesTasks = tasks.filter(t => {
+                    const bucketName = (t.actualBucketName || '').toLowerCase();
+                    return bucketMapping['issues'].some(name => bucketName.includes(name));
+                });
+
+                const issuesPanel = document.createElement('div');
+                issuesPanel.className = 'issues-panel';
                 
-                // Update task lists below analytics
-                const tasksContainer = document.createElement('div');
-                tasksContainer.className = 'tasks-container';
-                tasksContainer.style.display = 'grid';
-                tasksContainer.style.gap = '20px';
-                tasksContainer.style.marginTop = '20px';
+                const issuesHeader = document.createElement('div');
+                issuesHeader.className = 'issues-panel-header';
+                issuesHeader.innerHTML = `
+                    <h3>
+                        <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px;">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Project Issues (${issuesTasks.length})
+                    </h3>
+                    <svg class="w-5 h-5 transform transition-transform" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px;">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                `;
                 
-                // Add task lists for each category
-                updateTaskListOverlay(tasksContainer, 'to-do', toDoTasks);
-                updateTaskListOverlay(tasksContainer, 'in-progress', inProgressTasks);
-                updateTaskListOverlay(tasksContainer, 'testing', testingTasks);
-                updateTaskListOverlay(tasksContainer, 'completed', completedTasks);
-                updateTaskListOverlay(tasksContainer, 'uncategorized', uncategorizedTasks);
+                const issuesContent = document.createElement('div');
+                issuesContent.className = 'issues-panel-content';
                 
-                container.appendChild(tasksContainer);
+                if (issuesTasks.length > 0) {
+                    const issuesHtml = issuesTasks.map(task => {
+                        const severity = task.priority === 1 ? 'low' : 
+                                       task.priority === 5 ? 'medium' : 
+                                       task.priority === 9 ? 'high' : 'medium';
+                        
+                        return `
+                            <div class="issue-card">
+                                <div class="issue-header">
+                                    <h4 class="issue-title">${task.title}</h4>
+                                    <span class="issue-severity severity-${severity}">
+                                        ${severity.charAt(0).toUpperCase() + severity.slice(1)} Priority
+                                    </span>
+                                </div>
+                                <p class="issue-description">${task.description || 'No description provided.'}</p>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    issuesContent.innerHTML = issuesHtml;
+                } else {
+                    issuesContent.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No issues found.</p>';
+                }
+                
+                issuesPanel.appendChild(issuesHeader);
+                issuesPanel.appendChild(issuesContent);
+                
+                // Add click handler for expanding/collapsing
+                issuesHeader.addEventListener('click', () => {
+                    issuesContent.classList.toggle('expanded');
+                    const arrow = issuesHeader.querySelector('svg:last-child');
+                    arrow.style.transform = issuesContent.classList.contains('expanded') ? 'rotate(180deg)' : '';
+                });
+                
+                // If there are issues, expand by default
+                if (issuesTasks.length > 0) {
+                    issuesContent.classList.add('expanded');
+                    const arrow = issuesHeader.querySelector('svg:last-child');
+                    arrow.style.transform = 'rotate(180deg)';
+                }
+                
+                // Add the issues panel after the analytics container
+                container.appendChild(issuesPanel);
             })
             .catch(error => {
                 console.error('Error fetching details:', error);
@@ -2721,21 +3155,27 @@
         }
         
         // Helper function to add metric cards to the overlay
-        function addMetricCardOverlay(grid, title, value, highlight = false) {
+        function addMetricCardOverlay(grid, title, value, highlight = false, tasks = []) {
             const card = document.createElement('div');
             card.className = `metric-card${highlight ? ' highlight' : ''}`;
             card.style.backgroundColor = highlight ? '#e6f7e6' : '#f5f5f7';
-            card.style.borderRadius = '8px';
-            card.style.padding = '20px';
-            card.style.textAlign = 'center';
+            card.style.borderRadius = '12px';
+            card.style.padding = '16px 24px';
+            card.style.textAlign = 'left';
             card.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
+            card.style.display = 'flex';
+            card.style.justifyContent = 'space-between';
+            card.style.alignItems = 'center';
+            card.style.minHeight = '80px';
+            card.style.position = 'relative';  // Added for popup positioning
+            card.style.cursor = 'pointer';     // Show it's interactive
             
             const titleElement = document.createElement('div');
             titleElement.className = 'metric-title';
             titleElement.textContent = title;
-            titleElement.style.fontSize = '0.9em';
+            titleElement.style.fontSize = '0.95em';
             titleElement.style.color = '#666';
-            titleElement.style.marginBottom = '10px';
+            titleElement.style.marginBottom = '0';
             
             const valueElement = document.createElement('div');
             valueElement.className = 'metric-value';
@@ -2744,9 +3184,168 @@
             valueElement.style.fontWeight = '600';
             valueElement.style.color = highlight ? '#2a9d2a' : '#0078d4';
             
+            // Create task list popup
+            const taskList = document.createElement('div');
+            taskList.className = 'task-list';
+            taskList.style.display = 'none';
+            taskList.style.position = 'absolute';
+            taskList.style.top = '100%';
+            taskList.style.left = '0';
+            taskList.style.width = '300px';
+            taskList.style.maxHeight = '400px';
+            taskList.style.overflowY = 'auto';
+            taskList.style.backgroundColor = 'white';
+            taskList.style.borderRadius = '8px';
+            taskList.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            taskList.style.zIndex = '1000';
+            taskList.style.padding = '12px';
+            taskList.style.marginTop = '8px';
+            
+            // Add tasks to the popup
+            if (tasks.length > 0) {
+                tasks.forEach(task => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-item';
+                    taskItem.style.padding = '12px';
+                    taskItem.style.borderBottom = '1px solid #eee';
+                    taskItem.style.display = 'flex';
+                    taskItem.style.flexDirection = 'column';
+                    taskItem.style.gap = '4px';
+                    
+                    const taskTitle = document.createElement('span');
+                    taskTitle.textContent = task.title;
+                    taskTitle.style.fontWeight = '500';
+                    taskTitle.style.color = '#333';
+                    
+                    const taskMeta = document.createElement('div');
+                    taskMeta.style.fontSize = '0.85em';
+                    taskMeta.style.color = '#666';
+                    taskMeta.style.display = 'flex';
+                    taskMeta.style.alignItems = 'center';
+                    taskMeta.style.gap = '8px';
+                    
+                    if (task.dueDateTime) {
+                        const dueDate = document.createElement('span');
+                        dueDate.innerHTML = `📅 ${new Date(task.dueDateTime).toLocaleDateString()}`;
+                        taskMeta.appendChild(dueDate);
+            } else {
+                        const noDueDate = document.createElement('span');
+                        noDueDate.innerHTML = '📅 No due date';
+                        noDueDate.style.color = '#999';
+                        taskMeta.appendChild(noDueDate);
+                    }
+                    
+                    taskItem.appendChild(taskTitle);
+                    taskItem.appendChild(taskMeta);
+                    taskList.appendChild(taskItem);
+                });
+            } else {
+                const noTasks = document.createElement('div');
+                noTasks.textContent = 'No tasks in this category';
+                noTasks.style.padding = '10px';
+                noTasks.style.color = '#666';
+                taskList.appendChild(noTasks);
+            }
+            
+            // Add hover and click events
+            let timeout;
+            
+            card.addEventListener('mouseenter', () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    taskList.style.display = 'block';
+                }, 200);
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    taskList.style.display = 'none';
+                }, 200);
+            });
+            
+            card.addEventListener('click', () => {
+                const isVisible = taskList.style.display === 'block';
+                taskList.style.display = isVisible ? 'none' : 'block';
+            });
+            
             card.appendChild(titleElement);
             card.appendChild(valueElement);
+            card.appendChild(taskList);
             grid.appendChild(card);
+        }
+
+        // Calculate project progress based on forecast logic and priorities
+        function calculateProjectProgress(tasks) {
+            if (!tasks || tasks.length === 0) return 0;
+
+            // Get completed tasks
+            const completedTasks = tasks.filter(t => {
+                const bucketName = (t.actualBucketName || '').toLowerCase();
+                return bucketMapping['completed'].some(name => bucketName.includes(name));
+            });
+
+            // Check if we have any tasks with priorities
+            const hasPriorities = tasks.some(t => t.labels && t.labels.some(label => 
+                ['urgent', 'important', 'medium', 'low'].includes(label.toLowerCase())
+            ));
+
+            if (hasPriorities) {
+                // Calculate weighted totals
+                let weightedCompleted = 0;
+                let weightedTotal = 0;
+
+                tasks.forEach(task => {
+                    // Get priority from labels
+                    let priority = 'medium'; // default priority
+                    if (task.labels) {
+                        if (task.labels.some(l => l.toLowerCase() === 'urgent')) priority = 'urgent';
+                        else if (task.labels.some(l => l.toLowerCase() === 'important')) priority = 'important';
+                        else if (task.labels.some(l => l.toLowerCase() === 'low')) priority = 'low';
+                    }
+                    
+                    const weight = priorityWeights[priority];
+                    weightedTotal += weight;
+
+                    const bucketName = (task.actualBucketName || '').toLowerCase();
+                    const isCompleted = bucketMapping['completed'].some(name => bucketName.includes(name));
+                    if (isCompleted) {
+                        weightedCompleted += weight;
+                    }
+                });
+
+                // Calculate weighted progress
+                const baseProgress = (weightedCompleted / weightedTotal) * 100;
+                
+                // Get project status
+                const status = getForecastStatus(tasks).status;
+                
+                // Adjust progress based on status
+                let adjustedProgress = baseProgress;
+                if (status === 'At Risk') {
+                    adjustedProgress = baseProgress * 0.75; // 25% reduction
+                } else if (status === 'Off Track') {
+                    adjustedProgress = baseProgress * 0.5; // 50% reduction
+                }
+                
+                return Math.round(adjustedProgress);
+            } else {
+                // Fallback to simple completion ratio if no priorities
+                const baseProgress = (completedTasks.length / tasks.length) * 100;
+                
+                // Get project status
+                const status = getForecastStatus(tasks).status;
+                
+                // Adjust progress based on status
+                let adjustedProgress = baseProgress;
+                if (status === 'At Risk') {
+                    adjustedProgress = baseProgress * 0.75; // 25% reduction
+                } else if (status === 'Off Track') {
+                    adjustedProgress = baseProgress * 0.5; // 50% reduction
+                }
+                
+                return Math.round(adjustedProgress);
+            }
         }
     </script>
 </body>
