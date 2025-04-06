@@ -113,28 +113,35 @@
                 <i class="fas fa-calculator portal-icon"></i>
                 <h2>Project Pricer</h2>
                 <p>Calculate project costs and generate accurate quotes</p>
-                <a href="Project-Price-Calculator.html" class="portal-button">Open Project Pricer</a>
+                <a href="Project-Price-Calculator.html" class="portal-button" onclick="handleNavigation(this.href); return false;">Open Project Pricer</a>
             </div>
 
             <div class="portal-card">
                 <i class="fas fa-tasks portal-icon"></i>
                 <h2>Release Planner</h2>
                 <p>Plan and track monthly release enhancements</p>
-                <a href="release-planner.html" class="portal-button">Open Release Planner</a>
+                <a href="release-planner.html" class="portal-button" onclick="handleNavigation(this.href); return false;">Open Release Planner</a>
             </div>
 
             <div class="portal-card">
                 <i class="fas fa-folder portal-icon"></i>
                 <h2>Quote Repository</h2>
                 <p>Access and manage all project quotes</p>
-                <a href="repository.html" class="portal-button">View Repository</a>
+                <a href="repository.html" class="portal-button" onclick="handleNavigation(this.href); return false;">View Repository</a>
             </div>
 
             <div class="portal-card">
                 <i class="fas fa-cogs portal-icon"></i>
                 <h2>Admin Portal</h2>
                 <p>Manage system settings and user access</p>
-                <a href="admin.html" class="portal-button">Admin Access</a>
+                <a href="admin.html" class="portal-button" onclick="handleNavigation(this.href); return false;">Admin Access</a>
+            </div>
+
+            <div class="portal-card">
+                <i class="fas fa-sync portal-icon"></i>
+                <h2>Polling Test</h2>
+                <p>Test polling functionality</p>
+                <a href="polling-test.html" class="portal-button" onclick="handleNavigation(this.href); return false;">Open Polling Test</a>
             </div>
         </div>
     </main>
@@ -142,6 +149,20 @@
     <script>
         async function initializePage() {
             try {
+                // Check if MSAL is loaded
+                if (typeof msal === 'undefined') {
+                    console.error('MSAL library not loaded');
+                    window.location.replace('login.html');
+                    return;
+                }
+                
+                // Check if MSAL instance exists
+                if (!window.msalInstance) {
+                    console.error('MSAL instance not initialized');
+                    window.location.replace('login.html');
+                    return;
+                }
+                
                 const account = await AuthHandler.initialize();
                 if (account) {
                     const username = document.getElementById('username');
@@ -151,14 +172,19 @@
                 }
             } catch (error) {
                 console.error('Error initializing page:', error);
-                if (error.errorCode?.includes('auth')) {
-                    window.location.replace('login.html');
-                }
+                window.location.replace('login.html');
             }
         }
 
         // Handle sign out
-        document.getElementById('signout-button').addEventListener('click', AuthHandler.signOut);
+        document.getElementById('signout-button').addEventListener('click', function() {
+            if (window.AuthHandler && typeof window.AuthHandler.signOut === 'function') {
+                window.AuthHandler.signOut();
+            } else {
+                console.error('Auth handler not properly initialized');
+                window.location.replace('login.html');
+            }
+        });
 
         // Initialize when the page loads
         if (document.readyState === 'loading') {

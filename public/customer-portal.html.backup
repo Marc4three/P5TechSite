@@ -303,13 +303,19 @@
 
         .project-card.expanded {
             position: fixed;
-            top: 20px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%) scale(1);
+            width: 95%;
+            height: 85vh;
+            max-width: 1600px;
             z-index: 1001;
-            width: 80%;
-            max-width: 800px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: default;
+            overflow-y: auto;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: expandCard 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px;
         }
 
         .project-card.closing {
@@ -318,8 +324,9 @@
 
         .project-card.hidden {
             opacity: 0;
-            transform: scale(0.8);
+            transform: scale(0.95);
             pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes expandCard {
@@ -980,70 +987,9 @@
 
         .metric-value {
             font-size: 24px;
-            font-weight: bold;
-            color: #0078d4;
-        }
-        
-        .metric-card.highlight {
-            background-color: #e6f2fa;
-            border-left: 4px solid #0078d4;
-        }
-        
-        /* Overlay Styles */
-        .project-details-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            background-color: white;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            overflow-y: auto;
-            padding: 0;
-        }
-
-        .overlay-header {
-            position: sticky;
-            top: 0;
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            width: 100%;
-        }
-
-        .project-details-overlay-content {
-            padding: 20px;
-            background-color: white;
-            width: 100%;
-            max-width: 1800px;
-            margin: 0 auto;
-        }
-
-        .back-button {
-            padding: 10px 20px;
-            background-color: #0078d4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .back-button:hover {
-            background-color: #005a9e;
-        }
-
-        /* Hide the project details section that expands below cards */
-        .project-details {
-            display: none !important;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
         }
 
         .panel-header {
@@ -1114,6 +1060,70 @@
         .view-toggle:hover {
             background: rgba(0, 113, 227, 0.15);
             transform: translateY(-1px);
+        }
+        
+        /* Overlay styles */
+        .overlay-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background-color: #f5f5f5;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .project-card {
+            transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .project-card.expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 1001;
+            width: 90%;
+            max-width: 1200px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .project-card.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            z-index: 1002;
+        }
+        
+        .back-button:hover {
+            background-color: #005a9e;
+        }
+        
+        .overlay-content {
+            padding: 20px;
+            margin-top: 60px;
+        }
+        
+        /* Update bucket mapping for the new categories */
+        .bucket-mapping {
+            display: none; /* Hide this element, it's just for reference */
         }
     </style>
 </head>
@@ -1202,6 +1212,18 @@
         <div class="spinner"></div>
                             </div>
 
+    <!-- Add overlay container -->
+    <div class="overlay-container" id="overlay-container"></div>
+    
+    <!-- Add bucket mapping reference -->
+    <div class="bucket-mapping">
+        <div data-category="to-do">Planning, To-Do</div>
+        <div data-category="in-progress">In-Progress</div>
+        <div data-category="tested">In-QA, In-UAT, Tested</div>
+        <div data-category="completed">Completed</div>
+        <div data-category="overdue">Overdue</div>
+                            </div>
+
     <!-- Scripts -->
     <script src="auth-config.js"></script>
     <script src="planner-config.js"></script>
@@ -1233,23 +1255,10 @@
         const bucketMapping = {
             'to-do': ['planning', 'to do', 'to-do', 'todo'],
             'in-progress': ['in progress', 'in-progress', 'inprogress'],
+            'tested': ['in-qa', 'in qa', 'qa', 'in-uat', 'in uat', 'uat', 'testing', 'test', 'tested'],
             'completed': ['completed', 'done', 'finished'],
-            'testing': ['in-qa', 'in qa', 'qa', 'in-uat', 'in uat', 'uat', 'testing', 'test']
+            'overdue': ['overdue', 'late', 'delayed']
         };
-
-        // Function to create the overlay container
-        function createOverlayContainer() {
-            // Check if the overlay container already exists
-            let overlayContainer = document.querySelector('.project-details-overlay');
-            if (!overlayContainer) {
-                // Create the overlay container
-                overlayContainer = document.createElement('div');
-                overlayContainer.className = 'project-details-overlay';
-                document.body.appendChild(overlayContainer);
-                console.log('Created overlay container');
-            }
-            return overlayContainer;
-        }
 
         // Add a test function to verify bucket fetching
         async function testBucketFetching() {
@@ -1326,7 +1335,7 @@
                         
                         const testingTasks = tasks.filter(t => {
                             const bucketName = t.actualBucketName?.toLowerCase() || '';
-                            return bucketMapping['testing'].some(name => bucketName.includes(name));
+                            return bucketMapping['tested'].some(name => bucketName.includes(name));
                         });
                         
                         console.log('- To Do:', toDoTasks.length);
@@ -1586,7 +1595,7 @@
                         </div>
                             </div>
                                         <div class="header-buttons">
-                                            <button class="view-toggle" onclick="showProjectDetailsOverlay(event, '${project.planId}')">
+                                            <button class="view-toggle" onclick="toggleProjectDetails(event, '${project.planId}')">
                                 View Details
                             </button>
                         </div>
@@ -1763,38 +1772,45 @@
             
             // Count tasks in each bucket using the mapping
             const toDoCount = tasks.filter(t => {
+                if (t.isOverdue) return false;
                 const bucketName = t.actualBucketName?.toLowerCase() || '';
                 return bucketMapping['to-do'].some(name => bucketName.includes(name));
             }).length;
             
             const inProgressCount = tasks.filter(t => {
+                if (t.isOverdue) return false;
                 const bucketName = t.actualBucketName?.toLowerCase() || '';
                 return bucketMapping['in-progress'].some(name => bucketName.includes(name));
             }).length;
             
+            const testedCount = tasks.filter(t => {
+                if (t.isOverdue) return false;
+                const bucketName = t.actualBucketName?.toLowerCase() || '';
+                return bucketMapping['tested'].some(name => bucketName.includes(name));
+            }).length;
+            
             const completedCount = tasks.filter(t => {
+                if (t.isOverdue) return false;
                 const bucketName = t.actualBucketName?.toLowerCase() || '';
                 return bucketMapping['completed'].some(name => bucketName.includes(name));
             }).length;
             
-            const testingCount = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['testing'].some(name => bucketName.includes(name));
-            }).length;
+            const overdueCount = tasks.filter(t => t.isOverdue).length;
             
             // Calculate percentages
             const totalTasks = tasks.length;
             const toDoPercent = (toDoCount / totalTasks) * 100;
             const inProgressPercent = (inProgressCount / totalTasks) * 100;
+            const testedPercent = (testedCount / totalTasks) * 100;
             const completedPercent = (completedCount / totalTasks) * 100;
-            const testingPercent = (testingCount / totalTasks) * 100;
+            const overduePercent = (overdueCount / totalTasks) * 100;
             
             // Determine phase based on bucket distribution
             if (completedPercent >= 100) {
                 return 'Completed';
             } else if (completedPercent >= 75) {
                 return 'Final Review';
-            } else if (testingPercent > 0) {
+            } else if (testedPercent > 0) {
                 return 'Testing';
             } else if (inProgressPercent > 0) {
                 return 'Development';
@@ -1905,192 +1921,195 @@
 
         async function toggleProjectDetails(event, planId) {
             try {
-                // Get the project details element
-                const projectDetails = document.getElementById(`details-${planId}`);
+                // Prevent default behavior
+                event.preventDefault();
             
-                // If the element doesn't exist, create it
-                if (!projectDetails) {
-                    console.log(`Creating project details element for plan ${planId}`);
+                // Get the project card
             const projectCard = document.querySelector(`[data-plan-id="${planId}"]`);
-                    if (projectCard) {
-                        const detailsDiv = document.createElement('div');
-                        detailsDiv.id = `details-${planId}`;
-                        detailsDiv.className = 'project-details';
-                        detailsDiv.style.display = 'none';
-                        projectCard.appendChild(detailsDiv);
-                    } else {
-                        console.error(`Project card with plan ID ${planId} not found`);
+                
+                // Check if we're already in overlay mode
+                const overlayContainer = document.getElementById('overlay-container');
+                if (overlayContainer.style.display === 'block') {
+                    // We're in overlay mode, so return to main view
+                    returnToMainView();
                 return;
-                    }
-                }
-                
-                // Get the project details element again (now it should exist)
-                const detailsElement = document.getElementById(`details-${planId}`);
-                
-                // Toggle visibility
-                if (detailsElement.style.display === 'none' || detailsElement.style.display === '') {
-                    detailsElement.style.display = 'block';
-                    
-                    // Fetch tasks and buckets
-                const tasks = await plannerIntegration.getTasks(planId);
-                    const buckets = await plannerIntegration.getBuckets(planId);
-                    
-                    // Log bucket information
-                    console.log(`Buckets for plan ${planId}:`, buckets);
-                    
-                    // Create a map of bucket IDs to names
-                    const bucketMap = {};
-                    buckets.forEach(bucket => {
-                        bucketMap[bucket.id] = bucket.name;
-                    });
-                    
-                    // Add bucket names to tasks
-                    tasks.forEach(task => {
-                        task.actualBucketName = bucketMap[task.bucketId];
-                    });
-                    
-                    // Categorize tasks based on bucket names using the mapping
-                    const toDoTasks = tasks.filter(t => {
-                        const bucketName = t.actualBucketName?.toLowerCase() || '';
-                        return bucketMapping['to-do'].some(name => bucketName.includes(name));
-                    });
-                    
-                    const inProgressTasks = tasks.filter(t => {
-                        const bucketName = t.actualBucketName?.toLowerCase() || '';
-                        return bucketMapping['in-progress'].some(name => bucketName.includes(name));
-                    });
-                    
-                    const completedTasks = tasks.filter(t => {
-                        const bucketName = t.actualBucketName?.toLowerCase() || '';
-                        return bucketMapping['completed'].some(name => bucketName.includes(name));
-                    });
-                    
-                    const testingTasks = tasks.filter(t => {
-                        const bucketName = t.actualBucketName?.toLowerCase() || '';
-                        return bucketMapping['testing'].some(name => bucketName.includes(name));
-                    });
-                    
-                    // For tasks that don't match any of the above categories, add them to a default category
-                    const uncategorizedTasks = tasks.filter(t => {
-                        const bucketName = t.actualBucketName?.toLowerCase() || '';
-                        return !bucketMapping['to-do'].some(name => bucketName.includes(name)) && 
-                               !bucketMapping['in-progress'].some(name => bucketName.includes(name)) && 
-                               !bucketMapping['completed'].some(name => bucketName.includes(name)) && 
-                               !bucketMapping['testing'].some(name => bucketName.includes(name));
-                    });
-                    
-                    console.log('Bucket-based categorization:');
-                    console.log('- To Do:', toDoTasks.length);
-                    console.log('- In Progress:', inProgressTasks.length);
-                    console.log('- Completed:', completedTasks.length);
-                    console.log('- Testing:', testingTasks.length);
-                    console.log('- Uncategorized:', uncategorizedTasks.length);
-                    
-                    // Update the UI with bucket-based categorization
-                    updateTaskList(detailsElement, 'to-do', toDoTasks);
-                    updateTaskList(detailsElement, 'in-progress', inProgressTasks);
-                    updateTaskList(detailsElement, 'completed', completedTasks);
-                    updateTaskList(detailsElement, 'testing', testingTasks);
-                    updateTaskList(detailsElement, 'uncategorized', uncategorizedTasks);
-                    
-                    // Update analytics metrics
-                    updateAnalyticsMetrics(planId, tasks);
-                } else {
-                    detailsElement.style.display = 'none';
-                }
+            }
+            
+                // Enter overlay mode
+                enterOverlayMode(projectCard, planId);
             } catch (error) {
                 console.error('Error toggling project details:', error);
             }
         }
-
-        function updateTaskList(detailsContainer, taskType, tasks) {
-            // Create a container for this task type if it doesn't exist
-            let taskTypeContainer = detailsContainer.querySelector(`.task-type-${taskType}`);
-            if (!taskTypeContainer) {
-                taskTypeContainer = document.createElement('div');
-                taskTypeContainer.className = `task-type-${taskType} bucket-section`;
-                
-                // Add a header for this task type
-                const header = document.createElement('h3');
-                header.textContent = getTaskTypeTitle(taskType);
-                taskTypeContainer.appendChild(header);
-                
-                // Add a container for the tasks
-                const tasksList = document.createElement('div');
-                tasksList.className = 'tasks-list';
-                taskTypeContainer.appendChild(tasksList);
-                
-                detailsContainer.appendChild(taskTypeContainer);
+        
+        function enterOverlayMode(projectCard, planId) {
+            // Clone the project card
+            const cardClone = projectCard.cloneNode(true);
+            
+            // Add expanded class to original card
+                    projectCard.classList.add('expanded');
+            
+            // Hide other cards
+            document.querySelectorAll('.project-card').forEach(card => {
+                if (card !== projectCard) {
+                    card.classList.add('hidden');
+                }
+            });
+            
+            // Show overlay container
+            const overlayContainer = document.getElementById('overlay-container');
+            overlayContainer.style.display = 'block';
+            
+            // Create overlay content container
+            const overlayContent = document.createElement('div');
+            overlayContent.className = 'overlay-content';
+            overlayContent.id = `overlay-content-${planId}`;
+            
+            // Add card clone to overlay content
+            overlayContent.appendChild(cardClone);
+            
+            // Add back button
+                    const backButton = document.createElement('button');
+            backButton.className = 'back-button';
+            backButton.textContent = '← Back to Projects';
+            backButton.onclick = returnToMainView;
+            overlayContainer.appendChild(backButton);
+            
+            // Add overlay content to container
+            overlayContainer.appendChild(overlayContent);
+            
+            // Fade in overlay
+            setTimeout(() => {
+                overlayContainer.style.opacity = '1';
+            }, 10);
+            
+            // Fetch and display details
+            fetchAndDisplayDetails(planId, overlayContent);
+        }
+        
+        function returnToMainView() {
+            // Get elements
+            const overlayContainer = document.getElementById('overlay-container');
+            const expandedCard = document.querySelector('.project-card.expanded');
+            
+            // Fade out overlay
+            overlayContainer.style.opacity = '0';
+            
+            // Remove expanded class from card
+            if (expandedCard) {
+                expandedCard.classList.remove('expanded');
             }
             
-            // Get the tasks list container
-            const tasksList = taskTypeContainer.querySelector('.tasks-list');
-            tasksList.innerHTML = '';
+            // Show other cards
+            document.querySelectorAll('.project-card.hidden').forEach(card => {
+                card.classList.remove('hidden');
+            });
             
-            // Add each task to the list
-            if (tasks.length === 0) {
-                const noTasks = document.createElement('p');
-                noTasks.textContent = 'No tasks in this category';
-                noTasks.className = 'no-tasks';
-                tasksList.appendChild(noTasks);
-            } else {
-                tasks.forEach(task => {
-                    const taskElement = document.createElement('div');
-                    taskElement.className = 'task-item';
-                    
-                    // Create task content
-                    const taskContent = document.createElement('div');
-                    taskContent.className = 'task-item-content';
-                    
-                    // Add checkbox for completion status
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.className = 'task-checkbox';
-                    checkbox.checked = task.percentComplete === 100;
-                    checkbox.onchange = () => updateTaskStatus(task.id, checkbox.checked);
-                    taskContent.appendChild(checkbox);
-                    
-                    // Add task details
-                    const taskDetails = document.createElement('div');
-                    taskDetails.className = 'task-details';
-                    
-                    // Add task title
-                    const title = document.createElement('span');
-                    title.className = 'task-title';
-                    title.textContent = task.title;
-                    taskDetails.appendChild(title);
-                    
-                    // Add task metadata
-                    const meta = document.createElement('div');
-                    meta.className = 'task-meta';
-                    
-                    // Add due date if available
-                    if (task.dueDateTime) {
-                        const dueDate = document.createElement('span');
-                        dueDate.className = 'task-due-date';
-                        dueDate.textContent = new Date(task.dueDateTime).toLocaleDateString();
-                        meta.appendChild(dueDate);
-                    }
-                    
-                    // Add bucket name if available
-                    if (task.actualBucketName) {
-                        const bucket = document.createElement('span');
-                        bucket.className = 'task-bucket';
-                        bucket.textContent = task.actualBucketName;
-                        meta.appendChild(bucket);
-                    }
-                    
-                    // Add status
-                    const status = document.createElement('span');
-                    status.className = `task-status status-${getTaskStatusClass(task)}`;
-                    status.textContent = getTaskStatusText(task);
-                    meta.appendChild(status);
-                    
-                    taskDetails.appendChild(meta);
-                    taskContent.appendChild(taskDetails);
-                    taskElement.appendChild(taskContent);
-                    tasksList.appendChild(taskElement);
+            // Hide overlay after animation
+            setTimeout(() => {
+                overlayContainer.style.display = 'none';
+                overlayContainer.innerHTML = '';
+            }, 300);
+        }
+        
+        async function fetchAndDisplayDetails(planId, container) {
+            try {
+                // Fetch tasks and buckets
+                const tasks = await plannerIntegration.getTasks(planId);
+                const buckets = await plannerIntegration.getBuckets(planId);
+                
+                // Log bucket information
+                console.log(`Buckets for plan ${planId}:`, buckets);
+                
+                // Create a map of bucket IDs to names
+                const bucketMap = {};
+                buckets.forEach(bucket => {
+                    bucketMap[bucket.id] = bucket.name;
                 });
+                
+                // Add bucket names to tasks
+                tasks.forEach(task => {
+                    task.actualBucketName = bucketMap[task.bucketId];
+                });
+                
+                // Check for overdue tasks
+                const now = new Date();
+                tasks.forEach(task => {
+                    if (task.dueDateTime) {
+                        const dueDate = new Date(task.dueDateTime);
+                        if (dueDate < now && 
+                            !bucketMapping['completed'].some(name => task.actualBucketName?.toLowerCase().includes(name)) &&
+                            !bucketMapping['tested'].some(name => task.actualBucketName?.toLowerCase().includes(name))) {
+                            task.isOverdue = true;
+                        }
+                    }
+                });
+                
+                // Categorize tasks based on bucket names using the mapping
+                const toDoTasks = tasks.filter(t => {
+                    if (t.isOverdue) return false;
+                    const bucketName = t.actualBucketName?.toLowerCase() || '';
+                    return bucketMapping['to-do'].some(name => bucketName.includes(name));
+                });
+                
+                const inProgressTasks = tasks.filter(t => {
+                    if (t.isOverdue) return false;
+                    const bucketName = t.actualBucketName?.toLowerCase() || '';
+                    return bucketMapping['in-progress'].some(name => bucketName.includes(name));
+                });
+                
+                const testedTasks = tasks.filter(t => {
+                    if (t.isOverdue) return false;
+                    const bucketName = t.actualBucketName?.toLowerCase() || '';
+                    return bucketMapping['tested'].some(name => bucketName.includes(name));
+                });
+                
+                const completedTasks = tasks.filter(t => {
+                    if (t.isOverdue) return false;
+                    const bucketName = t.actualBucketName?.toLowerCase() || '';
+                    return bucketMapping['completed'].some(name => bucketName.includes(name));
+                });
+                
+                const overdueTasks = tasks.filter(t => t.isOverdue);
+                
+                // For tasks that don't match any of the above categories, add them to a default category
+                const uncategorizedTasks = tasks.filter(t => {
+                    if (t.isOverdue) return false;
+                    const bucketName = t.actualBucketName?.toLowerCase() || '';
+                    return !bucketMapping['to-do'].some(name => bucketName.includes(name)) && 
+                           !bucketMapping['in-progress'].some(name => bucketName.includes(name)) && 
+                           !bucketMapping['tested'].some(name => bucketName.includes(name)) && 
+                           !bucketMapping['completed'].some(name => bucketName.includes(name));
+                });
+                
+                console.log('Bucket-based categorization:');
+                console.log('- To Do:', toDoTasks.length);
+                console.log('- In Progress:', inProgressTasks.length);
+                console.log('- Tested:', testedTasks.length);
+                console.log('- Completed:', completedTasks.length);
+                console.log('- Overdue:', overdueTasks.length);
+                console.log('- Uncategorized:', uncategorizedTasks.length);
+                
+                // Create details container
+                const detailsContainer = document.createElement('div');
+                detailsContainer.className = 'project-details';
+                detailsContainer.id = `details-${planId}`;
+                
+                // Update the UI with bucket-based categorization
+                updateTaskList(detailsContainer, 'to-do', toDoTasks);
+                updateTaskList(detailsContainer, 'in-progress', inProgressTasks);
+                updateTaskList(detailsContainer, 'tested', testedTasks);
+                updateTaskList(detailsContainer, 'completed', completedTasks);
+                updateTaskList(detailsContainer, 'overdue', overdueTasks);
+                updateTaskList(detailsContainer, 'uncategorized', uncategorizedTasks);
+                
+                // Update analytics metrics
+                updateAnalyticsMetrics(planId, tasks);
+                
+                // Add details container to overlay content
+                container.appendChild(detailsContainer);
+            } catch (error) {
+                console.error('Error fetching and displaying details:', error);
             }
         }
         
@@ -2100,10 +2119,12 @@
                     return 'To-Do';
                 case 'in-progress':
                     return 'In Progress';
+                case 'tested':
+                    return 'Tested';
                 case 'completed':
                     return 'Completed';
-                case 'testing':
-                    return 'Testing';
+                case 'overdue':
+                    return 'Overdue';
                 case 'uncategorized':
                     return 'Uncategorized';
                 default:
@@ -2112,14 +2133,18 @@
         }
         
         function getTaskStatusClass(task) {
+            if (task.isOverdue) {
+                return 'overdue';
+            }
+            
             const bucketName = task.actualBucketName?.toLowerCase() || '';
             
             if (bucketMapping['completed'].some(name => bucketName.includes(name))) {
                 return 'completed';
+            } else if (bucketMapping['tested'].some(name => bucketName.includes(name))) {
+                return 'tested';
             } else if (bucketMapping['in-progress'].some(name => bucketName.includes(name))) {
                 return 'in-progress';
-            } else if (bucketMapping['testing'].some(name => bucketName.includes(name))) {
-                return 'testing';
             } else if (bucketMapping['to-do'].some(name => bucketName.includes(name))) {
                 return 'not-started';
             } else {
@@ -2128,14 +2153,18 @@
         }
         
         function getTaskStatusText(task) {
+            if (task.isOverdue) {
+                return 'Overdue';
+            }
+            
             const bucketName = task.actualBucketName?.toLowerCase() || '';
             
             if (bucketMapping['completed'].some(name => bucketName.includes(name))) {
                 return 'Completed';
+            } else if (bucketMapping['tested'].some(name => bucketName.includes(name))) {
+                return 'Tested';
             } else if (bucketMapping['in-progress'].some(name => bucketName.includes(name))) {
                 return 'In Progress';
-            } else if (bucketMapping['testing'].some(name => bucketName.includes(name))) {
-                return 'Testing';
             } else if (bucketMapping['to-do'].some(name => bucketName.includes(name))) {
                 return 'Not Started';
             } else {
@@ -2173,42 +2202,50 @@
             const totalTasks = tasks.length;
             
             const toDoTasks = tasks.filter(t => {
+                if (t.isOverdue) return false;
                 const bucketName = t.actualBucketName?.toLowerCase() || '';
                 return bucketMapping['to-do'].some(name => bucketName.includes(name));
             }).length;
             
             const inProgressTasks = tasks.filter(t => {
+                if (t.isOverdue) return false;
                 const bucketName = t.actualBucketName?.toLowerCase() || '';
                 return bucketMapping['in-progress'].some(name => bucketName.includes(name));
             }).length;
             
+            const testedTasks = tasks.filter(t => {
+                if (t.isOverdue) return false;
+                const bucketName = t.actualBucketName?.toLowerCase() || '';
+                return bucketMapping['tested'].some(name => bucketName.includes(name));
+            }).length;
+            
             const completedTasks = tasks.filter(t => {
+                if (t.isOverdue) return false;
                 const bucketName = t.actualBucketName?.toLowerCase() || '';
                 return bucketMapping['completed'].some(name => bucketName.includes(name));
             }).length;
             
-            const testingTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['testing'].some(name => bucketName.includes(name));
-            }).length;
+            const overdueTasks = tasks.filter(t => t.isOverdue).length;
             
             const uncategorizedTasks = tasks.filter(t => {
+                if (t.isOverdue) return false;
                 const bucketName = t.actualBucketName?.toLowerCase() || '';
                 return !bucketMapping['to-do'].some(name => bucketName.includes(name)) && 
                        !bucketMapping['in-progress'].some(name => bucketName.includes(name)) && 
-                       !bucketMapping['completed'].some(name => bucketName.includes(name)) && 
-                       !bucketMapping['testing'].some(name => bucketName.includes(name));
+                       !bucketMapping['tested'].some(name => bucketName.includes(name)) && 
+                       !bucketMapping['completed'].some(name => bucketName.includes(name));
             }).length;
             
             // Calculate completion percentage
-            const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            const completionPercentage = totalTasks > 0 ? Math.round(((completedTasks + testedTasks) / totalTasks) * 100) : 0;
             
             // Add metric cards
             addMetricCard(grid, 'Total Tasks', totalTasks);
             addMetricCard(grid, 'To-Do', toDoTasks);
             addMetricCard(grid, 'In Progress', inProgressTasks);
-            addMetricCard(grid, 'Testing', testingTasks);
+            addMetricCard(grid, 'Tested', testedTasks);
             addMetricCard(grid, 'Completed', completedTasks);
+            addMetricCard(grid, 'Overdue', overdueTasks, overdueTasks > 0);
             addMetricCard(grid, 'Uncategorized', uncategorizedTasks);
             addMetricCard(grid, 'Completion', `${completionPercentage}%`);
         }
@@ -2246,477 +2283,6 @@
                 panel.classList.remove('visible');
             }
         });
-
-        // Add event listener for login button
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginButton = document.getElementById('login-button');
-            if (loginButton) {
-                loginButton.addEventListener('click', handleLogin);
-            }
-            
-            // Create the overlay container when the page loads
-            createOverlayContainer();
-            
-            // Add a test button to the first project card
-            addTestButton();
-            
-            // Add "View Full Details" buttons to project cards
-            addFullDetailsButtons();
-        });
-        
-        // Function to add a test button to the first project card
-        function addTestButton() {
-            // Wait for the projects to load
-            setTimeout(() => {
-                // Get the first project card
-                const firstProjectCard = document.querySelector('.project-card');
-                if (firstProjectCard) {
-                    // Create a test button
-                    const testButton = document.createElement('button');
-                    testButton.textContent = 'Test Overlay';
-                    testButton.className = 'test-overlay-btn';
-                    testButton.style.marginLeft = '10px';
-                    testButton.onclick = () => {
-                        // Show the overlay container
-                        const overlayContainer = document.querySelector('.project-details-overlay');
-                        if (overlayContainer) {
-                            overlayContainer.style.display = 'block';
-                            setTimeout(() => {
-                                overlayContainer.style.opacity = '1';
-                            }, 10);
-                            
-                            // Add a back button
-                            const backButton = document.createElement('button');
-                            backButton.className = 'back-button';
-                            backButton.textContent = '← Back to Projects';
-                            backButton.onclick = () => {
-                                overlayContainer.style.opacity = '0';
-                                setTimeout(() => {
-                                    overlayContainer.style.display = 'none';
-                                    overlayContainer.innerHTML = '';
-            }, 300);
-                            };
-                            overlayContainer.appendChild(backButton);
-                            
-                            // Add some test content
-                            const testContent = document.createElement('div');
-                            testContent.className = 'project-details-overlay-content';
-                            testContent.innerHTML = '<h2>Test Overlay Content</h2><p>This is a test of the overlay functionality.</p>';
-                            overlayContainer.appendChild(testContent);
-                        }
-                    };
-                    
-                    // Add the button to the project card's button container
-                    const buttonContainer = firstProjectCard.querySelector('.project-actions');
-                    if (buttonContainer) {
-                        buttonContainer.appendChild(testButton);
-                    }
-                }
-            }, 2000); // Wait 2 seconds for the projects to load
-        }
-        
-        // Basic functions to show and hide the project details overlay
-        function showProjectDetailsOverlay(event, planId) {
-            // Prevent default behavior
-            event.preventDefault();
-            
-            // Get the project card
-            const projectCard = document.querySelector(`[data-plan-id="${planId}"]`);
-            if (!projectCard) {
-                console.error(`Project card with plan ID ${planId} not found`);
-                return;
-            }
-            
-            // Get or create the overlay container
-            const overlayContainer = createOverlayContainer();
-            
-            // Show overlay container first
-            overlayContainer.style.display = 'block';
-            
-            // Create a header section for the overlay
-            const overlayHeader = document.createElement('div');
-            overlayHeader.className = 'overlay-header';
-            
-            // Add back button to header
-            const backButton = document.createElement('button');
-            backButton.className = 'back-button';
-            backButton.textContent = '← Back to Projects';
-            backButton.onclick = () => hideProjectDetailsOverlay(projectCard);
-            overlayHeader.appendChild(backButton);
-            
-            // Add the project title to the header
-            const projectTitle = projectCard.querySelector('.project-card-title');
-            if (projectTitle) {
-                const titleClone = projectTitle.cloneNode(true);
-                titleClone.style.marginLeft = '60px';
-                titleClone.style.display = 'inline-block';
-                overlayHeader.appendChild(titleClone);
-            }
-            
-            // Clear and set up overlay content
-            overlayContainer.innerHTML = '';
-            overlayContainer.appendChild(overlayHeader);
-            
-            // Create details container
-            const detailsContainer = document.createElement('div');
-            detailsContainer.id = `overlay-details-${planId}`;
-            detailsContainer.className = 'project-details-overlay-content';
-            overlayContainer.appendChild(detailsContainer);
-            
-            // Fade in overlay
-            setTimeout(() => {
-                overlayContainer.style.opacity = '1';
-            }, 10);
-            
-            // Fetch and display details
-            fetchAndDisplayDetailsOverlay(planId, detailsContainer);
-        }
-
-        function hideProjectDetailsOverlay(projectCard) {
-            // Get elements
-            const overlayContainer = document.querySelector('.project-details-overlay');
-            
-            // Fade out overlay
-            overlayContainer.style.opacity = '0';
-            
-            // Hide overlay after animation
-            setTimeout(() => {
-                overlayContainer.style.display = 'none';
-                overlayContainer.innerHTML = '';
-            }, 300);
-        }
-        
-        // Function to add "View Full Details" buttons to project cards
-        function addFullDetailsButtons() {
-            // Wait for the projects to load
-            setTimeout(() => {
-                // Get all project cards
-                const projectCards = document.querySelectorAll('.project-card');
-                projectCards.forEach(card => {
-                    // Get the plan ID
-                    const planId = card.getAttribute('data-plan-id');
-                    if (planId) {
-                        // Create a "View Details" button
-                        const fullDetailsButton = document.createElement('button');
-                        fullDetailsButton.textContent = 'View Details';
-                        fullDetailsButton.className = 'view-details-btn';
-                        fullDetailsButton.style.marginLeft = '10px';
-                        fullDetailsButton.onclick = (event) => showProjectDetailsOverlay(event, planId);
-                        
-                        // Add the button to the project card's button container
-                        const buttonContainer = card.querySelector('.project-actions');
-                        if (buttonContainer) {
-                            buttonContainer.appendChild(fullDetailsButton);
-                        }
-                    }
-                });
-            }, 2000); // Wait 2 seconds for the projects to load
-        }
-        
-        // Function to fetch and display details in the overlay
-        function fetchAndDisplayDetailsOverlay(planId, container) {
-            // Show loading indicator
-            container.innerHTML = '<div class="loading">Loading project details...</div>';
-            
-            // Fetch tasks and buckets using your existing integration
-            Promise.all([
-                plannerIntegration.getTasks(planId),
-                plannerIntegration.getBuckets(planId)
-            ])
-            .then(([tasks, buckets]) => {
-                // Create a map of bucket IDs to names
-                const bucketMap = {};
-                buckets.forEach(bucket => {
-                    bucketMap[bucket.id] = bucket.name;
-                });
-                
-                // Add bucket names to tasks
-            tasks.forEach(task => {
-                    task.actualBucketName = bucketMap[task.bucketId];
-                });
-                
-                // Categorize tasks based on bucket names using your mapping
-                const toDoTasks = tasks.filter(t => {
-                    const bucketName = t.actualBucketName?.toLowerCase() || '';
-                    return bucketMapping['to-do'].some(name => bucketName.includes(name));
-                });
-                
-                const inProgressTasks = tasks.filter(t => {
-                    const bucketName = t.actualBucketName?.toLowerCase() || '';
-                    return bucketMapping['in-progress'].some(name => bucketName.includes(name));
-                });
-                
-                const completedTasks = tasks.filter(t => {
-                    const bucketName = t.actualBucketName?.toLowerCase() || '';
-                    return bucketMapping['completed'].some(name => bucketName.includes(name));
-                });
-                
-                const testingTasks = tasks.filter(t => {
-                    const bucketName = t.actualBucketName?.toLowerCase() || '';
-                    return bucketMapping['testing'].some(name => bucketName.includes(name));
-                });
-                
-                // For tasks that don't match any of the above categories, add them to a default category
-                const uncategorizedTasks = tasks.filter(t => {
-                    const bucketName = t.actualBucketName?.toLowerCase() || '';
-                    return !bucketMapping['to-do'].some(name => bucketName.includes(name)) && 
-                           !bucketMapping['in-progress'].some(name => bucketName.includes(name)) && 
-                           !bucketMapping['completed'].some(name => bucketName.includes(name)) && 
-                           !bucketMapping['testing'].some(name => bucketName.includes(name));
-                });
-                
-                // Update the UI with bucket-based categorization
-                updateTaskListOverlay(container, 'to-do', toDoTasks);
-                updateTaskListOverlay(container, 'in-progress', inProgressTasks);
-                updateTaskListOverlay(container, 'completed', completedTasks);
-                updateTaskListOverlay(container, 'testing', testingTasks);
-                updateTaskListOverlay(container, 'uncategorized', uncategorizedTasks);
-                
-                // Update analytics metrics
-                updateAnalyticsMetricsOverlay(planId, tasks, container);
-            })
-            .catch(error => {
-                console.error('Error fetching details:', error);
-                container.innerHTML = `<div class="error">Error loading project details: ${error.message}</div>`;
-            });
-        }
-        
-        // Helper function to update task list in the overlay
-        function updateTaskListOverlay(container, taskType, tasks) {
-            if (tasks.length === 0) return;
-            
-            // Create task type container
-            const taskTypeContainer = document.createElement('div');
-            taskTypeContainer.className = `task-type-container ${taskType}`;
-            taskTypeContainer.style.marginBottom = '30px';
-            taskTypeContainer.style.backgroundColor = 'white';
-            taskTypeContainer.style.borderRadius = '8px';
-            taskTypeContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-            taskTypeContainer.style.padding = '20px';
-            
-            // Add header
-            const header = document.createElement('h3');
-            header.textContent = getTaskTypeTitle(taskType);
-            header.style.marginTop = '0';
-            header.style.marginBottom = '15px';
-            header.style.paddingBottom = '10px';
-            header.style.borderBottom = '1px solid #f0f0f0';
-            taskTypeContainer.appendChild(header);
-            
-            // Create task list
-            const taskList = document.createElement('div');
-            taskList.className = 'task-list';
-            taskList.style.display = 'grid';
-            taskList.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
-            taskList.style.gap = '15px';
-            
-            // Add tasks
-            tasks.forEach(task => {
-                const taskItem = document.createElement('div');
-                taskItem.className = 'task-item';
-                taskItem.style.backgroundColor = '#f9f9f9';
-                taskItem.style.borderRadius = '8px';
-                taskItem.style.padding = '15px';
-                taskItem.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
-                
-                // Add checkbox for completion status
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = task.percentComplete === 100;
-                checkbox.style.marginRight = '10px';
-                checkbox.onchange = () => updateTaskStatus(task.id, checkbox.checked);
-                
-                // Add task title
-                const title = document.createElement('span');
-                title.className = 'task-title';
-                title.textContent = task.title;
-                title.style.fontWeight = '500';
-                title.style.display = 'block';
-                title.style.marginBottom = '10px';
-                
-                // Create metadata container
-                const metadata = document.createElement('div');
-                metadata.style.display = 'flex';
-                metadata.style.flexWrap = 'wrap';
-                metadata.style.gap = '10px';
-                metadata.style.fontSize = '0.85em';
-                metadata.style.color = '#666';
-                
-                // Add due date if available
-                if (task.dueDateTime) {
-                    const dueDate = document.createElement('span');
-                    dueDate.className = 'task-due-date';
-                    dueDate.textContent = `Due: ${new Date(task.dueDateTime).toLocaleDateString()}`;
-                    metadata.appendChild(dueDate);
-                }
-                
-                // Add bucket name if available
-                if (task.actualBucketName) {
-                    const bucketName = document.createElement('span');
-                    bucketName.className = 'task-bucket';
-                    bucketName.textContent = `Bucket: ${task.actualBucketName}`;
-                    metadata.appendChild(bucketName);
-                }
-                
-                // Add status
-                const status = document.createElement('span');
-                status.className = `task-status ${getTaskStatusClass(task)}`;
-                status.textContent = getTaskStatusText(task);
-                status.style.padding = '2px 8px';
-                status.style.borderRadius = '12px';
-                status.style.backgroundColor = getStatusBackgroundColor(task);
-                status.style.color = getStatusTextColor(task);
-                metadata.appendChild(status);
-                
-                // Assemble task item
-                taskItem.appendChild(checkbox);
-                taskItem.appendChild(title);
-                taskItem.appendChild(metadata);
-                
-                taskList.appendChild(taskItem);
-            });
-            
-            taskTypeContainer.appendChild(taskList);
-            container.appendChild(taskTypeContainer);
-        }
-        
-        // Helper function to get status background color
-        function getStatusBackgroundColor(task) {
-            const status = getTaskStatusClass(task);
-            switch (status) {
-                case 'completed':
-                    return '#e6f7e6';
-                case 'in-progress':
-                    return '#fff4e5';
-                case 'testing':
-                    return '#e6f2fa';
-                case 'not-started':
-                    return '#f5f5f7';
-                default:
-                    return '#f5f5f7';
-            }
-        }
-        
-        // Helper function to get status text color
-        function getStatusTextColor(task) {
-            const status = getTaskStatusClass(task);
-            switch (status) {
-                case 'completed':
-                    return '#2a9d2a';
-                case 'in-progress':
-                    return '#d46b08';
-                case 'testing':
-                    return '#0071e3';
-                case 'not-started':
-                    return '#86868b';
-                default:
-                    return '#86868b';
-            }
-        }
-        
-        // Helper function to update analytics metrics in the overlay
-        function updateAnalyticsMetricsOverlay(planId, tasks, container) {
-            // Create analytics container
-            const analyticsContainer = document.createElement('div');
-            analyticsContainer.className = 'analytics-panel';
-            analyticsContainer.style.marginTop = '30px';
-            analyticsContainer.style.marginBottom = '30px';
-            analyticsContainer.style.backgroundColor = 'white';
-            analyticsContainer.style.borderRadius = '8px';
-            analyticsContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-            analyticsContainer.style.padding = '20px';
-            
-            // Add header
-            const header = document.createElement('h3');
-            header.textContent = 'Project Analytics';
-            header.style.marginTop = '0';
-            header.style.marginBottom = '20px';
-            header.style.paddingBottom = '10px';
-            header.style.borderBottom = '1px solid #f0f0f0';
-            analyticsContainer.appendChild(header);
-            
-            // Add analytics grid
-            const grid = document.createElement('div');
-            grid.className = 'analytics-grid';
-            grid.style.display = 'grid';
-            grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(200px, 1fr))';
-            grid.style.gap = '20px';
-            analyticsContainer.appendChild(grid);
-            
-            // Calculate metrics based on bucket names using the mapping
-            const totalTasks = tasks.length;
-            
-            const toDoTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['to-do'].some(name => bucketName.includes(name));
-            }).length;
-            
-            const inProgressTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['in-progress'].some(name => bucketName.includes(name));
-            }).length;
-            
-            const completedTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['completed'].some(name => bucketName.includes(name));
-            }).length;
-            
-            const testingTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return bucketMapping['testing'].some(name => bucketName.includes(name));
-            }).length;
-            
-            const uncategorizedTasks = tasks.filter(t => {
-                const bucketName = t.actualBucketName?.toLowerCase() || '';
-                return !bucketMapping['to-do'].some(name => bucketName.includes(name)) && 
-                       !bucketMapping['in-progress'].some(name => bucketName.includes(name)) && 
-                       !bucketMapping['completed'].some(name => bucketName.includes(name)) && 
-                       !bucketMapping['testing'].some(name => bucketName.includes(name));
-            }).length;
-            
-            // Calculate completion percentage
-            const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-            
-            // Add metric cards
-            addMetricCardOverlay(grid, 'Total Tasks', totalTasks);
-            addMetricCardOverlay(grid, 'To-Do', toDoTasks);
-            addMetricCardOverlay(grid, 'In Progress', inProgressTasks);
-            addMetricCardOverlay(grid, 'Testing', testingTasks);
-            addMetricCardOverlay(grid, 'Completed', completedTasks);
-            addMetricCardOverlay(grid, 'Uncategorized', uncategorizedTasks);
-            addMetricCardOverlay(grid, 'Completion', `${completionPercentage}%`, completionPercentage === 100);
-            
-            container.appendChild(analyticsContainer);
-        }
-        
-        // Helper function to add metric cards to the overlay
-        function addMetricCardOverlay(grid, title, value, highlight = false) {
-            const card = document.createElement('div');
-            card.className = `metric-card${highlight ? ' highlight' : ''}`;
-            card.style.backgroundColor = highlight ? '#e6f7e6' : '#f5f5f7';
-            card.style.borderRadius = '8px';
-            card.style.padding = '20px';
-            card.style.textAlign = 'center';
-            card.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
-            
-            const titleElement = document.createElement('div');
-            titleElement.className = 'metric-title';
-            titleElement.textContent = title;
-            titleElement.style.fontSize = '0.9em';
-            titleElement.style.color = '#666';
-            titleElement.style.marginBottom = '10px';
-            
-            const valueElement = document.createElement('div');
-            valueElement.className = 'metric-value';
-            valueElement.textContent = value;
-            valueElement.style.fontSize = '24px';
-            valueElement.style.fontWeight = '600';
-            valueElement.style.color = highlight ? '#2a9d2a' : '#0078d4';
-            
-            card.appendChild(titleElement);
-            card.appendChild(valueElement);
-            grid.appendChild(card);
-        }
     </script>
 </body>
 </html> 

@@ -19,80 +19,40 @@ class PlannerIntegration {
     // Initialize with MSAL instance and account
     async initialize() {
         try {
-            // Get the MSAL instance from the global scope
-            this.msalInstance = window.msalInstance;
-            if (!this.msalInstance) {
-                throw new Error('MSAL instance not found');
-            }
+            console.log('Initializing Planner integration...');
             
-            // Log MSAL configuration
-            console.log('MSAL config:', window.b2cConfig?.auth);
-            console.log('MSAL instance:', this.msalInstance);
-
-            const accounts = this.msalInstance.getAllAccounts();
-            console.log('All accounts:', accounts);
-            
-            if (!accounts || accounts.length === 0) {
-                throw new Error('No authenticated user found');
-            }
-
-            // Try to find the account with the correct tenant ID
-            const targetTenantId = '202abb20-ccd1-4194-aa83-a8e73f57d637';
-            this.account = accounts.find(account => account.tenantId === targetTenantId) || accounts[0];
-            
-            console.log('Selected account:', this.account);
-            
-            const tenantId = this.account.tenantId;
-            console.log('Actual tenant ID:', tenantId);
-            console.log('Expected tenant ID:', targetTenantId);
-            console.log('Are they equal?', tenantId === targetTenantId);
-            console.log('Case-insensitive equal?', tenantId.toLowerCase() === targetTenantId.toLowerCase());
-            
-            // Verify the user is from the correct tenant - using case-insensitive comparison
-            if (tenantId.toLowerCase() !== targetTenantId.toLowerCase()) {
-                console.error('User is not from the authorized tenant');
-                // Display error message to unauthorized users
-                if (window.showError) {
-                    window.showError("Planner access is only available for authorized Clinovators users.");
-                } else {
-                    // Fallback if showError is not available
-                    const errorElement = document.getElementById('errorMessage');
-                    if (errorElement) {
-                        errorElement.textContent = "Planner access is only available for authorized Clinovators users.";
-                    }
-                    // Hide dashboard and show error state
-                    const dashboard = document.getElementById('dashboard');
-                    const errorState = document.getElementById('errorState');
-                    if (dashboard) dashboard.style.display = 'none';
-                    if (errorState) errorState.style.display = 'flex';
-                }
+            // Check if MSAL is loaded
+            if (typeof msal === 'undefined') {
+                console.error('MSAL library not loaded');
                 return false;
             }
             
-            // Verify the user's email domain
-            const userEmail = this.account.username;
-            if (!userEmail || !userEmail.endsWith('@clinovators.com')) {
-                console.error('User is not from the authorized domain');
-                // Display error message to unauthorized users
-                if (window.showError) {
-                    window.showError("Planner access is only available for authorized Clinovators users.");
-                } else {
-                    // Fallback if showError is not available
-                    const errorElement = document.getElementById('errorMessage');
-                    if (errorElement) {
-                        errorElement.textContent = "Planner access is only available for authorized Clinovators users.";
-                    }
-                    // Hide dashboard and show error state
-                    const dashboard = document.getElementById('dashboard');
-                    const errorState = document.getElementById('errorState');
-                    if (dashboard) dashboard.style.display = 'none';
-                    if (errorState) errorState.style.display = 'flex';
-                }
+            // Check if MSAL instance exists
+            if (!window.msalInstance) {
+                console.error('MSAL instance not initialized');
                 return false;
             }
             
-            // Check if we have the required permissions
+            // Get the current account
+            const accounts = window.msalInstance.getAllAccounts();
+            if (accounts.length === 0) {
+                console.error('No authenticated user found');
+                return false;
+            }
+            
+            this.account = accounts[0];
+            console.log('Using account:', this.account.username);
+            
+            // Set the active account in MSAL
+            window.msalInstance.setActiveAccount(this.account);
+            
+            // Check permissions
             const permissions = await this.checkPermissions();
+            console.log('Permissions check result:', permissions);
+            
+            // Get tenant ID from the account
+            const tenantId = this.account.tenantId || 'common';
+            console.log('Using tenant ID:', tenantId);
             
             // If we don't have Group.Read.All permission, use mock data
             if (!permissions.groupReadAll) {
@@ -123,12 +83,26 @@ class PlannerIntegration {
                     console.log('Using mock planner data:', window.plannerConfig.projects);
                 }
                 
+                // Set the plan IDs for mock data
+                this.planIds = ['mock-plan-id-1', 'mock-plan-id-2'];
+                this.defaultPlanId = 'mock-plan-id-1';
+                
                 // Start the smart service if it exists
                 if (window.SmartPlannerService) {
+                    console.log('Creating SmartPlannerService instance...');
                     this.smartService = new window.SmartPlannerService(this);
-                    this.smartService.startTracking();
+                    console.log('SmartPlannerService created successfully');
+                    
+                    // Set up task update listener
+                    if (this.smartService) {
+                        console.log('Setting up task update listener...');
+                        this.smartService.onTaskUpdate = (tasks) => {
+                            console.log(`Task update received: ${tasks.length} tasks`);
+                            // This will be overridden by the polling-test.html page
+                        };
+                    }
                 } else {
-                    console.log('SmartPlannerService not available, continuing without it');
+                    console.error('SmartPlannerService not available, continuing without it');
                 }
                 
                 return true;
@@ -168,10 +142,20 @@ class PlannerIntegration {
             
             // Start the smart service if it exists
             if (window.SmartPlannerService) {
+                console.log('Creating SmartPlannerService instance...');
                 this.smartService = new window.SmartPlannerService(this);
-                this.smartService.startTracking();
+                console.log('SmartPlannerService created successfully');
+                
+                // Set up task update listener
+                if (this.smartService) {
+                    console.log('Setting up task update listener...');
+                    this.smartService.onTaskUpdate = (tasks) => {
+                        console.log(`Task update received: ${tasks.length} tasks`);
+                        // This will be overridden by the polling-test.html page
+                    };
+                }
             } else {
-                console.log('SmartPlannerService not available, continuing without it');
+                console.error('SmartPlannerService not available, continuing without it');
             }
             
             return true;
@@ -569,19 +553,23 @@ class PlannerIntegration {
     // Get all tasks from all plans
     async getAllTasks() {
         try {
+            console.log('Getting all tasks from all plans...');
             const allTasks = [];
             
             for (const planId of this.planIds) {
                 try {
+                    console.log(`Fetching tasks for plan ${planId}...`);
                     const tasks = await this.getTasks(planId);
+                    console.log(`Found ${tasks.length} tasks for plan ${planId}`);
                     allTasks.push(...tasks);
                 } catch (error) {
-                    console.log(`Failed to fetch tasks for plan ${planId}:`, error);
+                    console.error(`Failed to fetch tasks for plan ${planId}:`, error);
                     // Continue with other plans even if one fails
                     continue;
                 }
             }
             
+            console.log(`Total tasks found: ${allTasks.length}`);
             return allTasks;
         } catch (error) {
             console.error('Error fetching all tasks:', error);
@@ -672,16 +660,17 @@ class PlannerIntegration {
     // Get task details including checklist and description
     async getTaskDetails(taskId) {
         try {
-            const accessToken = await this.getAccessToken();
-            const response = await fetch(
-                `https://graph.microsoft.com/v1.0/planner/tasks/${taskId}/details`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Accept': 'application/json'
-                    }
+            const token = await this.getAccessToken();
+            if (!token) {
+                throw new Error('Failed to get access token');
+            }
+
+            const response = await fetch(`${this.baseUrl}/planner/tasks/${taskId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
                 }
-            );
+            });
 
             if (!response.ok) {
                 throw new Error(`Failed to fetch task details: ${response.statusText}`);
@@ -689,8 +678,114 @@ class PlannerIntegration {
 
             return await response.json();
         } catch (error) {
-            console.error('Error fetching task details:', error);
-            throw error;
+            console.error(`Error fetching task details for ${taskId}:`, error);
+            return null;
+        }
+    }
+
+    // Get buckets for a specific plan
+    async getBuckets(planId) {
+        try {
+            // Check if we're using mock data
+            if (planId.startsWith('mock-')) {
+                console.log('Using mock buckets for plan:', planId);
+                return [
+                    {
+                        id: 'mock-bucket-1',
+                        name: 'To Do',
+                        planId: planId,
+                        orderHint: ' !'
+                    },
+                    {
+                        id: 'mock-bucket-2',
+                        name: 'In Progress',
+                        planId: planId,
+                        orderHint: ' !'
+                    },
+                    {
+                        id: 'mock-bucket-3',
+                        name: 'Completed',
+                        planId: planId,
+                        orderHint: ' !'
+                    }
+                ];
+            }
+            
+            const token = await this.getAccessToken();
+            if (!token) {
+                throw new Error('Failed to get access token');
+            }
+
+            console.log(`Fetching buckets for plan ${planId}...`);
+            const response = await fetch(`${this.baseUrl}/planner/plans/${planId}/buckets`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.log(`No buckets found for plan ${planId} - this is normal if the plan is new or empty`);
+                    return [];
+                }
+                
+                // If we get a permission error, return mock data
+                if (response.status === 403) {
+                    console.warn('Permission error accessing buckets. Using mock data.');
+                    return [
+                        {
+                            id: 'mock-bucket-1',
+                            name: 'To Do',
+                            planId: planId,
+                            orderHint: ' !'
+                        },
+                        {
+                            id: 'mock-bucket-2',
+                            name: 'In Progress',
+                            planId: planId,
+                            orderHint: ' !'
+                        },
+                        {
+                            id: 'mock-bucket-3',
+                            name: 'Completed',
+                            planId: planId,
+                            orderHint: ' !'
+                        }
+                    ];
+                }
+                
+                throw new Error(`Failed to fetch buckets: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log(`Found ${data.value.length} buckets for plan ${planId}:`, data.value);
+            return data.value || [];
+        } catch (error) {
+            console.error(`Error fetching buckets for plan ${planId}:`, error);
+            
+            // Return mock data on error
+            console.warn('Using mock buckets due to error.');
+            return [
+                {
+                    id: 'mock-bucket-1',
+                    name: 'To Do',
+                    planId: planId,
+                    orderHint: ' !'
+                },
+                {
+                    id: 'mock-bucket-2',
+                    name: 'In Progress',
+                    planId: planId,
+                    orderHint: ' !'
+                },
+                {
+                    id: 'mock-bucket-3',
+                    name: 'Completed',
+                    planId: planId,
+                    orderHint: ' !'
+                }
+            ];
         }
     }
 
@@ -755,6 +850,63 @@ class PlannerIntegration {
             }
         } catch (error) {
             console.error('Error fetching plans by group ID:', error);
+            throw error;
+        }
+    }
+
+    async updateTaskBucket(taskId, bucketId) {
+        try {
+            console.log(`Updating task ${taskId} to bucket ${bucketId}`);
+            
+            // Check if we're using mock data
+            if (taskId.startsWith('mock-') || bucketId.startsWith('mock-')) {
+                console.log('Using mock data for task bucket update');
+                return true;
+            }
+            
+            const accessToken = await this.getAccessToken();
+            
+            // Get the current etag
+            const taskResponse = await fetch(
+                `https://graph.microsoft.com/v1.0/planner/tasks/${taskId}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': 'application/json'
+                    }
+                }
+            );
+
+            if (!taskResponse.ok) {
+                throw new Error(`Failed to fetch task: ${taskResponse.statusText}`);
+            }
+
+            const task = await taskResponse.json();
+            
+            // Update the task's bucket
+            const response = await fetch(
+                `https://graph.microsoft.com/v1.0/planner/tasks/${taskId}`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'If-Match': task['@odata.etag']
+                    },
+                    body: JSON.stringify({
+                        bucketId: bucketId
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`Failed to update task bucket: ${response.statusText}`);
+            }
+
+            console.log(`Successfully updated task ${taskId} to bucket ${bucketId}`);
+            return true;
+        } catch (error) {
+            console.error('Error updating task bucket:', error);
             throw error;
         }
     }

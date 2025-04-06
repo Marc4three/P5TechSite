@@ -27,6 +27,19 @@ class AuthHandler {
             isTeamMember: isTeamMember
         });
         
+        // Special case for polling test page
+        const currentPath = window.location.pathname.split('/').pop();
+        if (currentPath === 'polling-test.html') {
+            // Allow access to polling test page for authorized users
+            if (email === 'marcus.norman@clinovators.com' || 
+                email === 'marcus.norman@p5techsolutions.com') {
+                console.log('Authorized user accessing polling test page:', email);
+                return null; // Return null to prevent redirection
+            }
+            // For unauthorized users, redirect to home or customer portal
+            return isTeamMember ? 'home.html' : 'customer-portal.html';
+        }
+        
         // Internal team members go to home.html, guests to customer-portal.html
         if (isTeamMember) {
             return 'home.html';
@@ -44,6 +57,52 @@ class AuthHandler {
         console.log('Initializing Auth Handler...');
         
         try {
+            // Get current path FIRST
+            const currentPath = window.location.pathname.split('/').pop();
+            
+            // Allow navigation from home.html
+            if (currentPath === 'home.html') {
+                console.log('On home page, allowing navigation');
+                return true;
+            }
+            
+            // Special case for polling-test.html - allow access without redirection
+            if (currentPath === 'polling-test.html') {
+                console.log('On polling-test.html page, allowing access without redirection');
+                
+                // Check if MSAL is loaded
+                if (typeof msal === 'undefined') {
+                    console.error('MSAL library not loaded');
+                    return false;
+                }
+                
+                // Check if MSAL instance exists
+                if (!window.msalInstance) {
+                    console.error('MSAL instance not initialized');
+                    return false;
+                }
+                
+                // Check for authenticated user
+                const accounts = window.msalInstance.getAllAccounts();
+                console.log('Found accounts:', accounts);
+                
+                if (accounts.length > 0) {
+                    this.currentUser = accounts[0];
+                    this.isAuthenticated = true;
+                    
+                    const email = this.currentUser.username.toLowerCase();
+                    if (email === 'marcus.norman@clinovators.com' || 
+                        email === 'marcus.norman@p5techsolutions.com') {
+                        console.log('Authorized user accessing polling test page:', email);
+                        return true;
+                    }
+                }
+                
+                // Even if not authenticated, allow access to the page
+                console.log('Allowing access to polling test page');
+                return true;
+            }
+            
             // Check if MSAL is loaded
             if (typeof msal === 'undefined') {
                 console.error('MSAL library not loaded');
@@ -65,7 +124,6 @@ class AuthHandler {
                 this.isAuthenticated = true;
                 
                 // Determine correct portal
-                const currentPath = window.location.pathname.split('/').pop();
                 const correctPortal = this.determineUserPortal(this.currentUser);
                 
                 console.log('Portal check:', {
@@ -74,8 +132,11 @@ class AuthHandler {
                     userEmail: this.currentUser.username
                 });
                 
-                // Redirect if user is on wrong portal
-                if (currentPath !== correctPortal && !currentPath.includes('login')) {
+                // Only redirect if not on polling-test.html and on wrong portal
+                if (currentPath !== 'polling-test.html' && 
+                    correctPortal !== null && 
+                    currentPath !== correctPortal && 
+                    !currentPath.includes('login')) {
                     console.log('Redirecting to correct portal...');
                     window.location.href = correctPortal;
                     return true;

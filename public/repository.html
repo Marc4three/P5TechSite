@@ -277,6 +277,16 @@
                     if (username) {
                         username.textContent = account.username || account.name || 'User';
                     }
+                    
+                    // Ensure account is set as active
+                    if (window.msalInstance) {
+                        window.msalInstance.setActiveAccount(account);
+                        console.log('Active account set for SharePoint:', account.username);
+                    }
+                } else {
+                    console.error('No account found, redirecting to login');
+                    window.location.replace('login.html');
+                    return;
                 }
 
                 // Initialize SharePoint service
@@ -294,7 +304,7 @@
             } catch (error) {
                 console.error('Initialization error:', error);
                 // Redirect to login if authentication error
-                if (error.errorCode?.includes('auth')) {
+                if (error.errorCode?.includes('auth') || error.message?.includes('No active account found')) {
                     window.location.replace('login.html');
                 }
             }

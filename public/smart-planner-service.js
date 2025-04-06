@@ -6,6 +6,7 @@ class SmartPlannerService {
         this.trackingInterval = null;
         this.lastCheck = null;
         this.notificationCallbacks = [];
+        this.onTaskUpdate = null; // Add this property to store the callback
         
         console.log('SmartPlannerService initialized');
     }
@@ -24,6 +25,9 @@ class SmartPlannerService {
         this.trackingInterval = setInterval(() => {
             this.checkForUpdates();
         }, 5 * 60 * 1000);
+        
+        // Also do an immediate check
+        this.checkForUpdates();
         
         console.log('Started tracking tasks');
     }
@@ -53,6 +57,12 @@ class SmartPlannerService {
             
             // Get all tasks
             const tasks = await this.plannerIntegration.getAllTasks();
+            
+            // Always call onTaskUpdate with all tasks, regardless of changes
+            if (this.onTaskUpdate && typeof this.onTaskUpdate === 'function') {
+                console.log('Calling onTaskUpdate with', tasks.length, 'tasks');
+                this.onTaskUpdate(tasks);
+            }
             
             // Check for changes since last check
             const changes = this.detectChanges(tasks);

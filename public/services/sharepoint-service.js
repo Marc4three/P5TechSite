@@ -20,6 +20,22 @@ class SharePointService {
         if (!window.msalInstance) {
             throw new Error('MSAL instance not found');
         }
+        
+        // Check for active account
+        const account = window.msalInstance.getActiveAccount();
+        if (!account) {
+            // Try to set the active account
+            const accounts = window.msalInstance.getAllAccounts();
+            if (accounts.length > 0) {
+                window.msalInstance.setActiveAccount(accounts[0]);
+                console.log('Active account set in SharePointService.initialize:', accounts[0].username);
+            } else {
+                throw new Error('No accounts found for SharePoint initialization');
+            }
+        } else {
+            console.log('Using active account for SharePoint:', account.username);
+        }
+        
         return new SharePointService();
     }
 
