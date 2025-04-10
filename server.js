@@ -15,6 +15,18 @@ app.use(express.json());
 // Serve static files from the public directory
 app.use(express.static('public'));
 
+// Serve static files from the project-pricer/public directory
+app.use('/project-pricer/public', express.static(path.join(__dirname, 'project-pricer', 'public')));
+
+// Handle %PUBLIC_URL% placeholder for React app
+app.get('/project-pricer/public/%PUBLIC_URL%/manifest.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'project-pricer', 'public', 'manifest.json'));
+});
+
+app.get('/project-pricer/public/%PUBLIC_URL%/favicon.ico', (req, res) => {
+    res.sendFile(path.join(__dirname, 'project-pricer', 'public', 'favicon.ico'));
+});
+
 // Middleware to check authentication
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
